@@ -9,7 +9,6 @@ interface WebSocketContextType {
   userId: string | null;
   lastMessage: WebSocketMessage | null;
   sendMessage: (message: WebSocketMessage) => void;
-  sendPoke: (toUserId: string, data?: any) => void;
   sendPing: () => void;
 }
 
