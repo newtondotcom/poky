@@ -9,16 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WsRouteImport } from './routes/ws'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 
-const WsRoute = WsRouteImport.update({
-  id: '/ws',
-  path: '/ws',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -39,45 +33,34 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/search': typeof SearchRoute
-  '/ws': typeof WsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/search': typeof SearchRoute
-  '/ws': typeof WsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/search': typeof SearchRoute
-  '/ws': typeof WsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/search' | '/ws'
+  fullPaths: '/' | '/dashboard' | '/search'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/search' | '/ws'
-  id: '__root__' | '/' | '/dashboard' | '/search' | '/ws'
+  to: '/' | '/dashboard' | '/search'
+  id: '__root__' | '/' | '/dashboard' | '/search'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   SearchRoute: typeof SearchRoute
-  WsRoute: typeof WsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/ws': {
-      id: '/ws'
-      path: '/ws'
-      fullPath: '/ws'
-      preLoaderRoute: typeof WsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -106,7 +89,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   SearchRoute: SearchRoute,
-  WsRoute: WsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

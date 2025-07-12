@@ -63,14 +63,7 @@ export function UserSearch() {
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Search className="h-5 w-5" />
-          Search Users to Poke
-        </CardTitle>
-      </CardHeader>
       <CardContent className="space-y-4">
-        {/* Search Input */}
         <div className="flex gap-2">
           <Input
             placeholder="Search by name or nickname..."
