@@ -1,12 +1,16 @@
 import { Link } from "@tanstack/react-router";
+import { trpc } from "@/utils/trpc";
+import { useQuery } from "@tanstack/react-query";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import UserMenu from "@/components/user-menu";
 
 export default function Header() {
+  const healthCheck = useQuery(trpc.healthCheck.queryOptions());
   const links = [
     { to: "/", label: "Home" },
     { to: "/dashboard", label: "Dashboard" },
+    { to: "/search", label : "Search"}
   ];
 
   return (
@@ -22,6 +26,9 @@ export default function Header() {
           })}
         </nav>
         <div className="flex items-center gap-2">
+              <div
+                className={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
+              />
           <ModeToggle />
           <UserMenu />
         </div>
