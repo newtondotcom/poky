@@ -6,6 +6,10 @@ import { auth } from "@/lib/auth";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { createBunWebSocket } from 'hono/bun'
+import type { ServerWebSocket } from 'bun'
+
+const { upgradeWebSocket, websocket } = createBunWebSocket<ServerWebSocket>();
 
 const app = new Hono();
 
@@ -36,4 +40,29 @@ app.get("/", (c) => {
   return c.text("OK");
 });
 
-export default app;
+// --- WebSocket route ---
+const wsApp = app.get(
+  '/ws',
+  upgradeWebSocket((c) => {
+    return {
+      onMessage(event, ws) {
+        console.log(`Message from client: ${event.data}`);
+        ws.send('Hello from server!');
+      },
+      onClose() {
+        console.log('Connection closed');
+      },
+      onOpen(_event, ws) {
+        console.log('Connection opened on ',c);
+        ws.send('Welcome to the WebSocket server!');
+      },
+    };
+  })
+);
+
+export type WebSocketApp = typeof wsApp;
+
+export default {
+  fetch: app.fetch,
+  websocket,
+};
