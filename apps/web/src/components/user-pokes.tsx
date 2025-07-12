@@ -1,10 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { trpc } from "@/utils/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User, Calendar, Zap, RefreshCw, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useMemo } from "react";
+import { usePokeData, useOrderedPokeRelations } from "@/stores/poke-store";
 
 function PokeItemSkeleton() {
   return (
@@ -32,30 +30,8 @@ function PokeItemSkeleton() {
 }
 
 export function UserPokes() {
-  const { data: pokesData, isLoading, error, refetch } = useQuery(trpc.getUserPokes.queryOptions());
-
-  // Store ordered poke relations in a memoized array
-  const orderedPokeRelations = useMemo(() => {
-    if (!pokesData?.pokeRelations) return [];
-    
-    return [...pokesData.pokeRelations].sort((a, b) => {
-      const aIsYourTurn = a.lastPokeBy !== a.otherUser.id;
-      const bIsYourTurn = b.lastPokeBy !== b.otherUser.id;
-      
-      // First priority: Show relations where it's your turn to poke (someone is waiting for you)
-      if (aIsYourTurn && !bIsYourTurn) return -1;
-      if (!aIsYourTurn && bIsYourTurn) return 1;
-      
-      // Second priority: When both are in the same state (both your turn or both their turn),
-      // sort by highest count first
-      if (a.count !== b.count) {
-        return b.count - a.count; // Higher count first
-      }
-      
-      // Third priority: If counts are equal, sort by most recent last poke date
-      return new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime();
-    });
-  }, [pokesData?.pokeRelations]);
+  const { data: pokesData, isLoading, error, refetch } = usePokeData();
+  const orderedPokeRelations = useOrderedPokeRelations();
 
   if (isLoading) {
     return (
