@@ -70,7 +70,7 @@ export default function UserMenu() {
       <DropdownMenuContent className="bg-card" align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>{session.user.email}</DropdownMenuItem>
+        <DropdownMenuItem>{session.user.name}</DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Button
             variant="destructive"
