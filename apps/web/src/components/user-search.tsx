@@ -126,9 +126,6 @@ export function UserSearch() {
                       </div>
                       <div>
                         <p className="font-medium">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {user.username ? `@${user.username}` : user.email}
-                        </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Joined {new Date(user.createdAt).toLocaleDateString()}
                         </p>

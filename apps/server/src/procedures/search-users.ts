@@ -2,7 +2,8 @@ import { protectedProcedure } from "@/lib/trpc";
 import { z } from "zod";
 import { db } from "@/db";
 import { user } from "@/db/schema/auth";
-import { like, or } from "drizzle-orm";
+import { pokes } from "@/db/schema/pok7";
+import { like, or, eq } from "drizzle-orm";
 
 // Type for our simplified user response
 export interface SearchUserResult {
@@ -19,7 +20,7 @@ export const searchUsersProcedure = protectedProcedure
       query: z.string().min(1, "Search query cannot be empty"),
     })
   )
-  .query(async ({ input }) => {
+  .query(async ({ input, ctx }) => {
     const { query } = input;
 
     try {
@@ -50,9 +51,44 @@ export const searchUsersProcedure = protectedProcedure
         createdAt: user.createdAt.toISOString(),
       }));
 
+      // Fetch if current poke relations exists and return result
+      const currentUserId = ctx.session.user.id;
+      
+      // Get all poke relations for the current user
+      const pokeRelations = await db
+        .select({
+          userAId: pokes.userAId,
+          userBId: pokes.userBId,
+          count: pokes.count,
+          lastPokeBy : pokes.lastPokeBy
+        })
+        .from(pokes)
+        .where(
+          or(
+            eq(pokes.userAId, currentUserId),
+            eq(pokes.userBId, currentUserId)
+          )
+        );
+
+      // Merge both results - add poke info to search results
+      const searchResultsWithPokeRelations = searchResults.map(user => {
+        const userPokeRelation = pokeRelations.find(relation => 
+          (relation.userAId === currentUserId && relation.userBId === user.id) ||
+          (relation.userAId === user.id && relation.userBId === currentUserId)
+        );
+        
+        return {
+          ...user,
+          hasPokeRelation: !!userPokeRelation,
+          pokeCount: userPokeRelation?.count || 0,
+          lastPokeBy : userPokeRelation?.lastPokeBy || null
+        };
+      });
+
+      console.log(searchResultsWithPokeRelations);
       return {
-        users: searchResults,
-        count: searchResults.length,
+        users: searchResultsWithPokeRelations,
+        count: searchResultsWithPokeRelations.length,
       };
 
     } catch (error) {
