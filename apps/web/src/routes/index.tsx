@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
+import { WebSocketProvider } from "@/components/websocket-provider";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -26,6 +27,7 @@ function HomeComponent() {
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
 
   return (
+    <WebSocketProvider>
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
       <div className="grid gap-6">
@@ -46,5 +48,6 @@ function HomeComponent() {
         </section>
       </div>
     </div>
+    </WebSocketProvider>
   );
 }
