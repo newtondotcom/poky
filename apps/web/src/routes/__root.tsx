@@ -24,11 +24,11 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
   head: () => ({
     meta: [
       {
-        title: "My App",
+        title: "Pok7",
       },
       {
         name: "description",
-        content: "My App is a web application",
+        content: "an enhancement of Meta pokes in a PWA",
       },
     ],
     links: [
