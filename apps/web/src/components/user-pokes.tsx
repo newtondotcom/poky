@@ -3,6 +3,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { User, Calendar, Zap, RefreshCw, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePokeData, useOrderedPokeRelations } from "@/stores/poke-store";
+import { formatDistanceToNow } from "date-fns";
+import { PokeButton } from "@/components/poke-button";
 
 function PokeItemSkeleton() {
   return (
@@ -101,7 +103,7 @@ export function UserPokes() {
       <CardContent>
         <div className="space-y-3">
           {orderedPokeRelations.map((pokeRelation) => {
-            const isYourTurn = pokeRelation.lastPokeBy !== pokeRelation.otherUser.id;
+            const isYourTurn = pokeRelation.lastPokeBy == pokeRelation.otherUser.id;
             
             // Determine the status indicator
             let statusIcon, statusColor, statusText, statusBgColor;
@@ -137,13 +139,14 @@ export function UserPokes() {
                   </div>
                   <div>
                     <p className="font-medium">{pokeRelation.otherUser.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {pokeRelation.otherUser.username ? `@${pokeRelation.otherUser.username}` : 'No username'}
-                    </p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                       <Calendar className="h-3 w-3" />
                       <span>
-                        Last poke: {new Date(pokeRelation.lastPokeDate).toLocaleDateString()}
+                        {new Date(pokeRelation.lastPokeDate).toLocaleDateString()}
+                        {" "}-{" "}
+                        {formatDistanceToNow(pokeRelation.lastPokeDate,{
+                          addSuffix : true
+                        })}
                       </span>
                     </div>
                   </div>
@@ -157,6 +160,16 @@ export function UserPokes() {
                     {statusIcon}
                     <span>{statusText}</span>
                   </div>
+                  {isYourTurn && (
+                    <div className="mt-2">
+                      <PokeButton
+                        targetUserId={pokeRelation.otherUser.id}
+                        targetUserName={pokeRelation.otherUser.name}
+                        variant="outline"
+                        size="sm"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             );
