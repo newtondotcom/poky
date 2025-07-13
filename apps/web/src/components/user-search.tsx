@@ -8,6 +8,7 @@ import { Loader2, Search, User } from "lucide-react";
 import { toast } from "sonner";
 import type { SearchUserResult } from "../../../server/src/procedures/search-users";
 import { useQuery } from "@tanstack/react-query";
+import { PokeButton } from "@/components/poke-button";
 
 function SearchResultSkeleton() {
   return (
@@ -87,7 +88,7 @@ export function UserSearch() {
 
         {/* Search Results */}
         {searchUsersQuery.isLoading && (
-          <div className="flex items-center justify-center py-8">
+          <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, index) => (
               <SearchResultSkeleton key={index} />
             ))}
@@ -136,10 +137,31 @@ export function UserSearch() {
                       </div>
                       <div>
                         <p className="font-medium">{user.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {user.username ? `@${user.username}` : 'No username'}
+                        </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Joined {new Date(user.createdAt).toLocaleDateString()}
                         </p>
                       </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {user.hasPokeRelation && (
+                        <div className="text-xs text-muted-foreground text-right">
+                          <div className="flex items-center gap-1">
+                            <span>Pokes: {user.pokeCount}</span>
+                          </div>
+                          <div className="text-xs">
+                            {user.lastPokeBy === user.id ? 'They poked you' : 'You poked them'}
+                          </div>
+                        </div>
+                      )}
+                      <PokeButton
+                        targetUserId={user.id}
+                        targetUserName={user.name}
+                        variant="outline"
+                        size="sm"
+                      />
                     </div>
                   </div>
                 ))}
