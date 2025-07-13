@@ -84,26 +84,28 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 
         {/* Search Input */}
         <div className="p-6 border-b border-white/20 bg-white/5 backdrop-blur-xl">
-          <div className="flex gap-3">
-            <Input
-              placeholder="Search by name or nickname..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleKeyPress}
-              className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 backdrop-blur-xl"
-              autoFocus
-            />
-            <Button 
-              onClick={handleSearch}
-              disabled={isSearching || !searchQuery.trim()}
-              className="bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-xl"
-            >
-              {isSearching ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Search className="h-4 w-4" />
-              )}
-            </Button>
+          <div className="flex items-center justify-center w-full">
+            <div className="relative w-full max-w-md">
+              <input 
+                type="text" 
+                placeholder="Search by name or nickname..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyPress}
+                className="pr-12 pl-4 py-3 w-full text-white text-sm bg-black/20 border border-white/50 backdrop-blur-sm rounded-lg shadow-[inset_0_1px_0px_rgba(255,255,255,0.75),0_0_9px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.15)] placeholder:text-white/70 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300 relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-transparent before:opacity-70 before:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:bg-gradient-to-tl after:from-white/30 after:via-transparent after:to-transparent after:opacity-50 after:pointer-events-none"
+              />
+              <button 
+                onClick={handleSearch}
+                disabled={isSearching || !searchQuery.trim()}
+                className="inline-flex items-center justify-center px-3 py-2 text-black text-xs font-medium rounded-md bg-white/80 border border-white/30 backdrop-blur-sm shadow-[inset_0_1px_0px_rgba(255,255,255,0.75),0_0_9px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.15)] hover:bg-white/30 transition-all duration-300 absolute right-1 top-1/2 transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSearching ? (
+                  <Loader2 className="size-3 animate-spin" />
+                ) : (
+                  <Search className="size-3" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
