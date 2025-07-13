@@ -12,6 +12,9 @@ export interface SearchUserResult {
   username: string | null;
   image: string | null;
   createdAt: string;
+  hasPokeRelation: boolean;
+  pokeCount: number;
+  lastPokeBy: string | null;
 }
 
 export const searchUsersProcedure = protectedProcedure
@@ -49,6 +52,9 @@ export const searchUsersProcedure = protectedProcedure
         username: user.username,
         image: user.image,
         createdAt: user.createdAt.toISOString(),
+        hasPokeRelation: false,
+        pokeCount: 0,
+        lastPokeBy: null,
       }));
 
       // Fetch if current poke relations exists and return result

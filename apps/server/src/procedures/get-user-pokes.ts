@@ -96,7 +96,7 @@ export const getUserPokesProcedure = protectedProcedure
       pokeRelationsWithUsers.sort((a, b) => 
         new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime()
       );
-
+      
       return {
         pokeRelations: pokeRelationsWithUsers,
         count: pokeRelationsWithUsers.length,

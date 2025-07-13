@@ -38,10 +38,12 @@ export const auth = betterAuth({
 
                 const userInfo = await response.json();
 
+                console.log(userInfo)
+
                 return {
                   id: userInfo.sub || "", // could be uid but sub will be used for anonuymsation
                   name: userInfo.fullName ||"",
-                  username: userInfo.uid || "",
+                  username: userInfo.uid || userInfo.nickname || "",
                   image: userInfo.pictureURL || null,
                   createdAt: new Date(),
                   updatedAt: new Date(),
