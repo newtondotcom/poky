@@ -1,6 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User, Calendar, Zap, RefreshCw, ArrowRight, ArrowLeft } from "lucide-react";
+import { User, Calendar, Zap, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePokeData, useOrderedPokeRelations } from "@/stores/poke-store";
 import { formatDistanceToNow } from "date-fns";
@@ -9,7 +8,7 @@ import { Flipper, Flipped } from "react-flip-toolkit";
 
 function PokeItemSkeleton() {
   return (
-    <div className="flex items-center justify-between p-3 border rounded-lg">
+    <div className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
       <div className="flex items-center gap-3">
         <Skeleton className="w-10 h-10 rounded-full" />
         <div className="space-y-2">
@@ -34,145 +33,134 @@ function PokeItemSkeleton() {
 
 export function UserPokes() {
   const { data: pokesData, isLoading, error, refetch } = usePokeData();
-  const orderedPokeRelations = useOrderedPokeRelations();  // Use a string that changes when the order changes as the flipKey
+  const orderedPokeRelations = useOrderedPokeRelations();
   const flipKey = orderedPokeRelations.map(r => r.id).join(",");
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-        <CardTitle>Your Pokes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <PokeItemSkeleton key={index} />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
+          <Button variant="ghost" size="sm" className="text-white/70 hover:text-white">
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <PokeItemSkeleton key={index} />
+          ))}
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Pokes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8 text-red-500">
-            <p>Failed to load your pokes</p>
-            <p className="text-sm text-muted-foreground">{error.message}</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
+        </div>
+        <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+          <p className="text-red-400 font-medium">Failed to load your pokes</p>
+          <p className="text-sm text-white/60 mt-1">{error.message}</p>
+        </div>
+      </div>
     );
   }
 
   if (!pokesData || pokesData.count === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Pokes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <Zap className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p>No pokes yet!</p>
-            <p className="text-sm">Start poking people to see them here</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
+        </div>
+        <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+          <Zap className="h-12 w-12 mx-auto mb-3 text-white/50" />
+          <p className="text-white/80 font-medium">No pokes yet!</p>
+          <p className="text-sm text-white/60 mt-1">Start poking people to see them here</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Your Pokes</span>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-sm text-white/70">
             <span>{pokesData.count} relations</span>
             <span>•</span>
             <span>{pokesData.totalPokes} total pokes</span>
           </div>
-          <Button variant={"ghost"} onClick={() => refetch()}>
-            <RefreshCw />
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => refetch()}
+            className="text-white/70 hover:text-white hover:bg-white/10"
+          >
+            <RefreshCw className="h-4 w-4" />
           </Button>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </div>
+      </div>
+      
       <Flipper flipKey={flipKey} spring="veryGentle">
-        <div className="space-y-3">
+        <div className="space-y-4">
           {orderedPokeRelations.map((pokeRelation) => {
             const isYourTurn = pokeRelation.lastPokeBy == pokeRelation.otherUser.id;
-            
-            // Determine the status indicator
-            let statusIcon, statusColor, statusText, statusBgColor;
-            
-            if (isYourTurn) {
-              statusColor = "text-green-600";
-              statusBgColor = "bg-green-100 dark:bg-green-900/20";
-            } else {
-              statusColor = "text-red-600";
-              statusBgColor = "bg-red-100 dark:bg-red-900/20";
-            }
 
             return (
               <Flipped key={pokeRelation.id} flipId={pokeRelation.id}>
-              <div
-                key={pokeRelation.id}
-                className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex items-center justify-center">
-                    {pokeRelation.otherUser.image ? (
-                      <img
-                        src={pokeRelation.otherUser.image}
-                        alt={pokeRelation.otherUser.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <User className="h-5 w-5 text-muted-foreground" />
+                <div
+                  className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30">
+                      {pokeRelation.otherUser.image ? (
+                        <img
+                          src={pokeRelation.otherUser.image}
+                          alt={pokeRelation.otherUser.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-5 w-5 text-white/70" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium text-white/90">{pokeRelation.otherUser.name}</p>
+                      <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>
+                          {formatDistanceToNow(pokeRelation.lastPokeDate,{
+                            addSuffix : true
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="flex items-center gap-2 justify-end mb-2">
+                      <Zap className="h-4 w-4 text-yellow-400" />
+                      <span className="font-semibold text-white/90">{pokeRelation.count}</span>
+                    </div>
+                    {isYourTurn && (
+                      <div className="mt-2">
+                        <PokeButton
+                          targetUserId={pokeRelation.otherUser.id}
+                          targetUserName={pokeRelation.otherUser.name}
+                          variant="outline"
+                          size="sm"
+                          className="text-green-400 border-green-400/30 hover:bg-green-400/10"
+                        />
+                      </div>
                     )}
                   </div>
-                  <div>
-                    <p className="font-medium">{pokeRelation.otherUser.name}</p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                      <Calendar className="h-3 w-3" />
-                      <span>
-                        {formatDistanceToNow(pokeRelation.lastPokeDate,{
-                          addSuffix : true
-                        })}
-                      </span>
-                    </div>
-                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="flex items-center gap-2 justify-end mb-1">
-                    <Zap className="h-4 w-4 text-yellow-500" />
-                    <span className="font-semibold">{pokeRelation.count}</span>
-                  </div>
-                  {isYourTurn && (
-                    <div className="mt-2">
-                      <PokeButton
-                        targetUserId={pokeRelation.otherUser.id}
-                        targetUserName={pokeRelation.otherUser.name}
-                        variant="outline"
-                        size="sm"
-                        className="text-green-400"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
               </Flipped>
             );
           })}
         </div>
-        </Flipper>
-      </CardContent>
-    </Card>
+      </Flipper>
+    </div>
   );
 } 

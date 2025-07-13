@@ -9,10 +9,11 @@ import type { SearchUserResult } from "../../../server/src/procedures/search-use
 import { useQuery } from "@tanstack/react-query";
 import { PokeButton } from "@/components/poke-button";
 import { formatDistanceToNow } from "date-fns";
+import React from "react";
 
 function SearchResultSkeleton() {
   return (
-    <div className="flex items-center justify-between p-3 border rounded-lg">
+    <div className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
       <div className="flex items-center gap-3">
         <Skeleton className="w-10 h-10 rounded-full" />
         <div className="space-y-2">
@@ -28,6 +29,7 @@ function SearchResultSkeleton() {
 function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [localSearchResults, setLocalSearchResults] = useState<SearchUserResult[]>([]);
 
   // Use tRPC query for searching users
   const searchUsersQuery = useQuery(trpc.searchUsers.queryOptions(
@@ -65,63 +67,65 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b">
-        <h2 className="text-lg font-semibold">Search Users</h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onClose}
-          className="h-8 w-8 p-0"
-        >
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
-
-      {/* Search Input */}
-      <div className="p-4 border-b">
-        <div className="flex gap-2">
-          <Input
-            placeholder="Search by name or nickname..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleKeyPress}
-            className="flex-1"
-            autoFocus
-          />
-          <Button 
-            onClick={handleSearch}
-            disabled={isSearching || !searchQuery.trim()}
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
+      <div className="min-h-screen w-full bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-white/20 bg-white/10 backdrop-blur-xl">
+          <h2 className="text-xl font-semibold text-white/90">Search Users</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="h-8 w-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
           >
-            {isSearching ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Search className="h-4 w-4" />
-            )}
+            <X className="h-4 w-4" />
           </Button>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {/* Search Results */}
-        {searchUsersQuery.isLoading && (
-          <div className="space-y-3">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <SearchResultSkeleton key={index} />
-            ))}
+        {/* Search Input */}
+        <div className="p-6 border-b border-white/20 bg-white/5 backdrop-blur-xl">
+          <div className="flex gap-3">
+            <Input
+              placeholder="Search by name or nickname..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyPress}
+              className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 backdrop-blur-xl"
+              autoFocus
+            />
+            <Button 
+              onClick={handleSearch}
+              disabled={isSearching || !searchQuery.trim()}
+              className="bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-xl"
+            >
+              {isSearching ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
+            </Button>
           </div>
-        )}
+        </div>
 
-        {searchUsersQuery.error && (
-          <div className="text-center py-8 text-red-500">
-            <p>Failed to search users</p>
-            <p className="text-sm text-muted-foreground">
-              {searchUsersQuery.error.message}
-            </p>
-          </div>
-        )}
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6">
+          {/* Search Results */}
+          {searchUsersQuery.isLoading && (
+            <div className="space-y-4">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <SearchResultSkeleton key={index} />
+              ))}
+            </div>
+          )}
+
+          {searchUsersQuery.error && (
+            <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+              <p className="text-red-400 font-medium">Failed to search users</p>
+              <p className="text-sm text-white/60 mt-1">
+                {searchUsersQuery.error.message}
+              </p>
+            </div>
+          )}
 
         {searchUsersQuery.data && (
           <div className="space-y-2">
@@ -143,10 +147,10 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                   return (
                     <div
                       key={user.id}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                      className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 flex items-center justify-center flex-shrink-0 ring-2 ring-white/30">
                           {user.image ? (
                             <img
                               src={user.image}
@@ -154,12 +158,12 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <User className="h-5 w-5 text-muted-foreground" />
+                            <User className="h-5 w-5 text-white/70" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{user.name}</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                          <p className="font-medium truncate text-white/90">{user.name}</p>
+                          <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
                             <Calendar className="h-3 w-3" />
                             {user.hasPokeRelation && user.lastPokeDate ? (
                               <span>
@@ -178,9 +182,9 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                       <div className="text-right flex-shrink-0">
                         {user.hasPokeRelation ? (
                           <>
-                            <div className="flex items-center gap-2 justify-end mb-1">
-                              <Zap className="h-4 w-4 text-yellow-500" />
-                              <span className="font-semibold">{user.pokeCount}</span>
+                            <div className="flex items-center gap-2 justify-end mb-2">
+                              <Zap className="h-4 w-4 text-yellow-400" />
+                              <span className="font-semibold text-white/90">{user.pokeCount}</span>
                             </div>
                             {isYourTurn && (
                               <PokeButton
@@ -219,6 +223,7 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         )}
       </div>
     </div>
+    </div>
   );
 }
 
@@ -229,11 +234,11 @@ export function UserSearch() {
     <>
       <Button 
         onClick={() => setShowModal(true)}
-        className="w-full"
+        className="w-full bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-xl rounded-2xl p-4 h-auto"
         variant="outline"
       >
-        <Plus className="h-4 w-4 mr-2" />
-        Search Users
+        <Plus className="h-5 w-5 mr-3" />
+        <span className="text-lg font-medium">Search Users</span>
       </Button>
       
       <UserSearchModal 
@@ -242,4 +247,4 @@ export function UserSearch() {
       />
     </>
   );
-} 
+}
