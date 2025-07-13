@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { user } from "@/db/schema/auth";
 import { pokes } from "@/db/schema/pok7";
-import { like, or, eq } from "drizzle-orm";
+import { like, or, eq, and, not } from "drizzle-orm";
 
 // Type for our simplified user response
 export interface SearchUserResult {
@@ -38,9 +38,13 @@ export const searchUsersProcedure = protectedProcedure
         })
         .from(user)
         .where(
-          or(
-            like(user.username, `%${query}%`),
-            like(user.name, `%${query}%`),
+          and(
+            or(
+              like(user.username, `%${query}%`),
+              like(user.name, `%${query}%`),
+            ),
+            // Exclude the current user from the results
+            not(eq(user.id, ctx.session.user.id))
           )
         )
         .limit(20); // Limit results to 20 users
