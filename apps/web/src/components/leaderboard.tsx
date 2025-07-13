@@ -41,120 +41,60 @@ export function Leaderboard() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-white/90 flex items-center gap-2">
-          <Trophy className="h-6 w-6" />
-          Leaderboard
-        </h2>
-        <div className="space-y-4">
-          {Array.from({ length: 10 }).map((_, index) => (
-            <LeaderboardItemSkeleton key={index} />
-          ))}
-        </div>
+      <div className="space-y-4">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <LeaderboardItemSkeleton key={index} />
+        ))}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-white/90 flex items-center gap-2">
-          <Trophy className="h-6 w-6" />
-          Leaderboard
-        </h2>
-        <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
-          <p className="text-red-400 font-medium">Failed to load leaderboard</p>
-          <p className="text-sm text-white/60 mt-1">{error.message}</p>
-        </div>
+      <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+        <p className="text-red-400 font-medium">Failed to load leaderboard</p>
+        <p className="text-sm text-white/60 mt-1">{error.message}</p>
       </div>
     );
   }
 
   if (!leaderboardData || leaderboardData.count === 0) {
     return (
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-white/90 flex items-center gap-2">
-          <Trophy className="h-6 w-6" />
-          Leaderboard
-        </h2>
-        <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
-          <Trophy className="h-12 w-12 mx-auto mb-3 text-white/50" />
-          <p className="text-white/80 font-medium">No poke relations yet!</p>
-          <p className="text-sm text-white/60 mt-1">Start poking people to see them on the leaderboard</p>
-        </div>
+      <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+        <Trophy className="h-12 w-12 mx-auto mb-3 text-white/50" />
+        <p className="text-white/80 font-medium">No poke relations yet!</p>
+        <p className="text-sm text-white/60 mt-1">Start poking people to see them on the leaderboard</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white/90 flex items-center gap-2">
-        <Trophy className="h-6 w-6" />
-        Leaderboard
-      </h2>
-      
-      <div className="space-y-4">
-        {leaderboardData.entries.map((entry, index) => {
-          const rank = index + 1;
-          const rankIcon = getRankIcon(rank);
-          const rankColor = getRankColor(rank);
+    <div className="space-y-4">
+      {leaderboardData.entries.map((entry, index) => {
+        const rank = index + 1;
+        const rankIcon = getRankIcon(rank);
+        const rankColor = getRankColor(rank);
 
-          return (
-            <div
-              key={entry.id}
-              className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 min-w-[60px]">
-                  {rankIcon}
-                  <span className={`text-sm ${rankColor}`}>
-                    #{rank}
-                  </span>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  {/* User A */}
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30">
-                      {entry.userA.image ? (
-                        <img
-                          src={entry.userA.image}
-                          alt={entry.userA.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <User className="h-4 w-4 text-white/70" />
-                      )}
-                    </div>
-                    <span className="text-sm font-medium text-white/90">{entry.userA.name}</span>
-                  </div>
-                  
-                  <span className="text-white/60">X</span>
-                  
-                  {/* User B */}
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30">
-                      {entry.userB.image ? (
-                        <img
-                          src={entry.userB.image}
-                          alt={entry.userB.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <User className="h-4 w-4 text-white/70" />
-                      )}
-                    </div>
-                    <span className="text-sm font-medium text-white/90">{entry.userB.name}</span>
-                  </div>
-                </div>
+        return (
+          <div
+            key={entry.id}
+            className="p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
+          >
+            {/* Rank and Stats Row */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                {rankIcon}
+                <span className={`text-sm ${rankColor}`}>
+                  #{rank}
+                </span>
               </div>
               
-              <div className="text-right">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-white/90">
+              <div className="text-right flex flex-row gap-2 md:flex-col">
+                <div className="flex items-center gap-1">
+                  <span className="text-xl font-bold text-white/90">
                     {entry.count}
                   </span>
-                  <span className="text-sm text-white/60">pokes</span>
+                  <span className="text-xs text-white/60">pokes</span>
                 </div>
                 <div className="flex items-center gap-1 text-xs text-white/60 mt-1">
                   <Calendar className="h-3 w-3" />
@@ -166,9 +106,46 @@ export function Leaderboard() {
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
+            
+            {/* Users Row */}
+            <div className="flex flex-col md:flex-row items-center justify-center md:gap-3">
+              {/* User A */}
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
+                  {entry.userA.image ? (
+                    <img
+                      src={entry.userA.image}
+                      alt={entry.userA.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="h-4 w-4 text-white/70" />
+                  )}
+                </div>
+                <span className="text-sm font-medium text-white/90 truncate">{entry.userA.name}</span>
+              </div>
+              
+              <span className="text-white/60 text-lg font-bold">×</span>
+              
+              {/* User B */}
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
+                  {entry.userB.image ? (
+                    <img
+                      src={entry.userB.image}
+                      alt={entry.userB.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="h-4 w-4 text-white/70" />
+                  )}
+                </div>
+                <span className="text-sm font-medium text-white/90 truncate">{entry.userB.name}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 } 
