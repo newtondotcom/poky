@@ -29,7 +29,12 @@ function SearchResultSkeleton() {
 function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [localSearchResults, setLocalSearchResults] = useState<SearchUserResult[]>([]);
+
+  const handleClose = () => {
+    setSearchQuery("");
+    setIsSearching(false);
+    onClose();
+  };
 
   // Use tRPC query for searching users
   const searchUsersQuery = useQuery(trpc.searchUsers.queryOptions(
@@ -37,32 +42,30 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
       query: searchQuery,
     },
     {
-      enabled: false, // Don't auto-run, only when we explicitly search
+      enabled: searchQuery.trim().length > 0, // Auto-run when query has content
       retry: false,
+      staleTime: 30000, // Cache results for 30 seconds
     }
   ));
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      toast.error("Please enter a search query");
-      return;
-    }
-
-    setIsSearching(true);
-    try {
-      await searchUsersQuery.refetch();
-    } catch (error) {
-      toast.error("Failed to search users");
-    } finally {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    // Show loading state when user is typing
+    if (value.trim().length > 0) {
+      setIsSearching(true);
+    } else {
       setIsSearching(false);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
+  // Update loading state when query completes or when query is disabled
+  React.useEffect(() => {
+    if (!searchUsersQuery.isLoading || !searchQuery.trim()) {
+      setIsSearching(false);
     }
-  };
+  }, [searchUsersQuery.isLoading, searchQuery]);
 
   if (!isOpen) return null;
 
@@ -70,41 +73,32 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
       <div className="min-h-screen w-full bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/20 bg-white/10 backdrop-blur-xl">
+        <div className="flex items-center justify-between p-6">
           <h2 className="text-xl font-semibold text-white/90">Search Users</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="h-8 w-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
+          <button 
+            onClick={handleClose}
+            className="inline-flex items-center justify-center align-middle select-none font-sans text-center p-2 text-white text-sm font-medium rounded-lg bg-white/2.5 border border-white/50 backdrop-blur-sm shadow-[inset_0_1px_0px_rgba(255,255,255,0.75),0_0_9px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.15)] hover:bg-white/30 transition-all duration-300 before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-transparent before:opacity-70 before:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:bg-gradient-to-tl after:from-white/30 after:via-transparent after:to-transparent after:opacity-50 after:pointer-events-none transition antialiased relative"
           >
             <X className="h-4 w-4" />
-          </Button>
+          </button>
         </div>
 
         {/* Search Input */}
-        <div className="p-6 border-b border-white/20 bg-white/5 backdrop-blur-xl">
+        <div className="p-6">
           <div className="flex items-center justify-center w-full">
             <div className="relative w-full max-w-md">
               <input 
                 type="text" 
                 placeholder="Search by name or nickname..." 
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleKeyPress}
-                className="pr-12 pl-4 py-3 w-full text-white text-sm bg-black/20 border border-white/50 backdrop-blur-sm rounded-lg shadow-[inset_0_1px_0px_rgba(255,255,255,0.75),0_0_9px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.15)] placeholder:text-white/70 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300 relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-transparent before:opacity-70 before:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:bg-gradient-to-tl after:from-white/30 after:via-transparent after:to-transparent after:opacity-50 after:pointer-events-none"
+                onChange={handleSearchChange}
+                className="pl-4 py-3 w-full text-white text-sm bg-black/20 border border-white/50 backdrop-blur-sm rounded-lg shadow-[inset_0_1px_0px_rgba(255,255,255,0.75),0_0_9px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.15)] placeholder:text-white/70 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300 relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-transparent before:opacity-70 before:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:bg-gradient-to-tl after:from-white/30 after:via-transparent after:to-transparent after:opacity-50 after:pointer-events-none"
               />
-              <button 
-                onClick={handleSearch}
-                disabled={isSearching || !searchQuery.trim()}
-                className="inline-flex items-center justify-center px-3 py-2 text-black text-xs font-medium rounded-md bg-white/80 border border-white/30 backdrop-blur-sm shadow-[inset_0_1px_0px_rgba(255,255,255,0.75),0_0_9px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.15)] hover:bg-white/30 transition-all duration-300 absolute right-1 top-1/2 transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSearching ? (
-                  <Loader2 className="size-3 animate-spin" />
-                ) : (
-                  <Search className="size-3" />
-                )}
-              </button>
+              {isSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <Loader2 className="size-4 animate-spin text-white/70" />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -112,7 +106,7 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {/* Search Results */}
-          {searchUsersQuery.isLoading && (
+          {searchUsersQuery.isLoading && searchQuery.trim().length > 0 && (
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, index) => (
                 <SearchResultSkeleton key={index} />
@@ -129,14 +123,14 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
             </div>
           )}
 
-        {searchUsersQuery.data && (
+        {searchUsersQuery.data && searchQuery.trim().length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white/60">
               Found {searchUsersQuery.data.count} user(s)
             </p>
             
             {searchUsersQuery.data.users.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-white/60">
                 <User className="h-12 w-12 mx-auto mb-2 opacity-50" />
                 <p>No users found</p>
                 <p className="text-sm">Try a different search term</p>
@@ -195,7 +189,7 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                                 variant="outline"
                                 size="sm"
                                 className="text-green-400"
-                                onPokeSuccess={onClose}
+                                onPokeSuccess={handleClose}
                               />
                             )}
                           </>
@@ -205,7 +199,7 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                             targetUserName={user.name}
                             variant="outline"
                             size="sm"
-                            onPokeSuccess={onClose}
+                            onPokeSuccess={handleClose}
                           />
                         )}
                       </div>
@@ -218,11 +212,11 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         )}
 
         {/* Initial state */}
-        {!searchUsersQuery.data && !searchUsersQuery.isLoading && !searchUsersQuery.error && (
-          <div className="text-center py-12 text-muted-foreground">
+        {!searchQuery.trim() && (
+          <div className="text-center py-12 text-white/60">
             <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg font-medium mb-2">Search for users</p>
-            <p className="text-sm">Enter a name or nickname to find people to poke</p>
+            <p className="text-sm">Start typing to find people to poke</p>
           </div>
         )}
       </div>
