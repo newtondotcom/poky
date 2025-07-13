@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { usePokeData, useOrderedPokeRelations } from "@/stores/poke-store";
 import { formatDistanceToNow } from "date-fns";
 import { PokeButton } from "@/components/poke-button";
+import { Flipper, Flipped } from "react-flip-toolkit";
 
 function PokeItemSkeleton() {
   return (
@@ -33,7 +34,8 @@ function PokeItemSkeleton() {
 
 export function UserPokes() {
   const { data: pokesData, isLoading, error, refetch } = usePokeData();
-  const orderedPokeRelations = useOrderedPokeRelations();
+  const orderedPokeRelations = useOrderedPokeRelations();  // Use a string that changes when the order changes as the flipKey
+  const flipKey = orderedPokeRelations.map(r => r.id).join(",");
 
   if (isLoading) {
     return (
@@ -101,6 +103,7 @@ export function UserPokes() {
         </CardTitle>
       </CardHeader>
       <CardContent>
+      <Flipper flipKey={flipKey} spring="veryGentle">
         <div className="space-y-3">
           {orderedPokeRelations.map((pokeRelation) => {
             const isYourTurn = pokeRelation.lastPokeBy == pokeRelation.otherUser.id;
@@ -109,18 +112,15 @@ export function UserPokes() {
             let statusIcon, statusColor, statusText, statusBgColor;
             
             if (isYourTurn) {
-              statusIcon = <ArrowRight className="h-4 w-4" />;
               statusColor = "text-green-600";
               statusBgColor = "bg-green-100 dark:bg-green-900/20";
-              statusText = "Your turn to poke";
             } else {
-              statusIcon = <ArrowLeft className="h-4 w-4" />;
               statusColor = "text-red-600";
               statusBgColor = "bg-red-100 dark:bg-red-900/20";
-              statusText = "Waiting for their poke";
             }
 
             return (
+              <Flipped key={pokeRelation.id} flipId={pokeRelation.id}>
               <div
                 key={pokeRelation.id}
                 className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
@@ -156,10 +156,6 @@ export function UserPokes() {
                     <Zap className="h-4 w-4 text-yellow-500" />
                     <span className="font-semibold">{pokeRelation.count}</span>
                   </div>
-                  <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${statusBgColor} ${statusColor}`}>
-                    {statusIcon}
-                    <span>{statusText}</span>
-                  </div>
                   {isYourTurn && (
                     <div className="mt-2">
                       <PokeButton
@@ -167,14 +163,17 @@ export function UserPokes() {
                         targetUserName={pokeRelation.otherUser.name}
                         variant="outline"
                         size="sm"
+                        className="text-green-400"
                       />
                     </div>
                   )}
                 </div>
               </div>
+              </Flipped>
             );
           })}
         </div>
+        </Flipper>
       </CardContent>
     </Card>
   );

@@ -79,8 +79,8 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
     if (!pokeRelations) return [];
     
     return [...pokeRelations].sort((a, b) => {
-      const aIsYourTurn = a.lastPokeBy !== a.otherUser.id;
-      const bIsYourTurn = b.lastPokeBy !== b.otherUser.id;
+      const aIsYourTurn = a.lastPokeBy == a.otherUser.id;
+      const bIsYourTurn = b.lastPokeBy == b.otherUser.id;
       
       // First priority: Show relations where it's your turn to poke (someone is waiting for you)
       if (aIsYourTurn && !bIsYourTurn) return -1;
