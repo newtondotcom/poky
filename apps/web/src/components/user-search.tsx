@@ -2,9 +2,8 @@ import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Search, User } from "lucide-react";
+import { Loader2, Plus, Search, User, X } from "lucide-react";
 import { toast } from "sonner";
 import type { SearchUserResult } from "../../../server/src/procedures/search-users";
 import { useQuery } from "@tanstack/react-query";
@@ -25,7 +24,7 @@ function SearchResultSkeleton() {
   );
 }
 
-export function UserSearch() {
+function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
@@ -62,9 +61,25 @@ export function UserSearch() {
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardContent className="space-y-4">
+    <div className="fixed inset-0 z-50 bg-background">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b">
+        <h2 className="text-lg font-semibold">Search Users</h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="h-8 w-8 p-0"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {/* Search Input */}
+      <div className="p-4 border-b">
         <div className="flex gap-2">
           <Input
             placeholder="Search by name or nickname..."
@@ -72,6 +87,7 @@ export function UserSearch() {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={handleKeyPress}
             className="flex-1"
+            autoFocus
           />
           <Button 
             onClick={handleSearch}
@@ -82,10 +98,12 @@ export function UserSearch() {
             ) : (
               <Search className="h-4 w-4" />
             )}
-            Search
           </Button>
         </div>
+      </div>
 
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-4">
         {/* Search Results */}
         {searchUsersQuery.isLoading && (
           <div className="space-y-3">
@@ -123,8 +141,8 @@ export function UserSearch() {
                     key={user.id}
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex items-center justify-center">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
                         {user.image ? (
                           <img
                             src={user.image}
@@ -135,9 +153,9 @@ export function UserSearch() {
                           <User className="h-5 w-5 text-muted-foreground" />
                         )}
                       </div>
-                      <div>
-                        <p className="font-medium">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">{user.name}</p>
+                        <p className="text-sm text-muted-foreground truncate">
                           {user.username ? `@${user.username}` : 'No username'}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
@@ -145,9 +163,9 @@ export function UserSearch() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       {user.hasPokeRelation && (
-                        <div className="text-xs text-muted-foreground text-right">
+                        <div className="text-xs text-muted-foreground text-right hidden sm:block">
                           <div className="flex items-center gap-1">
                             <span>Pokes: {user.pokeCount}</span>
                           </div>
@@ -169,7 +187,38 @@ export function UserSearch() {
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+
+        {/* Initial state */}
+        {!searchUsersQuery.data && !searchUsersQuery.isLoading && !searchUsersQuery.error && (
+          <div className="text-center py-12 text-muted-foreground">
+            <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-lg font-medium mb-2">Search for users</p>
+            <p className="text-sm">Enter a name or nickname to find people to poke</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function UserSearch() {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <>
+      <Button 
+        onClick={() => setShowModal(true)}
+        className="w-full"
+        variant="outline"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        Search Users
+      </Button>
+      
+      <UserSearchModal 
+        isOpen={showModal} 
+        onClose={() => setShowModal(false)} 
+      />
+    </>
   );
 } 
