@@ -1,4 +1,3 @@
-import Header from "@/components/header";
 import Loader from "@/components/loader";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@pheralb/toast";
@@ -6,6 +5,7 @@ import type { trpc } from "@/utils/trpc";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import ShapeHero from "@/components/kokonutui/shape-hero";
+import { WebSocketProvider } from "@/components/websocket-provider";
 import {
   HeadContent,
   Outlet,
@@ -50,13 +50,14 @@ function RootComponent() {
     <>
       <HeadContent />
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <WebSocketProvider>
       <ShapeHero>
           <div className="grid grid-rows-[auto_1fr] h-svh">
-            <Header />
             {isFetching ? <Loader /> : <Outlet />}
           </div>
       </ShapeHero>
           <Toaster />
+          </WebSocketProvider>
       </ThemeProvider>
       <TanStackRouterDevtools position="bottom-left" />
       <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
