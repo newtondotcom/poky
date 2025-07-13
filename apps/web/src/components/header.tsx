@@ -9,7 +9,6 @@ export default function Header() {
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
   const links = [
     { to: "/", label: "Home" },
-    { to: "/search", label : "Search"},
     {to:"/leaderboard", label: "Leaderboard"}
   ];
 

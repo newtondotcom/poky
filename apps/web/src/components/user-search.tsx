@@ -3,11 +3,12 @@ import { trpc } from "@/utils/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Plus, Search, User, X } from "lucide-react";
+import { Loader2, Plus, Search, User, X, Calendar, Zap } from "lucide-react";
 import { toast } from "sonner";
 import type { SearchUserResult } from "../../../server/src/procedures/search-users";
 import { useQuery } from "@tanstack/react-query";
 import { PokeButton } from "@/components/poke-button";
+import { formatDistanceToNow } from "date-fns";
 
 function SearchResultSkeleton() {
   return (
@@ -136,53 +137,73 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
               </div>
             ) : (
               <div className="space-y-3">
-                {searchUsersQuery.data.users.map((user: SearchUserResult) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
-                        {user.image ? (
-                          <img
-                            src={user.image}
-                            alt={user.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <User className="h-5 w-5 text-muted-foreground" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{user.name}</p>
-                        <p className="text-sm text-muted-foreground truncate">
-                          {user.username ? `@${user.username}` : 'No username'}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Joined {new Date(user.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {user.hasPokeRelation && (
-                        <div className="text-xs text-muted-foreground text-right hidden sm:block">
-                          <div className="flex items-center gap-1">
-                            <span>Pokes: {user.pokeCount}</span>
-                          </div>
-                          <div className="text-xs">
-                            {user.lastPokeBy === user.id ? 'They poked you' : 'You poked them'}
+                {searchUsersQuery.data.users.map((user: SearchUserResult) => {
+                  const isYourTurn = user.lastPokeBy === user.id;
+                  
+                  return (
+                    <div
+                      key={user.id}
+                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
+                          {user.image ? (
+                            <img
+                              src={user.image}
+                              alt={user.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <User className="h-5 w-5 text-muted-foreground" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{user.name}</p>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                            <Calendar className="h-3 w-3" />
+                            {user.hasPokeRelation && user.lastPokeDate ? (
+                              <span>
+                                {formatDistanceToNow(new Date(user.lastPokeDate), {
+                                  addSuffix: true
+                                })}
+                              </span>
+                            ) : (
+                              <span>
+                                Joined {new Date(user.createdAt).toLocaleDateString()}
+                              </span>
+                            )}
                           </div>
                         </div>
-                      )}
-                      <PokeButton
-                        targetUserId={user.id}
-                        targetUserName={user.name}
-                        variant="outline"
-                        size="sm"
-                      />
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        {user.hasPokeRelation ? (
+                          <>
+                            <div className="flex items-center gap-2 justify-end mb-1">
+                              <Zap className="h-4 w-4 text-yellow-500" />
+                              <span className="font-semibold">{user.pokeCount}</span>
+                            </div>
+                            {isYourTurn && (
+                              <PokeButton
+                                targetUserId={user.id}
+                                targetUserName={user.name}
+                                variant="outline"
+                                size="sm"
+                                className="text-green-400"
+                              />
+                            )}
+                          </>
+                        ) : (
+                          <PokeButton
+                            targetUserId={user.id}
+                            targetUserName={user.name}
+                            variant="outline"
+                            size="sm"
+                          />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

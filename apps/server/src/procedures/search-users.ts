@@ -15,6 +15,7 @@ export interface SearchUserResult {
   hasPokeRelation: boolean;
   pokeCount: number;
   lastPokeBy: string | null;
+  lastPokeDate: string | null;
 }
 
 export const searchUsersProcedure = protectedProcedure
@@ -59,6 +60,7 @@ export const searchUsersProcedure = protectedProcedure
         hasPokeRelation: false,
         pokeCount: 0,
         lastPokeBy: null,
+        lastPokeDate: null,
       }));
 
       // Fetch if current poke relations exists and return result
@@ -70,7 +72,8 @@ export const searchUsersProcedure = protectedProcedure
           userAId: pokes.userAId,
           userBId: pokes.userBId,
           count: pokes.count,
-          lastPokeBy : pokes.lastPokeBy
+          lastPokeBy: pokes.lastPokeBy,
+          lastPokeDate: pokes.lastPokeDate
         })
         .from(pokes)
         .where(
@@ -91,7 +94,8 @@ export const searchUsersProcedure = protectedProcedure
           ...user,
           hasPokeRelation: !!userPokeRelation,
           pokeCount: userPokeRelation?.count || 0,
-          lastPokeBy : userPokeRelation?.lastPokeBy || null
+          lastPokeBy: userPokeRelation?.lastPokeBy || null,
+          lastPokeDate: userPokeRelation?.lastPokeDate?.toISOString() || null
         };
       });
 
