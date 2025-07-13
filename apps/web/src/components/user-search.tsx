@@ -193,6 +193,7 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                                 variant="outline"
                                 size="sm"
                                 className="text-green-400"
+                                onPokeSuccess={onClose}
                               />
                             )}
                           </>
@@ -202,6 +203,7 @@ function UserSearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                             targetUserName={user.name}
                             variant="outline"
                             size="sm"
+                            onPokeSuccess={onClose}
                           />
                         )}
                       </div>

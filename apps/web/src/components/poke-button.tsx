@@ -9,6 +9,7 @@ interface PokeButtonProps {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
+  onPokeSuccess?: () => void;
 }
 
 export function PokeButton({ 
@@ -16,7 +17,8 @@ export function PokeButton({
   targetUserName, 
   variant = "default",
   size = "default",
-  className 
+  className,
+  onPokeSuccess
 }: PokeButtonProps) {
   const { pokeUser, isPoking, error } = usePokeUser();
 
@@ -24,6 +26,8 @@ export function PokeButton({
     try {
       await pokeUser(targetUserId);
       toast.success(`Poked ${targetUserName}! 🎯`);
+      // Call the success callback if provided
+      onPokeSuccess?.();
     } catch (err) {
       toast.error(`Failed to poke ${targetUserName}`);
     }
