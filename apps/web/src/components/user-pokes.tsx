@@ -5,6 +5,7 @@ import { usePokeData, useOrderedPokeRelations } from "@/stores/poke-store";
 import { formatDistanceToNow } from "date-fns";
 import { PokeButton } from "@/components/poke-button";
 import { Flipper, Flipped } from "react-flip-toolkit";
+import { useState } from "react";
 
 function PokeItemSkeleton() {
   return (
@@ -35,14 +36,28 @@ export function UserPokes() {
   const { data: pokesData, isLoading, error, refetch } = usePokeData();
   const orderedPokeRelations = useOrderedPokeRelations();
   const flipKey = orderedPokeRelations.map(r => r.id).join(",");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
-          <Button variant="ghost" size="sm" className="text-white/70 hover:text-white">
-            <RefreshCw className="h-4 w-4" />
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={async () => {
+              setIsRefreshing(true);
+              try {
+                await refetch();
+              } finally {
+                setIsRefreshing(false);
+              }
+            }}
+            className="text-white/70 hover:text-white hover:bg-white/10"
+            disabled={true}
+          >
+            <RefreshCw className="h-4 w-4 animate-spin" />
           </Button>
         </div>
         <div className="space-y-4">
@@ -59,6 +74,22 @@ export function UserPokes() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={async () => {
+              setIsRefreshing(true);
+              try {
+                await refetch();
+              } finally {
+                setIsRefreshing(false);
+              }
+            }}
+            className="text-white/70 hover:text-white hover:bg-white/10"
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </Button>
         </div>
         <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <p className="text-red-400 font-medium">Failed to load your pokes</p>
@@ -73,6 +104,22 @@ export function UserPokes() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={async () => {
+              setIsRefreshing(true);
+              try {
+                await refetch();
+              } finally {
+                setIsRefreshing(false);
+              }
+            }}
+            className="text-white/70 hover:text-white hover:bg-white/10"
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </Button>
         </div>
         <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <Zap className="h-12 w-12 mx-auto mb-3 text-white/50" />
@@ -86,20 +133,27 @@ export function UserPokes() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-white/70">
-            <span>{pokesData.count} relations</span>
-            <span>•</span>
-            <span>{pokesData.totalPokes} total pokes</span>
+        <div className="flex flex-row justify-between gap-4 w-full">
+          <div className="flex flex-col gap-2 text-sm text-white/70 text-start">
+            <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
+            <span>{pokesData.count} relations • {pokesData.totalPokes} total pokes</span>
           </div>
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => refetch()}
+            onClick={async () => {
+              console.log('Refreshing pokes...');
+              setIsRefreshing(true);
+              try {
+                await refetch();
+              } finally {
+                setIsRefreshing(false);
+              }
+            }}
             className="text-white/70 hover:text-white hover:bg-white/10"
+            disabled={isLoading || isRefreshing}
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className={`h-4 w-4 ${isLoading || isRefreshing ? 'animate-spin' : ''}`} />
           </Button>
         </div>
       </div>
