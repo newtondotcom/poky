@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { useQuery } from '@tanstack/react-query';
-import { trpc } from '@/utils/trpc';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { trpc, trpcClient } from '@/utils/trpc';
 import React from 'react';
 
 interface PokeRelation {
@@ -117,6 +117,31 @@ export const usePokeData = () => {
   }, [error, setError]);
 
   return { data, isLoading, error, refetch };
+};
+
+// Hook to poke a user
+export const usePokeUser = () => {
+  const queryClient = useQueryClient();
+  const { refetch } = usePokeData();
+
+  const mutation = useMutation({
+    mutationFn: (targetUserId: string) => 
+      trpcClient.pokeUser.mutate({ targetUserId }),
+    onSuccess: () => {
+      // Invalidate and refetch poke data to update the UI
+      queryClient.invalidateQueries({ queryKey: trpc.getUserPokes.queryKey() });
+      refetch();
+    },
+    onError: (error) => {
+      console.error('Failed to poke user:', error);
+    },
+  });
+
+  return {
+    pokeUser: mutation.mutate,
+    isPoking: mutation.isPending,
+    error: mutation.error,
+  };
 };
 
 // Helper hooks for easier access
