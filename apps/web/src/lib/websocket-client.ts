@@ -1,5 +1,3 @@
-import { authClient } from "./auth-client";
-
 export interface WebSocketMessage {
   type: string;
   [key: string]: any;
