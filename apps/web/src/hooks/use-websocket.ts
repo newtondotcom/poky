@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { wsClient, type WebSocketMessage } from '@/lib/websocket-client';
 import { authClient } from '@/lib/auth-client';
+import { toast } from '@pheralb/toast';
+import { usePokeStore } from '@/stores/poke-store';
 
 export function useWebSocket() {
   const [isConnected, setIsConnected] = useState(false);
@@ -49,7 +51,16 @@ export function useWebSocket() {
       setUserId(null);
     });
 
+    const { setPokesData } = usePokeStore.getState();
     wsClient.onMessage((message) => {
+      if (message.type === 'poke_update') {
+        setPokesData({
+          pokeRelations: message.pokeRelations,
+          count: message.count,
+          totalPokes: message.totalPokes,
+        });
+        toast.success({ text: 'Your pokes have been updated!' });
+      }
       setLastMessage(message);
     });
 
