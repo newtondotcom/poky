@@ -3,21 +3,39 @@ import { ArrowLeft, Bell, LogOut, Moon, Sun, Wifi } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery as useRQQuery } from "@tanstack/react-query";
 import { useMutation } from '@tanstack/react-query';
 import { trpc, trpcClient } from "@/utils/trpc";
 import { useTheme } from "@/components/theme-provider";
-import { toast } from "sonner";
+import { useEffect, useState } from 'react';
+import Loader from '@/components/loader';
+import { toast } from "@pheralb/toast";
 
 export const Route = createFileRoute("/account")({
   component: AccountPage,
 });
 
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
 function AccountPage() {
   const navigate = useNavigate();
   const { setTheme, theme } = useTheme();
-  const healthCheck = useQuery(trpc.healthCheck.queryOptions());
+  const healthCheck = useRQQuery(trpc.healthCheck.queryOptions());
   const { data: session, isPending } = authClient.useSession();
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [checkingPush, setCheckingPush] = useState(true);
+  const [subscriptionValid, setSubscriptionValid] = useState(false);
 
   // Add mutation for registering web push
   const registerWebPushMutation = useMutation({
@@ -28,6 +46,37 @@ function AccountPage() {
       options: string;
     }) => trpcClient.registerWebPush.mutate(input),
   });
+
+  const deleteWebPushMutation = useMutation({
+    mutationFn: (input: { id: string }) => trpcClient.deleteWebPush.mutate(input),
+  });
+
+  // Check current push subscription and validate with backend
+  useEffect(() => {
+    async function checkPush() {
+      setCheckingPush(true);
+      let endpoint: string | null = null;
+      let valid = false;
+      if ('serviceWorker' in navigator && 'PushManager' in window) {
+        try {
+          const reg = await navigator.serviceWorker.ready;
+          const sub = await reg.pushManager.getSubscription();
+          if (sub) {
+            endpoint = sub.endpoint;
+            // Validate with backend
+            const backendSub = await trpcClient.getWebPush.query({ id: endpoint });
+            valid = !!backendSub;
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+      setPushEnabled(!!endpoint);
+      setSubscriptionValid(valid);
+      setCheckingPush(false);
+    }
+    checkPush();
+  }, []);
 
   // Get initials from user name
   const getInitials = (name: string) => {
@@ -42,7 +91,7 @@ function AccountPage() {
   const cycleMode = () => {
     const newTheme = theme === "light" ? "dark" : theme === "dark" ? "system" : "light";
     setTheme(newTheme);
-    toast.success(`Theme changed to ${newTheme}`);
+    console.log(`Theme changed to ${newTheme}`);
   };
 
   if (isPending) {
@@ -60,53 +109,71 @@ function AccountPage() {
     return null;
   }
 
-
-
   async function manageWebPush() {
-    if (!('serviceWorker' in navigator)) {
-      console.error('Service workers are not supported in this browser.');
-      return;
-    }
-    if (!('PushManager' in window)) {
-      console.error('Push notifications are not supported in this browser.');
-      return;
-    }
-    try {
-      const permission = await Notification.requestPermission();
-      localStorage.setItem('webpush-permission', permission);
-      if (permission !== 'granted') {
-        console.error('Push notification permission denied.');
-        return;
-      }
+    if (pushEnabled) {
+      // Remove from localStorage, unsubscribe from PushManager
       const reg = await navigator.serviceWorker.ready;
-      console.log('navigator.serviceWorker.read');
-      const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-      if (!vapidPublicKey) {
-        console.error('VAPID public key is not set.');
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        const endpoint = sub.endpoint;
+        await sub.unsubscribe();
+        await deleteWebPushMutation.mutateAsync({ id: endpoint });
+      }
+      localStorage.removeItem('webpush-permission');
+      localStorage.removeItem('webpush-subscription');
+      setPushEnabled(false);
+      setSubscriptionValid(false);
+      console.log('Web push notifications disabled.');
+      return;
+    }
+    // If not valid, renew subscription
+    if (!subscriptionValid) {
+      if (!('serviceWorker' in navigator)) {
+        console.error('Service workers are not supported in this browser.');
         return;
       }
-      console.log('test')
-      const subscription = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-      });
-      console.log('Push notifications enabled!');
-      // Store subscription in localStorage
-      localStorage.setItem('webpush-subscription', JSON.stringify(subscription));
-      // Register subscription in backend
-      const subObj = subscription.toJSON();
-      await registerWebPushMutation.mutateAsync({
-        id: subscription.endpoint,
-        endpoint: subscription.endpoint,
-        expirationTime: subscription.expirationTime ?? null,
-        options: JSON.stringify({
-          keys: subObj.keys,
-        }),
-      });
-    } catch (err) {
-      toast.error('Failed to enable push notifications.');
-      console.error(err);
+      if (!('PushManager' in window)) {
+        console.error('Push notifications are not supported in this browser.');
+        return;
+      }
+      try {
+        const permission = await Notification.requestPermission();
+        localStorage.setItem('webpush-permission', permission);
+        if (permission !== 'granted') {
+          console.error('Push notification permission denied.');
+          return;
+        }
+        const reg = await navigator.serviceWorker.ready;
+        const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+        if (!vapidPublicKey) {
+          console.error('VAPID public key is not set.');
+          return;
+        }
+        const subscription = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        });
+        localStorage.setItem('webpush-subscription', JSON.stringify(subscription));
+        const subObj = subscription.toJSON();
+        await registerWebPushMutation.mutateAsync({
+          id: subscription.endpoint,
+          endpoint: subscription.endpoint,
+          expirationTime: subscription.expirationTime ?? null,
+          options: JSON.stringify({
+            keys: subObj.keys,
+          }),
+        });
+        setPushEnabled(true);
+        setSubscriptionValid(true);
+        console.log('Push notifications enabled!');
+      } catch (err) {
+        toast.error({text:'Failed to enable push notifications.'});
+        console.error(err);
+      }
+      return;
     }
+    // If valid, do nothing (should not happen, but fallback)
+    console.log('Web push notifications already enabled and valid.');
   }
 
   return (
@@ -168,10 +235,16 @@ function AccountPage() {
                 <button
                   onClick={manageWebPush}
                   className="w-full flex items-center justify-between p-3 bg-white/20 hover:bg-white/30 rounded-lg transition-all duration-300 border border-white/30"
+                  disabled={checkingPush}
                 >
                   <div className="flex items-center gap-3">
                     <Bell className="w-4 h-4" />
-                    <span className="text-sm">Enable Web Push Notifications</span>
+                    {checkingPush && (
+                      <span className="w-4 h-4 flex items-center justify-center">
+                        <Loader />
+                      </span>
+                    )}
+                    <span className="text-sm">{pushEnabled ? 'Disable' : 'Enable'} notifications</span>
                   </div>
                 </button>
 
@@ -179,7 +252,7 @@ function AccountPage() {
                 <div className="w-full flex items-center justify-between p-3 bg-white/20 rounded-lg border border-white/30">
                   <div className="flex items-center gap-3">
                     <Wifi className={`w-4 h-4`} />
-                    <span className="text-sm">API Status</span>
+                    <span className="text-sm">API status</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div
@@ -213,17 +286,4 @@ function AccountPage() {
       </div>
     </div>
   );
-} 
-
-function urlBase64ToUint8Array(base64String: string) {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
 } 
