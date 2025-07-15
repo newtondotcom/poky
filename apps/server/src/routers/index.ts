@@ -4,6 +4,7 @@ import { getUserPokesProcedure } from "@/procedures/get-user-pokes";
 import { pokeUserProcedure } from "@/procedures/poke-user";
 import { getLeaderboardProcedure } from "@/procedures/get-leaderboard";
 import { registerWebPushProcedure } from "@/procedures/register-webpush";
+import { deleteWebPushProcedure } from "@/procedures/delete-webpush";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -14,5 +15,6 @@ export const appRouter = router({
   pokeUser: pokeUserProcedure,
   getLeaderboard: getLeaderboardProcedure,
   registerWebPush: registerWebPushProcedure,
+  deleteWebPush: deleteWebPushProcedure,
 });
 export type AppRouter = typeof appRouter;
