@@ -62,8 +62,15 @@ export function useWebSocket() {
       connect();
     }
 
+    // Disconnect websocket on page unload/close
+    const handleUnload = () => {
+      disconnect();
+    };
+    window.addEventListener('beforeunload', handleUnload);
+
     // Cleanup on unmount
     return () => {
+      window.removeEventListener('beforeunload', handleUnload);
       disconnect();
     };
   }, [session, connect, disconnect]);
