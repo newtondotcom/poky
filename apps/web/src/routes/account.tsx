@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, LogOut, Moon, Palette, Sun, Wifi, WifiOff } from "lucide-react";
+import { ArrowLeft, Bell, LogOut, Moon, Sun, Wifi } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { trpc } from "@/utils/trpc";
+import { useMutation } from '@tanstack/react-query';
+import { trpc, trpcClient } from "@/utils/trpc";
 import { useTheme } from "@/components/theme-provider";
 import { toast } from "sonner";
 
@@ -18,6 +18,16 @@ function AccountPage() {
   const { setTheme, theme } = useTheme();
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
   const { data: session, isPending } = authClient.useSession();
+
+  // Add mutation for registering web push
+  const registerWebPushMutation = useMutation({
+    mutationFn: (input: {
+      id: string;
+      endpoint: string;
+      expirationTime: number | null;
+      options: string;
+    }) => trpcClient.registerWebPush.mutate(input),
+  });
 
   // Get initials from user name
   const getInitials = (name: string) => {
@@ -48,6 +58,55 @@ function AccountPage() {
   if (!session) {
     navigate({ to: "/" });
     return null;
+  }
+
+
+
+  async function manageWebPush() {
+    if (!('serviceWorker' in navigator)) {
+      console.error('Service workers are not supported in this browser.');
+      return;
+    }
+    if (!('PushManager' in window)) {
+      console.error('Push notifications are not supported in this browser.');
+      return;
+    }
+    try {
+      const permission = await Notification.requestPermission();
+      localStorage.setItem('webpush-permission', permission);
+      if (permission !== 'granted') {
+        console.error('Push notification permission denied.');
+        return;
+      }
+      const reg = await navigator.serviceWorker.ready;
+      console.log('navigator.serviceWorker.read');
+      const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      if (!vapidPublicKey) {
+        console.error('VAPID public key is not set.');
+        return;
+      }
+      console.log('test')
+      const subscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+      });
+      console.log('Push notifications enabled!');
+      // Store subscription in localStorage
+      localStorage.setItem('webpush-subscription', JSON.stringify(subscription));
+      // Register subscription in backend
+      const subObj = subscription.toJSON();
+      await registerWebPushMutation.mutateAsync({
+        id: subscription.endpoint,
+        endpoint: subscription.endpoint,
+        expirationTime: subscription.expirationTime ?? null,
+        options: JSON.stringify({
+          keys: subObj.keys,
+        }),
+      });
+    } catch (err) {
+      toast.error('Failed to enable push notifications.');
+      console.error(err);
+    }
   }
 
   return (
@@ -105,6 +164,17 @@ function AccountPage() {
                   <span className="text-xs text-white/70 capitalize">{theme}</span>
                 </button>
 
+                {/* Web Push Permission Button */}
+                <button
+                  onClick={manageWebPush}
+                  className="w-full flex items-center justify-between p-3 bg-white/20 hover:bg-white/30 rounded-lg transition-all duration-300 border border-white/30"
+                >
+                  <div className="flex items-center gap-3">
+                    <Bell className="w-4 h-4" />
+                    <span className="text-sm">Enable Web Push Notifications</span>
+                  </div>
+                </button>
+
                                 {/* API Status */}
                 <div className="w-full flex items-center justify-between p-3 bg-white/20 rounded-lg border border-white/30">
                   <div className="flex items-center gap-3">
@@ -143,4 +213,17 @@ function AccountPage() {
       </div>
     </div>
   );
+} 
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
 } 
