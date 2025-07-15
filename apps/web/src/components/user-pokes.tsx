@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { PokeButton } from "@/components/poke-button";
 import { Flipper, Flipped } from "react-flip-toolkit";
 import { useState } from "react";
+import { toast } from "@pheralb/toast";
 
 function PokeItemSkeleton() {
   return (
@@ -70,6 +71,7 @@ export function UserPokes() {
   }
 
   if (error) {
+    toast.error({ text: "Failed to load your pokes" });
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -146,6 +148,7 @@ export function UserPokes() {
               setIsRefreshing(true);
               try {
                 await refetch();
+                toast.success({ text: "Pokes refreshed!" });
               } finally {
                 setIsRefreshing(false);
               }

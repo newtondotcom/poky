@@ -123,30 +123,31 @@ function AccountPage() {
       localStorage.removeItem('webpush-subscription');
       setPushEnabled(false);
       setSubscriptionValid(false);
-      console.log('Web push notifications disabled.');
+      setCheckingPush(false); // Ensure checkingPush is false after successful disable
+      toast.info({ text: "Notifications disabled." });
       return;
     }
     // If not valid, renew subscription
     if (!subscriptionValid) {
       if (!('serviceWorker' in navigator)) {
-        console.error('Service workers are not supported in this browser.');
+        toast.error({ text: "Service workers are not supported in this browser." });
         return;
       }
       if (!('PushManager' in window)) {
-        console.error('Push notifications are not supported in this browser.');
+        toast.error({ text: "Push notifications are not supported in this browser." });
         return;
       }
       try {
         const permission = await Notification.requestPermission();
         localStorage.setItem('webpush-permission', permission);
         if (permission !== 'granted') {
-          console.error('Push notification permission denied.');
+          toast.warning({ text: "Push notification permission denied." });
           return;
         }
         const reg = await navigator.serviceWorker.ready;
         const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
         if (!vapidPublicKey) {
-          console.error('VAPID public key is not set.');
+          toast.error({ text: "VAPID public key is not set." });
           return;
         }
         const subscription = await reg.pushManager.subscribe({
@@ -165,15 +166,16 @@ function AccountPage() {
         });
         setPushEnabled(true);
         setSubscriptionValid(true);
-        console.log('Push notifications enabled!');
+        setCheckingPush(false); // Ensure checkingPush is false after successful enable
+        toast.success({ text: "Push notifications enabled!" });
       } catch (err) {
-        toast.error({text:'Failed to enable push notifications.'});
+        toast.error({ text: "Failed to enable push notifications." });
         console.error(err);
       }
       return;
     }
     // If valid, do nothing (should not happen, but fallback)
-    console.log('Web push notifications already enabled and valid.');
+    toast.info({ text: "Web push notifications already enabled and valid." });
   }
 
   return (

@@ -3,6 +3,7 @@ import { trpc } from "@/utils/trpc";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Medal, Award, User, Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { toast } from "@pheralb/toast";
 
 function LeaderboardItemSkeleton() {
   return (
@@ -50,6 +51,7 @@ export function Leaderboard() {
   }
 
   if (error) {
+    toast.error({ text: "Failed to load leaderboard" });
     return (
       <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
         <p className="text-red-400 font-medium">Failed to load leaderboard</p>

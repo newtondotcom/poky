@@ -1,5 +1,5 @@
 import Loader from "@/components/loader";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider, useTheme } from "@/components/theme-provider";
 import { Toaster } from "@pheralb/toast";
 import type { trpc } from "@/utils/trpc";
 import type { QueryClient } from "@tanstack/react-query";
@@ -45,6 +45,7 @@ function RootComponent() {
   const isFetching = useRouterState({
     select: (s) => s.isLoading,
   });
+  const { theme } = useTheme();
 
   return (
     <>
@@ -56,7 +57,7 @@ function RootComponent() {
             {isFetching ? <Loader /> : <Outlet />}
           </div>
       </ShapeHero>
-          <Toaster />
+          <Toaster position="bottom-center" theme={theme}/>
           </WebSocketProvider>
       </ThemeProvider>
       <TanStackRouterDevtools position="bottom-left" />
