@@ -1,0 +1,53 @@
+name: Build and Deploy Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Buildah
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ secrets.DOCKER_IMAGE }}
+          tags: latest
+          containerfiles: apps/server/Containerfile
+          context: apps/server
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push image to Docker Hub
+        run: |
+          buildah push ${{ secrets.DOCKER_IMAGE }} docker://$DOCKER_IMAGE
+        env:
+          DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH client and sshpass
+        run: sudo apt-get update && sudo apt-get install -y openssh-client sshpass
+
+      - name: Deploy on remote server using password
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          sshpass -e ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            docker pull ${{ secrets.DOCKER_IMAGE }} && \
+            cd ${{ secrets.DOCKER_COMPOSE_PATH }} && \
+            docker compose down && \
+            docker compose up -d
+          '
