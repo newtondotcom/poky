@@ -170,33 +170,33 @@ function SearchPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="text-right flex-shrink-0">
+                      <div className="flex-shrink-0 flex flex-row items-center align-middle space-x-2">
                         {user.hasPokeRelation ? (
                           <>
+                          {isYourTurn && (
+                            <PokeButton
+                              targetUserId={user.id}
+                              targetUserName={user.name}
+                              variant="outline"
+                              size="sm"
+                              className="text-green-400"
+                              onPokeSuccess={() => navigate({ to: "/" })}
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <PokeButton
+                          targetUserId={user.id}
+                          targetUserName={user.name}
+                          variant="outline"
+                          size="sm"
+                          onPokeSuccess={() => navigate({ to: "/" })}
+                        />
+                      )}
                             <div className="flex items-center gap-2 justify-end mb-2">
                               <Zap className="h-4 w-4 text-yellow-400" />
                               <span className="font-semibold text-white/90">{user.pokeCount}</span>
                             </div>
-                            {isYourTurn && (
-                              <PokeButton
-                                targetUserId={user.id}
-                                targetUserName={user.name}
-                                variant="outline"
-                                size="sm"
-                                className="text-green-400"
-                                onPokeSuccess={() => navigate({ to: "/" })}
-                              />
-                            )}
-                          </>
-                        ) : (
-                          <PokeButton
-                            targetUserId={user.id}
-                            targetUserName={user.name}
-                            variant="outline"
-                            size="sm"
-                            onPokeSuccess={() => navigate({ to: "/" })}
-                          />
-                        )}
                       </div>
                     </div>
                   );

@@ -195,13 +195,8 @@ export function UserPokes() {
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="flex items-center gap-2 justify-end mb-2">
-                      <Zap className="h-4 w-4 text-yellow-400" />
-                      <span className="font-semibold text-white/90">{pokeRelation.count}</span>
-                    </div>
+                  <div className="flex flex-row items-center align-middle space-x-2">
                     {isYourTurn && (
-                      <div className="mt-2">
                         <PokeButton
                           targetUserId={pokeRelation.otherUser.id}
                           targetUserName={pokeRelation.otherUser.name}
@@ -209,8 +204,11 @@ export function UserPokes() {
                           size="sm"
                           className="text-green-400 border-green-400/30 hover:bg-green-400/10"
                         />
-                      </div>
                     )}
+                    <div className="flex items-center gap-2 justify-end">
+                      <Zap className="h-4 w-4 text-yellow-400" />
+                      <span className="font-semibold text-white/90">{pokeRelation.count}</span>
+                    </div>
                   </div>
                 </div>
               </Flipped>
