@@ -67,7 +67,7 @@ export const pokeUserProcedure = protectedProcedure
           })
           .where(eq(pokes.id, relation.id));
 
-        await notifyTargetUser(targetUserId);
+        notifyTargetUser(targetUserId);
 
         return {
           success: true,
@@ -95,7 +95,7 @@ export const pokeUserProcedure = protectedProcedure
           visibleLeaderboard: true, // Default to visible
         });
 
-        await notifyTargetUser(targetUserId);
+        notifyTargetUser(targetUserId);
 
         return {
           success: true,
