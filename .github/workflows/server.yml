@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  manifest_workflow:
 
 jobs:
   build-and-push:
