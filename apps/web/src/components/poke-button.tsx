@@ -20,7 +20,7 @@ export function PokeButton({
   className,
   onPokeSuccess
 }: PokeButtonProps) {
-  const { pokeUser, isPoking, error } = usePokeUser();
+  const { pokeUser, isPoking} = usePokeUser();
 
   const handlePoke = async () => {
     try {

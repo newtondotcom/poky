@@ -1,11 +1,11 @@
 // Service Worker for Web Push Notifications
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', () => {
   self.skipWaiting();
   console.log('[ServiceWorker] Installed');
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', () => {
   self.clients.claim();
   console.log('[ServiceWorker] Activated');
 });
