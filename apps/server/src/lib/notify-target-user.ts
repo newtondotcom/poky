@@ -12,6 +12,7 @@ export async function notifyTargetUser(targetUserId: string) {
       type: "poke_update",
       ...pokeData,
     });
+    console.log("User is online")
   } else {
     const subs = await db
       .select()
@@ -30,6 +31,8 @@ export async function notifyTargetUser(targetUserId: string) {
         icon: "/favicon-32x32.png",
         data: { type: "poke" },
       });
+      console.log("webpush sent")
     }
+    console.log("User is offline")
   }
 } 

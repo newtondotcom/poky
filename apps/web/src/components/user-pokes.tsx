@@ -47,14 +47,6 @@ export function UserPokes() {
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={async () => {
-              setIsRefreshing(true);
-              try {
-                await refetch();
-              } finally {
-                setIsRefreshing(false);
-              }
-            }}
             className="text-white/70 hover:text-white hover:bg-white/10"
             disabled={true}
           >
