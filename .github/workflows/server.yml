@@ -20,7 +20,7 @@ jobs:
           tags: ${{ secrets.DOCKER_TAG }}
           containerfiles: apps/server/Containerfile
           context: apps/server
-          arch: arm64v8
+          arch: arm64
           build-args: |
             BUILDKIT_INLINE_CACHE=1
 
