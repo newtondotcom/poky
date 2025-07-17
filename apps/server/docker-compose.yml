@@ -1,5 +1,6 @@
 services:
   server:
+    name : pok7
     image: newtondotcom/pok7:latest
     restart: unless-stopped
     env_file:
