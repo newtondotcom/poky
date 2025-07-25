@@ -30,6 +30,8 @@ COPY --from=builder /usr/src/app/server ./server
 # Change ownership and make executable
 RUN chown appuser:appuser ./server && chmod +x ./server
 
+RUN ls
+
 # Switch to non-root user
 USER appuser
 
