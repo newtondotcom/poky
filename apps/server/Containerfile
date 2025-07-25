@@ -1,43 +1,40 @@
-# use the official Bun image
-# see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1 AS base
+# Build stage - Use Bun to compile the binary
+FROM oven/bun:1 AS builder
 WORKDIR /usr/src/app
 
-# install dependencies into temp directory
-# this will cache them and speed up future builds
-FROM base AS install
-RUN mkdir -p /temp/dev
-COPY package.json bun.lockb* /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile
+# Copy package files
+COPY package.json bun.lockb* ./
 
-# install with --production (exclude devDependencies)
-RUN mkdir -p /temp/prod
-COPY package.json bun.lockb* /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
+# Install dependencies
+RUN bun install --frozen-lockfile
 
-# copy node_modules from temp directory
-# then copy all (non-ignored) project files into the image
-FROM base AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
+# Copy source code
 COPY . .
 
-# [optional] tests & build
-ENV NODE_ENV=production
-# Only run build if build script exists, otherwise skip
-RUN if grep -q '"build"' package.json; then bun run build; else echo "No build script found, skipping..."; fi
+# Build the binary (statically linked)
+RUN bun run compile
 
-# copy production dependencies and source code into final image
-FROM base AS release
-COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/package.json .
+# Runtime stage - Use Alpine for minimal size with utilities
+FROM alpine:3.19 AS runtime
 
-# Copy the source files
-COPY --from=prerelease /usr/src/app/src ./src
+# Create user (no additional packages needed)
+RUN addgroup -g 1001 -S appuser \
+    && adduser -S -D -H -u 1001 -h /app -s /sbin/nologin -G appuser -g appuser appuser
 
-# If build created a dist folder, copy that too
-COPY --from=prerelease /usr/src/app/dist* ./dist/ 2>/dev/null || true
+# Set working directory
+WORKDIR /app
 
-# run the app
-USER bun
-EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "src/index.js" ]
+# Copy the compiled binary
+COPY --from=builder /usr/src/app/server ./server
+
+# Change ownership and make executable
+RUN chown appuser:appuser ./server && chmod +x ./server
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
+EXPOSE 3000
+
+# Run the binary
+ENTRYPOINT ["./server"]
