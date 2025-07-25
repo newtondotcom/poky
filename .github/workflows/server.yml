@@ -25,5 +25,5 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_IMAGE }}:${{ secrets.DOCKER_TAG }}
           platforms: linux/arm64/v8
-          containerfiles: apps/server/Containerfile
+          file: apps/server/Containerfile
           context: apps/server
