@@ -1,5 +1,5 @@
 # Build stage - Use Bun to compile the binary
-FROM oven/bun:1 AS builder
+FROM --platform=$BUILDPLATFORM oven/bun:1 AS builder
 WORKDIR /usr/src/app
 
 # Copy package files
@@ -12,13 +12,14 @@ RUN bun install --frozen-lockfile
 COPY . .
 
 # Build the binary (statically linked)
-RUN bun run compile
+RUN bun run compile && ls -la && file server || echo "Binary not found!"
 
 # Runtime stage - Use Alpine for minimal size with utilities
 FROM alpine:3.19 AS runtime
 
-# Create user (no additional packages needed)
-RUN addgroup -g 1001 -S appuser \
+# Install glibc compatibility for Bun binary
+RUN apk add --no-cache glibc-compat \
+    && addgroup -g 1001 -S appuser \
     && adduser -S -D -H -u 1001 -h /app -s /sbin/nologin -G appuser -g appuser appuser
 
 # Set working directory
@@ -27,10 +28,11 @@ WORKDIR /app
 # Copy the compiled binary
 COPY --from=builder /usr/src/app/server ./server
 
+# Debug: Check if binary exists and is executable
+RUN ls -la ./server && file ./server
+
 # Change ownership and make executable
 RUN chown appuser:appuser ./server && chmod +x ./server
-
-RUN ls
 
 # Switch to non-root user
 USER appuser
