@@ -3,6 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
 import * as schema from "@/db/schema/auth";
 import { genericOAuth } from "better-auth/plugins";
+import { generateUserAnonymizedData } from "@/lib/anonymization";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -40,15 +41,22 @@ export const auth = betterAuth({
 
                 console.log(userInfo)
 
+                const userId = userInfo.sub || "";
+                
+                // Generate consistent anonymized data based on user ID
+                const anonymizedData = generateUserAnonymizedData(userId);
+
                 return {
-                  id: userInfo.sub || "", // could be uid but sub will be used for anonuymsation
+                  id: userId,
                   name: userInfo.fullName ||"",
                   username: userInfo.uid || userInfo.nickname || "",
                   image: userInfo.pictureURL || null,
                   createdAt: new Date(),
                   updatedAt: new Date(),
                   email : userInfo.email,
-                  emailVerified : userInfo.email_verified
+                  emailVerified : userInfo.email_verified,
+                  usernameAnonymized: anonymizedData.usernameAnonymized,
+                  pictureAnonymized: anonymizedData.pictureAnonymized,
                 };
               },
           }, 
