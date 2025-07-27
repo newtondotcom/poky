@@ -2,17 +2,12 @@ import { db } from "@/db";
 import { webpush } from "@/db/schema/pok7";
 import { eq } from "drizzle-orm";
 import { sendWebPush } from "@/lib/webpush";
-import { getUserPokesData } from "@/lib/get-user-pokes-data";
+import { redisService } from "@/lib/redis";
+
+
+const sub = redisService.getSubscriber();
 
 export async function notifyTargetUser(targetUserId: string) {
-  if (wsSessionManager.isUserOnline(targetUserId)) {
-    const pokeData = await getUserPokesData(targetUserId);
-    wsSessionManager.sendToUser(targetUserId, {
-      type: "poke_update",
-      ...pokeData,
-    });
-    console.log("User is online");
-  } else {
     const subs = await db
       .select()
       .from(webpush)
@@ -37,4 +32,3 @@ export async function notifyTargetUser(targetUserId: string) {
     }
     console.log("User is offline");
   }
-}
