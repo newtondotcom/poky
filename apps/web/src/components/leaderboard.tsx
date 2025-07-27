@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Trophy, Medal, Award, User, Calendar } from "lucide-react";
+import { Trophy, Medal, Award, Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "@pheralb/toast";
 
@@ -114,17 +114,19 @@ export function Leaderboard() {
               {/* User A */}
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
-                  {entry.userA.image ? (
                     <img
-                      src={entry.userA.image}
-                      alt={entry.userA.name}
+                      src={
+                        entry.visibleLeaderboard
+                          ? entry.userA.image || undefined
+                          : entry.userA.pictureAnonymized ?? undefined
+                      }
+                      alt={entry.visibleLeaderboard ? entry.userA.name : entry.userA.usernameAnonymized || undefined}
                       className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User className="h-4 w-4 text-white/70" />
-                  )}
+                    />                
                 </div>
-                <span className="text-sm font-medium text-white/90 truncate">{entry.userA.name}</span>
+                <span className="text-sm font-medium text-white/90 truncate">
+                  {entry.visibleLeaderboard ? entry.userA.name : entry.userA.usernameAnonymized}
+                </span>
               </div>
               
               <span className="text-white/60 text-lg font-bold">×</span>
@@ -132,17 +134,19 @@ export function Leaderboard() {
               {/* User B */}
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
-                  {entry.userB.image ? (
                     <img
-                      src={entry.userB.image}
-                      alt={entry.userB.name}
+                      src={
+                        entry.visibleLeaderboard
+                          ? entry.userB.image || undefined
+                          : entry.userB.pictureAnonymized ?? undefined
+                      }
+                      alt={entry.visibleLeaderboard ? entry.userB.name : entry.userB.usernameAnonymized || undefined}
                       className="w-full h-full object-cover"
                     />
-                  ) : (
-                    <User className="h-4 w-4 text-white/70" />
-                  )}
                 </div>
-                <span className="text-sm font-medium text-white/90 truncate">{entry.userB.name}</span>
+                <span className="text-sm font-medium text-white/90 truncate">
+                  {entry.visibleLeaderboard ? entry.userB.name : entry.userB.usernameAnonymized}
+                </span>
               </div>
             </div>
           </div>
