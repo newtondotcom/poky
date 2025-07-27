@@ -27,7 +27,8 @@ export const webpush = pgTable("webpush", {
   id: text("id").primaryKey(), // endpoint
   deviceId: text("device_id")
     .notNull()
-    .references(() => devices.id),
+    .references(() => devices.id)
+    .unique(), // Ensure one subscription per device
   userId: text("user_id")
     .notNull()
     .references(() => user.id),

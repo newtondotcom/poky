@@ -40,32 +40,24 @@ export const registerWebPushProcedure = protectedProcedure
 
       const expirationDate = input.expirationTime ? new Date(input.expirationTime) : null;
       
-      // Check if subscription already exists for this device
-      const existing = await db.select().from(webpush).where(
-        eq(webpush.deviceId, input.deviceId)
-      );
-      
-      if (existing.length > 0) {
-        // Update existing subscription
-        await db.update(webpush)
-          .set({
-            endpoint: input.endpoint,
-            expirationTime: expirationDate,
-            options: input.options,
-            userId,
-          })
-          .where(eq(webpush.deviceId, input.deviceId));
-      } else {
-        // Insert new subscription
-        await db.insert(webpush).values({
-          id: input.id,
+      // Upsert web push subscription (one per device)
+      await db.insert(webpush).values({
+        id: input.id,
+        endpoint: input.endpoint,
+        expirationTime: expirationDate,
+        options: input.options,
+        userId,
+        deviceId: input.deviceId,
+      }).onConflictDoUpdate({
+        target: webpush.deviceId, // Update based on deviceId constraint
+        set: {
           endpoint: input.endpoint,
           expirationTime: expirationDate,
           options: input.options,
           userId,
-          deviceId: input.deviceId,
-        });
-      }
+          id: input.id, // Update the endpoint ID as well
+        }
+      });
       
       return { success: true };
     } catch (error) {
