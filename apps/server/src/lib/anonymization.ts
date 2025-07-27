@@ -37,7 +37,7 @@ const adjectives = [
   
   export function generateFunyPicture(seed?: string): string {
     const randomSeed = seed ?? crypto.randomUUID();
-    return `https://api.dicebear.com/9.x/thumbs/svg?seed=${randomSeed}`;
+    return `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=${randomSeed}`;
   }
   
   // Helper function to generate consistent anonymized data for a user
