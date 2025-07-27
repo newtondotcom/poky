@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, Bell, LogOut, Moon, Sun, Wifi } from "lucide-react";
+import { ArrowLeft, Bell, LogOut, Moon, Sun, Wifi, TestTube } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -188,12 +188,30 @@ function AccountPage() {
         toast.success({ text: "Push notifications enabled!" });
       } catch (err) {
         toast.error({ text: "Failed to enable push notifications." });
+        setSubscriptionValid(false);
+        setPushEnabled(false);
         console.error(err);
       }
       return;
     }
     // If valid, do nothing (should not happen, but fallback)
     toast.info({ text: "Web push notifications already enabled and valid." });
+  }
+
+  async function testWebPush() {
+    if (!pushEnabled) {
+      toast.error({ text: "Please enable notifications first." });
+      return;
+    }
+    
+    try {
+      // Send a test notification to the current user
+      await trpcClient.testWebPush.mutate();
+      toast.success({ text: "Test notification sent!" });
+    } catch (err) {
+      toast.error({ text: "Failed to send test notification." });
+      console.error(err);
+    }
   }
 
   return (
@@ -259,24 +277,48 @@ function AccountPage() {
                   </span>
                 </button>
 
-                {/* Web Push Permission Button */}
-                <button
-                  onClick={manageWebPush}
-                  className="w-full flex items-center justify-between p-3 bg-white/20 hover:bg-white/30 rounded-lg transition-all duration-300 border border-white/30"
-                  disabled={checkingPush}
-                >
+                {/* Web Push Permission Toggle */}
+                <div className="w-full flex items-center justify-between p-3 bg-white/20 rounded-lg border border-white/30">
                   <div className="flex items-center gap-3">
                     <Bell className="w-4 h-4" />
+                    <span className="text-sm">Notifications</span>
+                  </div>
+                  <div className="flex items-center gap-2">
                     {checkingPush && (
                       <span className="w-4 h-4 flex items-center justify-center">
                         <Loader />
                       </span>
                     )}
-                    <span className="text-sm">
-                      {pushEnabled ? "Disable" : "Enable"} notifications
-                    </span>
+                    <button
+                      onClick={manageWebPush}
+                      disabled={checkingPush}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent ${
+                        pushEnabled 
+                          ? 'bg-green-500 hover:bg-green-600' 
+                          : 'bg-gray-400 hover:bg-gray-500'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          pushEnabled ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </div>
-                </button>
+                </div>
+
+                {/* Test Web Push Button */}
+                {pushEnabled && (
+                  <button
+                    onClick={testWebPush}
+                    className="w-full flex items-center justify-between p-3 bg-white/20 hover:bg-white/30 rounded-lg transition-all duration-300 border border-white/30"
+                  >
+                    <div className="flex items-center gap-3">
+                      <TestTube className="w-4 h-4" />
+                      <span className="text-sm">Test notification</span>
+                    </div>
+                  </button>
+                )}
 
                 {/* API Status */}
                 <div className="w-full flex items-center justify-between p-3 bg-white/20 rounded-lg border border-white/30">
