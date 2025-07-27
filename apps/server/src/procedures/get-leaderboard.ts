@@ -49,7 +49,6 @@ export const getLeaderboardProcedure = protectedProcedure
           visibleLeaderboard: pokes.visibleLeaderboard,
         })
         .from(pokes)
-        .where(eq(pokes.visibleLeaderboard, true))
         .orderBy(desc(pokes.count))
         .limit(50);
 
