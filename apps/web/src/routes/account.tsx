@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, Bell, LogOut, Moon, Sun, Wifi, TestTube } from "lucide-react";
+import { ArrowLeft, Bell, LogOut, Moon, Sun, Wifi, RotateCcw, Loader2 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -36,6 +36,12 @@ function AccountPage() {
   const [checkingPush, setCheckingPush] = useState(true);
   const [subscriptionValid, setSubscriptionValid] = useState(false);
 
+  // Fetch anonymized data
+  const anonymizedDataQuery = useRQQuery({
+    ...trpc.getUserAnonymizedData.queryOptions(),
+    enabled: !!session?.user,
+  });
+
   // Add mutation for registering web push
   const registerWebPushMutation = useMutation({
     mutationFn: (input: {
@@ -52,6 +58,29 @@ function AccountPage() {
   const deleteWebPushMutation = useMutation({
     mutationFn: (input: { id: string }) =>
       trpcClient.deleteWebPush.mutate(input),
+  });
+
+  // Add mutations for refreshing anonymized data
+  const refreshNameMutation = useMutation({
+    mutationFn: () => trpcClient.refreshAnonymizedName.mutate(),
+    onSuccess: () => {
+      anonymizedDataQuery.refetch();
+      toast.success({ text: "Anonymous name refreshed!" });
+    },
+    onError: () => {
+      toast.error({ text: "Failed to refresh anonymous name" });
+    },
+  });
+
+  const refreshPictureMutation = useMutation({
+    mutationFn: () => trpcClient.refreshAnonymizedPicture.mutate(),
+    onSuccess: () => {
+      anonymizedDataQuery.refetch();
+      toast.success({ text: "Anonymous picture refreshed!" });
+    },
+    onError: () => {
+      toast.error({ text: "Failed to refresh anonymous picture" });
+    },
   });
 
   // Check current push subscription and validate with backend
@@ -251,13 +280,63 @@ function AccountPage() {
               </div>
 
               {/* User Info */}
-              <h2 className="text-md font-semibold mb-1">
-                {session.user.name || "User"}
-              </h2>
-              <p className="text-sm opacity-70 mb-6">
-                {session.user.email || "No email provided"}
-              </p>
-
+              <h2 className="text-md font-semibold mb-1">{session.user.name || "User"}</h2>
+              <p className="text-sm opacity-70 mb-6">{session.user.email || "No email provided"}</p>
+              
+              {/* Anonymized Data Section */}
+              <div className="w-full mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
+                <h3 className="text-sm font-medium text-white/80 mb-3">Anonymous Identity</h3>
+                <div className="space-y-3">
+                  {/* Anonymized Avatar */}
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-white/20 flex items-center justify-center">
+                        {anonymizedDataQuery.isLoading ? (
+                          <Loader />
+                        ) : anonymizedDataQuery.data?.pictureAnonymized ? (
+                          <img 
+                            src={anonymizedDataQuery.data.pictureAnonymized} 
+                            alt="Anonymous avatar" 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-lg font-semibold text-white/70">?</span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => refreshPictureMutation.mutate()}
+                        disabled={refreshPictureMutation.isPending}
+                        className="absolute -top-1 -right-1 w-6 h-6 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 border border-white/30"
+                      >
+                        {refreshPictureMutation.isPending ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <RotateCcw className="w-3 h-3" />
+                        )}
+                      </button>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium">
+                          {anonymizedDataQuery.isLoading ? "Loading..." : anonymizedDataQuery.data?.usernameAnonymized || "Generating..."}
+                        </p>
+                        <button
+                          onClick={() => refreshNameMutation.mutate()}
+                          disabled={refreshNameMutation.isPending}
+                          className="w-5 h-5 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 border border-white/30"
+                        >
+                          {refreshNameMutation.isPending ? (
+                            <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                          ) : (
+                            <RotateCcw className="w-2.5 h-2.5" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               {/* Settings Options */}
               <div className="w-full space-y-3">
                 {/* Theme Color */}
