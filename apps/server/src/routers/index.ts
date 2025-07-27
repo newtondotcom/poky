@@ -8,6 +8,7 @@ import { registerWebPushProcedure } from "@/procedures/register-webpush";
 import { deleteWebPushProcedure } from "@/procedures/delete-webpush";
 import { getWebPushProcedure } from "@/procedures/get-webpush";
 import { togglePokeVisibilityProcedure } from "@/procedures/toggle-poke-visibility";
+import { testWebPushProcedure } from "@/procedures/test-webpush";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -24,5 +25,6 @@ export const appRouter = router({
   deleteWebPush: deleteWebPushProcedure,
   getWebPush: getWebPushProcedure,
   togglePokeVisibility: togglePokeVisibilityProcedure,
+  testWebPush: testWebPushProcedure,
 });
 export type AppRouter = typeof appRouter;
