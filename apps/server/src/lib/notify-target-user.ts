@@ -1,4 +1,3 @@
-import { wsSessionManager } from "@/lib/websocket-sessions";
 import { db } from "@/db";
 import { webpush } from "@/db/schema/pok7";
 import { eq } from "drizzle-orm";
@@ -12,7 +11,7 @@ export async function notifyTargetUser(targetUserId: string) {
       type: "poke_update",
       ...pokeData,
     });
-    console.log("User is online")
+    console.log("User is online");
   } else {
     const subs = await db
       .select()
@@ -22,7 +21,10 @@ export async function notifyTargetUser(targetUserId: string) {
       const sub = subs[0];
       const subscription = {
         endpoint: sub.endpoint,
-        expirationTime: sub.expirationTime instanceof Date ? sub.expirationTime.valueOf() : sub.expirationTime ?? undefined,
+        expirationTime:
+          sub.expirationTime instanceof Date
+            ? sub.expirationTime.valueOf()
+            : (sub.expirationTime ?? undefined),
         keys: JSON.parse(sub.options).keys,
       };
       await sendWebPush(subscription, {
@@ -31,8 +33,8 @@ export async function notifyTargetUser(targetUserId: string) {
         icon: "/favicon-32x32.png",
         data: { type: "poke" },
       });
-      console.log("webpush sent")
+      console.log("webpush sent");
     }
-    console.log("User is offline")
+    console.log("User is offline");
   }
-} 
+}
