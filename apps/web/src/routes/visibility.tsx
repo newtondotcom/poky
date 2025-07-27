@@ -3,28 +3,14 @@ import { ArrowLeft, Eye, EyeOff, User, Calendar, Zap } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { trpc, trpcClient } from "@/utils/trpc";
-import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "@pheralb/toast";
+import { VisibilityItemSkeleton } from "@/components/skeletons/visibility";
 
 export const Route = createFileRoute("/visibility")({
   component: VisibilityPage,
 });
 
-function VisibilityItemSkeleton() {
-  return (
-    <div className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
-      <div className="flex items-center gap-3">
-        <Skeleton className="w-10 h-10 rounded-full" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-3 w-24" />
-        </div>
-      </div>
-      <Skeleton className="w-12 h-6 rounded-full" />
-    </div>
-  );
-}
 
 function VisibilityPage() {
   const navigate = useNavigate();
