@@ -7,6 +7,7 @@ import { getLeaderboardProcedure } from "@/procedures/get-leaderboard";
 import { registerWebPushProcedure } from "@/procedures/register-webpush";
 import { deleteWebPushProcedure } from "@/procedures/delete-webpush";
 import { getWebPushProcedure } from "@/procedures/get-webpush";
+import { testWebPushProcedure } from "@/procedures/test-webpush";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -22,5 +23,6 @@ export const appRouter = router({
   registerWebPush: registerWebPushProcedure,
   deleteWebPush: deleteWebPushProcedure,
   getWebPush: getWebPushProcedure,
+  testWebPush: testWebPushProcedure,
 });
 export type AppRouter = typeof appRouter;

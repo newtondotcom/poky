@@ -4,24 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Medal, Award, Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "@pheralb/toast";
-
-function LeaderboardItemSkeleton() {
-  return (
-    <div className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
-      <div className="flex items-center gap-3">
-        <Skeleton className="w-8 h-8 rounded-full" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-3 w-24" />
-        </div>
-      </div>
-      <div className="text-right space-y-2">
-        <Skeleton className="h-4 w-6" />
-        <Skeleton className="h-3 w-20" />
-      </div>
-    </div>
-  );
-}
+import { LeaderboardItemSkeleton } from "@/components/skeletons/leaderbord";
 
 function getRankIcon(rank: number) {
   if (rank === 1) return <Trophy className="h-5 w-5 text-yellow-400" />;
@@ -38,7 +21,11 @@ function getRankColor(rank: number) {
 }
 
 export function Leaderboard() {
-  const { data: leaderboardData, isLoading, error } = useQuery(trpc.getLeaderboard.queryOptions());
+  const {
+    data: leaderboardData,
+    isLoading,
+    error,
+  } = useQuery(trpc.getLeaderboard.queryOptions());
 
   if (isLoading) {
     return (
@@ -65,7 +52,9 @@ export function Leaderboard() {
       <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
         <Trophy className="h-12 w-12 mx-auto mb-3 text-white/50" />
         <p className="text-white/80 font-medium">No poke relations yet!</p>
-        <p className="text-sm text-white/60 mt-1">Start poking people to see them on the leaderboard</p>
+        <p className="text-sm text-white/60 mt-1">
+          Start poking people to see them on the leaderboard
+        </p>
       </div>
     );
   }
@@ -86,11 +75,9 @@ export function Leaderboard() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 {rankIcon}
-                <span className={`text-sm ${rankColor}`}>
-                  #{rank}
-                </span>
+                <span className={`text-sm ${rankColor}`}>#{rank}</span>
               </div>
-              
+
               <div className="text-right flex flex-row gap-2 md:flex-col">
                 <div className="flex items-center gap-1">
                   <span className="text-xl font-bold text-white/90">
@@ -102,13 +89,13 @@ export function Leaderboard() {
                   <Calendar className="h-3 w-3" />
                   <span>
                     {formatDistanceToNow(new Date(entry.lastPokeDate), {
-                      addSuffix: true
+                      addSuffix: true,
                     })}
                   </span>
                 </div>
               </div>
             </div>
-            
+
             {/* Users Row */}
             <div className="flex flex-col md:flex-row items-center justify-center md:gap-3">
               {/* User A */}
@@ -128,9 +115,9 @@ export function Leaderboard() {
                   {entry.visibleLeaderboard ? entry.userA.name : entry.userA.usernameAnonymized}
                 </span>
               </div>
-              
+
               <span className="text-white/60 text-lg font-bold">×</span>
-              
+
               {/* User B */}
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
@@ -154,4 +141,4 @@ export function Leaderboard() {
       })}
     </div>
   );
-} 
+}
