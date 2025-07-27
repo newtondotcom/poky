@@ -1,7 +1,7 @@
 import { publicProcedure, router } from "@/lib/trpc";
 import { searchUsersProcedure } from "@/procedures/search-users";
 import { getUserPokesProcedure } from "@/procedures/get-user-pokes";
-import { getUserAnonymizedDataProcedure } from "@/procedures/get-user-anonymized-data";
+import { getUserAnonymizedDataProcedure, refreshAnonymizedNameProcedure, refreshAnonymizedPictureProcedure } from "@/procedures/user-anonymized-data";
 import { pokeUserProcedure } from "@/procedures/poke-user";
 import { getLeaderboardProcedure } from "@/procedures/get-leaderboard";
 import { registerWebPushProcedure } from "@/procedures/register-webpush";
@@ -15,6 +15,8 @@ export const appRouter = router({
   searchUsers: searchUsersProcedure,
   getUserPokes: getUserPokesProcedure,
   getUserAnonymizedData: getUserAnonymizedDataProcedure,
+  refreshAnonymizedName: refreshAnonymizedNameProcedure,
+  refreshAnonymizedPicture: refreshAnonymizedPictureProcedure,
   pokeUser: pokeUserProcedure,
   getLeaderboard: getLeaderboardProcedure,
   registerWebPush: registerWebPushProcedure,
