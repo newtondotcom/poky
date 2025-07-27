@@ -43,6 +43,9 @@ function AccountPage() {
       endpoint: string;
       expirationTime: number | null;
       options: string;
+      deviceId: string;
+      deviceName?: string;
+      userAgent?: string;
     }) => trpcClient.registerWebPush.mutate(input),
   });
 
@@ -167,12 +170,7 @@ function AccountPage() {
         );
         const subObj = subscription.toJSON();
         const deviceId = getDeviceId();
-        const deviceInfo = {
-          id: deviceId,
-          name: `${getBrowserName()} on ${getOSName()}`, // e.g., "Chrome on Windows"
-          userAgent: navigator.userAgent,
-          lastSeen: new Date(),
-        };
+        const deviceName = `${getBrowserName()} on ${getOSName()}`; // e.g., "Chrome on Windows"
         await registerWebPushMutation.mutateAsync({
           id: subscription.endpoint,
           endpoint: subscription.endpoint,
@@ -180,6 +178,9 @@ function AccountPage() {
           options: JSON.stringify({
             keys: subObj.keys,
           }),
+          deviceId,
+          deviceName,
+          userAgent: navigator.userAgent,
         });
         setPushEnabled(true);
         setSubscriptionValid(true);
