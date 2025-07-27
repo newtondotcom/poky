@@ -37,6 +37,12 @@ function AccountPage() {
   const [checkingPush, setCheckingPush] = useState(true);
   const [subscriptionValid, setSubscriptionValid] = useState(false);
 
+  // Fetch anonymized data
+  const anonymizedDataQuery = useRQQuery({
+    ...trpc.getUserAnonymizedData.queryOptions(),
+    enabled: !!session?.user,
+  });
+
   // Add mutation for registering web push
   const registerWebPushMutation = useMutation({
     mutationFn: (input: {
@@ -215,6 +221,35 @@ function AccountPage() {
               {/* User Info */}
               <h2 className="text-md font-semibold mb-1">{session.user.name || "User"}</h2>
               <p className="text-sm opacity-70 mb-6">{session.user.email || "No email provided"}</p>
+              
+              {/* Anonymized Data Section */}
+              <div className="w-full mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
+                <h3 className="text-sm font-medium text-white/80 mb-3">Anonymous Identity</h3>
+                <div className="space-y-3">
+                  {/* Anonymized Avatar */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-white/20 flex items-center justify-center">
+                      {anonymizedDataQuery.isLoading ? (
+                        <Loader />
+                      ) : anonymizedDataQuery.data?.pictureAnonymized ? (
+                        <img 
+                          src={anonymizedDataQuery.data.pictureAnonymized} 
+                          alt="Anonymous avatar" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-lg font-semibold text-white/70">?</span>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-white/60">Anonymous Name</p>
+                      <p className="text-sm font-medium">
+                        {anonymizedDataQuery.isLoading ? "Loading..." : anonymizedDataQuery.data?.usernameAnonymized || "Generating..."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
               
               {/* Settings Options */}
               <div className="w-full space-y-3">
