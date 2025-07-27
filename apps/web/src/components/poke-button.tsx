@@ -1,33 +1,37 @@
 import { Button } from "@/components/ui/button";
 import { Zap, Loader2 } from "lucide-react";
-import { usePokeUser } from "@/stores/poke-store";
 import { toast } from "@pheralb/toast";
+import { usePokeUser } from "@/hooks/poke-user";
 
 interface PokeButtonProps {
   targetUserId: string;
   targetUserName: string;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
   onPokeSuccess?: () => void;
 }
 
-export function PokeButton({ 
-  targetUserId, 
-  targetUserName, 
+export function PokeButton({
+  targetUserId,
+  targetUserName,
   variant = "default",
   size = "default",
   className,
-  onPokeSuccess
+  onPokeSuccess,
 }: PokeButtonProps) {
-  const { pokeUser, isPoking} = usePokeUser();
+  const { pokeUser, isPoking } = usePokeUser(onPokeSuccess);
 
   const handlePoke = async () => {
     try {
-      await pokeUser(targetUserId);
-      toast.success({ text: `Poked ${targetUserName}! 🎯` });
+      pokeUser(targetUserId);
       // Call the success callback if provided
-      onPokeSuccess?.();
     } catch (err) {
       toast.error({ text: `Failed to poke ${targetUserName}` });
     }
@@ -49,4 +53,4 @@ export function PokeButton({
       {size !== "icon" && (isPoking ? "Poking..." : "Poke")}
     </Button>
   );
-} 
+}
