@@ -1,5 +1,7 @@
 import { protectedProcedure } from "@/lib/trpc";
 import { getUserPokesData } from "@/lib/get-user-pokes-data";
+import { redisService } from "@/lib/redis";
+import { addUserConnected, removeUserConnected } from "@/lib/user-connected";
 
 // Type for poke relation with user details
 export interface UserPokeRelation {
@@ -19,13 +21,39 @@ export interface UserPokeRelation {
   };
 }
 
-export const getUserPokesProcedure = protectedProcedure
-  .query(async ({ ctx }) => {
-    const currentUserId = ctx.session.user.id;
+const sub = redisService.getSubscriber();
+
+export const getUserPokesProcedure = protectedProcedure.subscription(
+  async function* (opts) {
+    const currentUserId = opts.ctx.session.user.id;
+    addUserConnected(currentUserId);
+
+    const firstDatas = await getUserPokesData(currentUserId);
+    yield firstDatas;
+
     try {
-      return await getUserPokesData(currentUserId);
+      // Subscribe to the channel
+      await sub.subscribe(currentUserId);
+
+      // Create async iterator to receive messages
+      while (true) {
+        const message = await new Promise<string>((resolve) => {
+          sub.on("message", (ch: string, msg: string) => {
+            if (ch === currentUserId) {
+              resolve(msg);
+            }
+          });
+        });
+        const nextDatas = await getUserPokesData(currentUserId);
+        yield nextDatas;
+      }
     } catch (error) {
-      console.error("Error fetching user pokes:", error);
-      throw new Error("Failed to fetch user pokes");
+      console.error("Subscription error:", error);
+      throw error;
+    } finally {
+      console.log("Test subscription ended");
+      await sub.unsubscribe(currentUserId);
+      removeUserConnected(currentUserId);
     }
-  }); 
+  },
+);
