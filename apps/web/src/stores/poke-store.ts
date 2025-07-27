@@ -1,7 +1,8 @@
-import { create } from 'zustand';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { trpc, trpcClient } from '@/utils/trpc';
-import React from 'react';
+import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
+import { useMutation } from "@tanstack/react-query";
+import { trpcClient } from "@/utils/trpc";
+import React from "react";
 
 interface PokeRelation {
   id: string;
@@ -31,12 +32,11 @@ interface PokeStore {
   isLoading: boolean;
   error: any;
   orderedPokeRelations: PokeRelation[];
-  
+
   // Actions
   setPokesData: (data: PokeData | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: any) => void;
-  updateOrderedRelations: () => void;
   getOrderedPokeRelations: (pokeRelations: PokeRelation[]) => PokeRelation[];
 }
 
@@ -47,10 +47,16 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
   error: null,
   orderedPokeRelations: [],
 
-  // Set pokes data
+  // Set pokes data and update ordered relations in a single state update
   setPokesData: (data) => {
-    set({ pokesData: data });
-    get().updateOrderedRelations();
+    const orderedRelations = data?.pokeRelations
+      ? get().getOrderedPokeRelations(data.pokeRelations)
+      : [];
+
+    set({
+      pokesData: data,
+      orderedPokeRelations: orderedRelations,
+    });
   },
 
   // Set loading state
@@ -63,94 +69,76 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
     set({ error });
   },
 
-  // Update ordered relations when data changes
-  updateOrderedRelations: () => {
-    const { pokesData } = get();
-    if (pokesData?.pokeRelations) {
-      const ordered = get().getOrderedPokeRelations(pokesData.pokeRelations);
-      set({ orderedPokeRelations: ordered });
-    } else {
-      set({ orderedPokeRelations: [] });
-    }
-  },
-
   // Get ordered poke relations based on the provided data
   getOrderedPokeRelations: (pokeRelations) => {
     if (!pokeRelations) return [];
-    
+
     return [...pokeRelations].sort((a, b) => {
       const aIsYourTurn = a.lastPokeBy == a.otherUser.id;
       const bIsYourTurn = b.lastPokeBy == b.otherUser.id;
-      
+
       // First priority: Show relations where it's your turn to poke (someone is waiting for you)
       if (aIsYourTurn && !bIsYourTurn) return -1;
       if (!aIsYourTurn && bIsYourTurn) return 1;
-      
+
       // Second priority: When both are in the same state (both your turn or both their turn),
       // sort by highest count first
       if (a.count !== b.count) {
         return b.count - a.count; // Higher count first
       }
-      
+
       // Third priority: If counts are equal, sort by most recent last poke date
-      return new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime();
+      return (
+        new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime()
+      );
     });
   },
 }));
 
-// Hook to use poke data with React Query
+// Hook to use poke data Server Send Events
 export const usePokeData = () => {
-  const { data, isLoading, error, refetch } = useQuery(trpc.getUserPokes.queryOptions());
-  const { setPokesData, setLoading, setError } = usePokeStore();
-
-  // Update store when query data changes
-  React.useEffect(() => {
-    setPokesData(data || null);
-  }, [data, setPokesData]);
-
-  React.useEffect(() => {
-    setLoading(isLoading);
-  }, [isLoading, setLoading]);
+  const { setPokesData, setLoading, setError } = usePokeStore(
+    useShallow((state) => ({
+      setPokesData: state.setPokesData,
+      setLoading: state.setLoading,
+      setError: state.setError,
+    })),
+  );
 
   React.useEffect(() => {
-    setError(error);
-  }, [error, setError]);
+    setLoading(true);
 
-  return { data, isLoading, error, refetch };
+    const subscription = trpcClient.getUserPokes.subscribe(undefined, {
+      onData: (data: any) => {
+        console.log(">>> Observed new event:", data);
+        setPokesData(data);
+        setLoading(false);
+      },
+      onError: (error: any) => {
+        console.error(">>> Subscription error:", error);
+        setError(error);
+        setLoading(false);
+      },
+      onComplete: () => {
+        console.log(">>> User subscription completed");
+        setLoading(false);
+      },
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [setPokesData, setLoading, setError]);
+
+  return usePokeStore(
+    useShallow((state) => ({
+      data: state.pokesData,
+      isLoading: state.isLoading,
+      error: state.error,
+    })),
+  );
 };
 
-// Hook to poke a user
-export const usePokeUser = () => {
-  const queryClient = useQueryClient();
-  const { refetch } = usePokeData();
-
-  const mutation = useMutation({
-    mutationFn: (targetUserId: string) => 
-      trpcClient.pokeUser.mutate({ targetUserId }),
-    onSuccess: () => {
-      // Invalidate and refetch poke data to update the UI
-      queryClient.invalidateQueries({ queryKey: trpc.getUserPokes.queryKey() });
-      refetch();
-    },
-    onError: (error) => {
-      console.error('Failed to poke user:', error);
-    },
-  });
-
-  return {
-    pokeUser: mutation.mutate,
-    isPoking: mutation.isPending,
-    error: mutation.error,
-  };
-};
-
-// Helper hooks for easier access
-export const usePokeLoading = () => usePokeStore((state) => state.isLoading);
-export const usePokeError = () => usePokeStore((state) => state.error);
-export const useOrderedPokeRelations = () => usePokeStore((state) => state.orderedPokeRelations);
-export const usePokeActions = () => usePokeStore((state) => ({
-  setPokesData: state.setPokesData,
-  setLoading: state.setLoading,
-  setError: state.setError,
-  updateOrderedRelations: state.updateOrderedRelations,
-})); 
+// Helper hook for easier access
+export const useOrderedPokeRelations = () =>
+  usePokeStore((state) => state.orderedPokeRelations);
