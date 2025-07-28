@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { user } from "@/db/schema/auth";
 import { pokes } from "@/db/schema/pok7";
 import { like, or, eq, and, not } from "drizzle-orm";
+import logger from "@/lib/logger";
 
 // Type for our simplified user response
 export interface SearchUserResult {
@@ -99,14 +100,14 @@ export const searchUsersProcedure = protectedProcedure
         };
       });
 
-      console.log(searchResultsWithPokeRelations);
+      logger.info("Search results with poke relations", { results: searchResultsWithPokeRelations });
       return {
         users: searchResultsWithPokeRelations,
         count: searchResultsWithPokeRelations.length,
       };
 
     } catch (error) {
-      console.error("Error searching users:", error);
+      logger.error("Error searching users:", { error });
       throw new Error("Failed to search users");
     }
   }); 

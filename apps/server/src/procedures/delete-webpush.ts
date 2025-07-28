@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { webpush } from "@/db/schema/pok7";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
+import logger from "@/lib/logger";
 
 export const deleteWebPushProcedure = protectedProcedure
   .input(z.object({
@@ -25,7 +26,7 @@ export const deleteWebPushProcedure = protectedProcedure
       );
       return { success: true };
     } catch (error) {
-      console.error("Failed to delete web push subscription", error);
+      logger.error("Failed to delete web push subscription", { error });
       throw new Error("Failed to delete web push subscription");
     }
   }); 

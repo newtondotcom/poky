@@ -7,19 +7,20 @@ import { eq, or, and } from "drizzle-orm";
 import { notifyTargetUser } from "@/lib/notify-target-user";
 import { redisService } from "@/lib/redis";
 import { isUserConnected } from "@/lib/user-connected";
+import logger from "@/lib/logger";
 
 const pub = redisService.getPublisher();
 
 async function decideWhichActionToPerform(targetUserId: string) {
   // if users logged as online in the map
   const targetUserConnected = await isUserConnected(targetUserId);
-  console.log(`Target user ${targetUserId} connected: ${targetUserConnected}`);
+  logger.info(`Target user ${targetUserId} connected: ${targetUserConnected}`);
   
   if (targetUserConnected) {
-    console.log(`Publishing to target user channel: ${targetUserId}`);
+    logger.info(`Publishing to target user channel: ${targetUserId}`);
     pub.publish(targetUserId, targetUserId);
   } else {
-    console.log(`Target user ${targetUserId} is offline, sending web push notification`);
+    logger.info(`Target user ${targetUserId} is offline, sending web push notification`);
     notifyTargetUser(targetUserId);
   }
 }
@@ -95,7 +96,7 @@ export const pokeUserProcedure = protectedProcedure
         decideWhichActionToPerform(targetUserId);
         
         // publish so that user ui is refreshed
-        console.log(`Publishing to Redis channel: ${currentUserId}`);
+        logger.info(`Publishing to Redis channel: ${currentUserId}`);
         pub.publish(currentUserId, currentUserId);
 
         return {
@@ -128,7 +129,7 @@ export const pokeUserProcedure = protectedProcedure
         decideWhichActionToPerform(targetUserId);
 
         // publish so that user ui is refreshed
-        console.log(`Publishing to Redis channel: ${currentUserId}`);
+        logger.info(`Publishing to Redis channel: ${currentUserId}`);
         pub.publish(currentUserId, currentUserId);
 
         return {
@@ -144,7 +145,7 @@ export const pokeUserProcedure = protectedProcedure
         };
       }
     } catch (error) {
-      console.error("Error poking user:", error);
+      logger.error("Error poking user:", { error });
 
       if (error instanceof Error) {
         throw new Error(error.message);

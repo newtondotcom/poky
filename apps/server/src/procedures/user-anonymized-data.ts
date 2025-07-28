@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { user } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
 import { generateFunnyFrenchName, generateFunnyPicture } from "@/lib/anonymization";
+import logger from "@/lib/logger";
 
 export const getUserAnonymizedDataProcedure = protectedProcedure
   .query(async ({ ctx }) => {
@@ -22,7 +23,7 @@ export const getUserAnonymizedDataProcedure = protectedProcedure
 
       return userData[0];
     } catch (error) {
-      console.error("Error fetching user anonymized data:", error);
+      logger.error("Error fetching user anonymized data:", { error });
       throw new Error("Failed to fetch user anonymized data");
     }
   });
@@ -43,7 +44,7 @@ export const refreshAnonymizedNameProcedure = protectedProcedure
       
       return { usernameAnonymized: newName };
     } catch (error) {
-      console.error("Error refreshing anonymized name:", error);
+      logger.error("Error refreshing anonymized name:", { error });
       throw new Error("Failed to refresh anonymized name");
     }
   });
@@ -64,7 +65,7 @@ export const refreshAnonymizedPictureProcedure = protectedProcedure
 
       return { pictureAnonymized: newPicture };
     } catch (error) {
-      console.error("Error refreshing anonymized picture:", error);
+      logger.error("Error refreshing anonymized picture:", { error });
       throw new Error("Failed to refresh anonymized picture");
     }
   }); 

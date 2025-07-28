@@ -1,7 +1,8 @@
 import webpush from 'web-push';
+import logger from '@/lib/logger';
 
 webpush.setVapidDetails(
-  'mailto:asphalt8fr@gmail.com',
+  `mailto:${process.env.VAPID_EMAIL}`,
   process.env.VAPID_PUBLIC_KEY!,
   process.env.VAPID_PRIVATE_KEY!
 );
@@ -13,6 +14,6 @@ export async function sendWebPush(
   try {
     await webpush.sendNotification(subscription, JSON.stringify(payload));
   } catch (err) {
-    console.error('Web push error:', err);
+    logger.error('Web push error:', { error: err });
   }
 }
