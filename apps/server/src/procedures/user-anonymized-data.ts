@@ -2,7 +2,7 @@ import { protectedProcedure } from "@/lib/trpc";
 import { db } from "@/db";
 import { user } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
-import { generateFunnyFrenchName, generateFunyPicture } from "@/lib/anonymization";
+import { generateFunnyFrenchName, generateFunnyPicture } from "@/lib/anonymization";
 
 export const getUserAnonymizedDataProcedure = protectedProcedure
   .query(async ({ ctx }) => {
@@ -52,7 +52,7 @@ export const refreshAnonymizedPictureProcedure = protectedProcedure
   .mutation(async ({ ctx }) => {
     try {
       const userId = ctx.session.user.id;
-      const newPicture = generateFunyPicture();
+      const newPicture = generateFunnyPicture();
       
       await db
         .update(user)

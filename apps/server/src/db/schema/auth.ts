@@ -1,4 +1,3 @@
-import { generateFunnyFrenchName, generateFunyPicture } from "@/lib/anonymization";
 import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {

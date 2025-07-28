@@ -4,12 +4,36 @@ import { db } from "@/db";
 import * as schema from "@/db/schema/auth";
 import { genericOAuth } from "better-auth/plugins";
 import { generateUserAnonymizedData } from "@/lib/anonymization";
+import { user } from "@/db/schema/auth";
+import { eq } from "drizzle-orm";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite",
     schema: schema,
   }),
+  user: {
+    additionalFields: {
+      usernameAnonymized: {
+        type: "string",
+        required: true,
+        defaultValue: "",
+        input: false,
+      },
+      pictureAnonymized: {
+        type: "string",
+        required: true,
+        defaultValue: "",
+        input: false,
+      },
+      username: {
+        type: "string",
+        required: true,
+        defaultValue: "",
+        input: false,
+      },
+    },
+  },
   plugins: [
     genericOAuth({ 
       config: [ 
@@ -43,8 +67,33 @@ export const auth = betterAuth({
 
                 const userId = userInfo.sub || "";
                 
-                // Generate consistent anonymized data based on user ID
-                const anonymizedData = generateUserAnonymizedData(userId);
+                // Check if user already exists and has anonymized data
+                const existingUser = await db
+                  .select({
+                    usernameAnonymized: user.usernameAnonymized,
+                    pictureAnonymized: user.pictureAnonymized,
+                  })
+                  .from(user)
+                  .where(eq(user.id, userId))
+                  .limit(1);
+
+                let anonymizedData: {
+                  usernameAnonymized: string | null;
+                  pictureAnonymized: string | null;
+                };
+
+                // Only generate new anonymized data if user doesn't exist or has null anonymized data
+                if (existingUser.length === 0 || 
+                    !existingUser[0].usernameAnonymized || 
+                    !existingUser[0].pictureAnonymized) {
+                  anonymizedData = generateUserAnonymizedData(userId);
+                } else {
+                  // Use existing anonymized data
+                  anonymizedData = {
+                    usernameAnonymized: existingUser[0].usernameAnonymized,
+                    pictureAnonymized: existingUser[0].pictureAnonymized,
+                  };
+                }
 
                 return {
                   id: userId,
@@ -54,9 +103,9 @@ export const auth = betterAuth({
                   createdAt: new Date(),
                   updatedAt: new Date(),
                   email : userInfo.email,
-                  emailVerified : userInfo.email_verified,
                   usernameAnonymized: anonymizedData.usernameAnonymized,
                   pictureAnonymized: anonymizedData.pictureAnonymized,
+                  emailVerified : true,
                 };
               },
           }, 
