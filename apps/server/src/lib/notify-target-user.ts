@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { webpush } from "@/db/schema/pok7";
 import { eq } from "drizzle-orm";
 import { sendWebPush } from "@/lib/webpush";
+import logger from "@/lib/logger";
 
 export async function notifyTargetUser(targetUserId: string) {
     const subs = await db
@@ -24,7 +25,7 @@ export async function notifyTargetUser(targetUserId: string) {
         icon: "/favicon-32x32.png",
         data: { type: "poke" },
       });
-      console.log("webpush sent");
+      logger.info("Web push notification sent", { targetUserId });
     }
-    console.log("User is offline", targetUserId);
+    logger.info("User is offline", { targetUserId });
   }

@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import logger from "@/lib/logger";
 
 class UserConnectionManager {
   private static instance: UserConnectionManager;
@@ -131,7 +132,7 @@ class UserConnectionManager {
       try {
         await this.cleanupExpiredConnections();
       } catch (error) {
-        console.error("Cleanup interval error:", error);
+        logger.error("Cleanup interval error:", { error });
       }
     }, 120000); // 2 minutes
   }

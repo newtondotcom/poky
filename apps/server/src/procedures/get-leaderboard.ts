@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { user } from "@/db/schema/auth";
 import { pokes } from "@/db/schema/pok7";
 import { desc, eq, inArray } from "drizzle-orm";
+import logger from "@/lib/logger";
 
 // Type for leaderboard entry
 export interface LeaderboardEntry {
@@ -115,7 +116,7 @@ export const getLeaderboardProcedure = protectedProcedure
       };
 
     } catch (error) {
-      console.error("Error fetching leaderboard:", error);
+      logger.error("Error fetching leaderboard:", { error });
       throw new Error("Failed to fetch leaderboard");
     }
   }); 

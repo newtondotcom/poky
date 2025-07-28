@@ -1,4 +1,5 @@
 import { Redis } from "ioredis";
+import logger from "@/lib/logger";
 
 export class RedisService {
   private publisher: Redis | undefined;
@@ -10,11 +11,11 @@ export class RedisService {
       
       // Handle connection events
       this.publisher.on('error', (err) => {
-        console.error('Redis publisher error:', err);
+        logger.error('Redis publisher error:', { error: err });
       });
       
       this.publisher.on('connect', () => {
-        console.log('Redis publisher connected');
+        logger.info('Redis publisher connected');
       });
     }
     return this.publisher;
@@ -26,11 +27,11 @@ export class RedisService {
       
       // Handle connection events
       this.subscriber.on('error', (err) => {
-        console.error('Redis subscriber error:', err);
+        logger.error('Redis subscriber error:', { error: err });
       });
       
       this.subscriber.on('connect', () => {
-        console.log('Redis subscriber connected');
+        logger.info('Redis subscriber connected');
       });
     }
     return this.subscriber;

@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { webpush } from "@/db/schema/pok7";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
+import logger from "@/lib/logger";
 
 export const getWebPushProcedure = protectedProcedure
   .input(z.object({
@@ -19,7 +20,7 @@ export const getWebPushProcedure = protectedProcedure
       }
       return result[0];
     } catch (error) {
-      console.error("Failed to get web push subscription", error);
+      logger.error("Failed to get web push subscription", { error });
       throw new Error("Failed to get web push subscription");
     }
   }); 

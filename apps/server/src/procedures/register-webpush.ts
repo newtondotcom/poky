@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { webpush } from "@/db/schema/pok7";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
+import logger from "@/lib/logger";
 
 export const registerWebPushProcedure = protectedProcedure
   .input(z.object({
@@ -39,7 +40,7 @@ export const registerWebPushProcedure = protectedProcedure
       }
       return { success: true };
     } catch (error) {
-      console.error("Failed to register web push subscription", error);
+      logger.error("Failed to register web push subscription", { error });
       throw new Error("Failed to register web push subscription");
     }
   }); 
