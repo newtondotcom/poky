@@ -35,7 +35,7 @@ const adjectives = [
     return `${adj1}${noun}${adj2}`;
   }
   
-  export function generateFunyPicture(seed?: string): string {
+  export function generateFunnyPicture(seed?: string): string {
     const randomSeed = seed ?? crypto.randomUUID();
     return `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=${randomSeed}`;
   }
@@ -44,6 +44,6 @@ const adjectives = [
   export function generateUserAnonymizedData(userId: string) {
     return {
       usernameAnonymized: generateFunnyFrenchName(userId),
-      pictureAnonymized: generateFunyPicture(userId),
+      pictureAnonymized: generateFunnyPicture(userId),
     };
   }
