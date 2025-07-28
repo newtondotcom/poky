@@ -72,9 +72,6 @@ export const pokeUserProcedure = protectedProcedure
         )
         .limit(1);
 
-      // publish so that user ui is refreshed
-      pub.publish(currentUserId, currentUserId);
-
       decideWhichActionToPerform(targetUserId);
 
       if (existingRelation.length > 0) {
@@ -91,6 +88,9 @@ export const pokeUserProcedure = protectedProcedure
             lastPokeBy: currentUserId,
           })
           .where(eq(pokes.id, relation.id));
+
+          // publish so that user ui is refreshed
+          pub.publish(currentUserId, currentUserId);
 
         return {
           success: true,
@@ -117,6 +117,10 @@ export const pokeUserProcedure = protectedProcedure
           lastPokeBy: currentUserId,
           visibleLeaderboard: true, // Default to visible
         });
+
+
+        // publish so that user ui is refreshed
+        pub.publish(currentUserId, currentUserId);
 
         return {
           success: true,
