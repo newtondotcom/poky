@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { useMutation } from "@tanstack/react-query";
 import { trpcClient } from "@/utils/trpc";
 import React from "react";
 
@@ -32,11 +31,13 @@ interface PokeStore {
   isLoading: boolean;
   error: any;
   orderedPokeRelations: PokeRelation[];
+  isConnected: boolean;
 
   // Actions
   setPokesData: (data: PokeData | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: any) => void;
+  setConnectionStatus: (connected: boolean) => void;
   getOrderedPokeRelations: (pokeRelations: PokeRelation[]) => PokeRelation[];
 }
 
@@ -46,6 +47,7 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
   isLoading: false,
   error: null,
   orderedPokeRelations: [],
+  isConnected: false,
 
   // Set pokes data and update ordered relations in a single state update
   setPokesData: (data) => {
@@ -67,6 +69,11 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
   // Set error state
   setError: (error) => {
     set({ error });
+  },
+
+  // Set connection status
+  setConnectionStatus: (connected) => {
+    set({ isConnected: connected });
   },
 
   // Get ordered poke relations based on the provided data
@@ -97,44 +104,51 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
 
 // Hook to use poke data Server Send Events
 export const usePokeData = () => {
-  const { setPokesData, setLoading, setError } = usePokeStore(
+  const { setPokesData, setLoading, setError, setConnectionStatus } = usePokeStore(
     useShallow((state) => ({
       setPokesData: state.setPokesData,
       setLoading: state.setLoading,
       setError: state.setError,
+      setConnectionStatus: state.setConnectionStatus,
     })),
   );
 
   React.useEffect(() => {
     setLoading(true);
+    setConnectionStatus(false); // Start disconnected
 
     const subscription = trpcClient.getUserPokes.subscribe(undefined, {
       onData: (data: any) => {
         console.log(">>> Observed new event:", data);
         setPokesData(data);
         setLoading(false);
+        setConnectionStatus(true); // Connected when we receive data
       },
       onError: (error: any) => {
         console.error(">>> Subscription error:", error);
         setError(error);
         setLoading(false);
+        setConnectionStatus(false); // Disconnected on error
       },
       onComplete: () => {
         console.log(">>> User subscription completed");
         setLoading(false);
+        setConnectionStatus(false); // Disconnected when completed
       },
     });
 
     return () => {
       subscription.unsubscribe();
+      setConnectionStatus(false);
     };
-  }, [setPokesData, setLoading, setError]);
+  }, [setPokesData, setLoading, setError, setConnectionStatus]);
 
   return usePokeStore(
     useShallow((state) => ({
       data: state.pokesData,
       isLoading: state.isLoading,
       error: state.error,
+      isConnected: state.isConnected,
     })),
   );
 };
@@ -142,3 +156,7 @@ export const usePokeData = () => {
 // Helper hook for easier access
 export const useOrderedPokeRelations = () =>
   usePokeStore((state) => state.orderedPokeRelations);
+
+// Helper hook for connection status
+export const useConnectionStatus = () =>
+  usePokeStore((state) => state.isConnected);

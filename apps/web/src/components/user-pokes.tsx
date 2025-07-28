@@ -1,12 +1,9 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { User, Calendar, Zap, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { User, Calendar, Zap } from "lucide-react";
 import { usePokeData, useOrderedPokeRelations } from "@/stores/poke-store";
 import { formatDistanceToNow } from "date-fns";
 import { PokeButton } from "@/components/poke-button";
 import { Flipper, Flipped } from "react-flip-toolkit";
-import { useState } from "react";
-import { toast } from "@pheralb/toast";
 
 function PokeItemSkeleton() {
   return (
@@ -34,24 +31,18 @@ function PokeItemSkeleton() {
 }
 
 export function UserPokes() {
-  const { data: pokesData, isLoading, error } = usePokeData();
+  const { data: pokesData, isLoading, error, isConnected } = usePokeData();
   const orderedPokeRelations = useOrderedPokeRelations();
   const flipKey = orderedPokeRelations.map((r) => r.id).join(",");
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white/70 hover:text-white hover:bg-white/10"
-            disabled={true}
-          >
-            <RefreshCw className="h-4 w-4 animate-spin" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+          </div>
         </div>
         <div className="space-y-4">
           {Array.from({ length: 5 }).map((_, index) => (
@@ -63,21 +54,14 @@ export function UserPokes() {
   }
 
   if (error) {
-    toast.error({ text: "Failed to load your pokes" });
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white/70 hover:text-white hover:bg-white/10"
-            disabled={isRefreshing}
-          >
-            <RefreshCw
-              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-          </Button>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-red-400" />
+            <span className="text-xs text-white/50">Disconnected</span>
+          </div>
         </div>
         <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <p className="text-red-400 font-medium">Failed to load your pokes</p>
@@ -92,16 +76,9 @@ export function UserPokes() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white/70 hover:text-white hover:bg-white/10"
-            disabled={isRefreshing}
-          >
-            <RefreshCw
-              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-          </Button>
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`} />
+          </div>
         </div>
         <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <Zap className="h-12 w-12 mx-auto mb-3 text-white/50" />
@@ -124,16 +101,9 @@ export function UserPokes() {
               {pokesData.count} relations • {pokesData.totalPokes} total pokes
             </span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white/70 hover:text-white hover:bg-white/10"
-            disabled={isLoading || isRefreshing}
-          >
-            <RefreshCw
-              className={`h-4 w-4 ${isLoading || isRefreshing ? "animate-spin" : ""}`}
-            />
-          </Button>
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`} />
+          </div>
         </div>
       </div>
 
