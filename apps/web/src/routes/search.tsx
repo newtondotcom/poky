@@ -4,14 +4,29 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PokeButton } from "@/components/poke-button";
 import { formatDistanceToNow } from "date-fns";
 import type { SearchUserResult } from "../../../server/src/procedures/search-users";
-import { SearchResultSkeleton } from "@/components/skeletons/search-result";
 
 export const Route = createFileRoute("/search")({
   component: SearchPage,
 });
+
+function SearchResultSkeleton() {
+  return (
+    <div className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+      <div className="flex items-center gap-3">
+        <Skeleton className="w-10 h-10 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-3 w-28" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function SearchPage() {
   const navigate = useNavigate();
@@ -19,23 +34,21 @@ function SearchPage() {
   const [isSearching, setIsSearching] = useState(false);
 
   // Use tRPC query for searching users
-  const searchUsersQuery = useQuery(
-    trpc.searchUsers.queryOptions(
-      {
-        query: searchQuery,
-      },
-      {
-        enabled: searchQuery.trim().length > 0, // Auto-run when query has content
-        retry: false,
-        staleTime: 30000, // Cache results for 30 seconds
-      },
-    ),
-  );
+  const searchUsersQuery = useQuery(trpc.searchUsers.queryOptions(
+    {
+      query: searchQuery,
+    },
+    {
+      enabled: searchQuery.trim().length > 0, // Auto-run when query has content
+      retry: false,
+      staleTime: 30000, // Cache results for 30 seconds
+    }
+  ));
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
-
+    
     // Show loading state when user is typing
     if (value.trim().length > 0) {
       setIsSearching(true);
@@ -55,7 +68,7 @@ function SearchPage() {
     <div className="min-h-screen w-full bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20">
       {/* Header */}
       <div className="flex items-center justify-between p-6">
-        <button
+        <button 
           onClick={() => navigate({ to: "/" })}
           className="inline-flex items-center justify-center align-middle select-none font-sans text-center p-2 text-white text-sm font-medium rounded-lg bg-white/2.5 border border-white/50 backdrop-blur-sm shadow-[inset_0_1px_0px_rgba(255,255,255,0.75),0_0_9px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.15)] hover:bg-white/30 duration-300 before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-transparent before:opacity-70 before:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:bg-gradient-to-tl after:from-white/30 after:via-transparent after:to-transparent after:opacity-50 after:pointer-events-none transition antialiased relative"
         >
@@ -69,9 +82,9 @@ function SearchPage() {
       <div className="px-6 pb-6">
         <div className="flex items-center justify-center w-full">
           <div className="relative w-full max-w-md">
-            <input
-              type="text"
-              placeholder="Search by name or nickname..."
+            <input 
+              type="text" 
+              placeholder="Search by name or nickname..." 
               value={searchQuery}
               onChange={handleSearchChange}
               className="pl-4 py-3 w-full text-white text-sm bg-black/20 border border-white/50 backdrop-blur-sm rounded-lg shadow-[inset_0_1px_0px_rgba(255,255,255,0.75),0_0_9px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.15)] placeholder:text-white/70 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-300 relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-transparent before:opacity-70 before:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:bg-gradient-to-tl after:from-white/30 after:via-transparent after:to-transparent after:opacity-50 after:pointer-events-none"
@@ -110,7 +123,7 @@ function SearchPage() {
             <p className="text-sm text-white/60">
               Found {searchUsersQuery.data.count} user(s)
             </p>
-
+            
             {searchUsersQuery.data.users.length === 0 ? (
               <div className="text-center py-8 text-white/60">
                 <User className="h-12 w-12 mx-auto mb-2 opacity-50" />
@@ -121,7 +134,7 @@ function SearchPage() {
               <div className="space-y-3">
                 {searchUsersQuery.data.users.map((user: SearchUserResult) => {
                   const isYourTurn = user.lastPokeBy === user.id;
-
+                  
                   return (
                     <div
                       key={user.id}
@@ -140,24 +153,18 @@ function SearchPage() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate text-white/90">
-                            {user.name}
-                          </p>
+                          <p className="font-medium truncate text-white/90">{user.name}</p>
                           <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
                             <Calendar className="h-3 w-3" />
                             {user.hasPokeRelation && user.lastPokeDate ? (
                               <span>
-                                {formatDistanceToNow(
-                                  new Date(user.lastPokeDate),
-                                  {
-                                    addSuffix: true,
-                                  },
-                                )}
+                                {formatDistanceToNow(new Date(user.lastPokeDate), {
+                                  addSuffix: true
+                                })}
                               </span>
                             ) : (
                               <span>
-                                Joined{" "}
-                                {new Date(user.createdAt).toLocaleDateString()}
+                                Joined {new Date(user.createdAt).toLocaleDateString()}
                               </span>
                             )}
                           </div>
@@ -166,32 +173,30 @@ function SearchPage() {
                       <div className="flex-shrink-0 flex flex-row items-center align-middle space-x-2">
                         {user.hasPokeRelation ? (
                           <>
-                            {isYourTurn && (
-                              <PokeButton
-                                targetUserId={user.id}
-                                targetUserName={user.name}
-                                variant="outline"
-                                size="sm"
-                                className="text-green-400"
-                                onPokeSuccess={() => navigate({ to: "/" })}
-                              />
-                            )}
-                          </>
-                        ) : (
-                          <PokeButton
-                            targetUserId={user.id}
-                            targetUserName={user.name}
-                            variant="outline"
-                            size="sm"
-                            onPokeSuccess={() => navigate({ to: "/" })}
-                          />
-                        )}
-                        <div className="flex items-center gap-2 justify-end mb-2">
-                          <Zap className="h-4 w-4 text-yellow-400" />
-                          <span className="font-semibold text-white/90">
-                            {user.pokeCount}
-                          </span>
-                        </div>
+                          {isYourTurn && (
+                            <PokeButton
+                              targetUserId={user.id}
+                              targetUserName={user.name}
+                              variant="outline"
+                              size="sm"
+                              className="text-green-400"
+                              onPokeSuccess={() => navigate({ to: "/" })}
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <PokeButton
+                          targetUserId={user.id}
+                          targetUserName={user.name}
+                          variant="outline"
+                          size="sm"
+                          onPokeSuccess={() => navigate({ to: "/" })}
+                        />
+                      )}
+                            <div className="flex items-center gap-2 justify-end mb-2">
+                              <Zap className="h-4 w-4 text-yellow-400" />
+                              <span className="font-semibold text-white/90">{user.pokeCount}</span>
+                            </div>
                       </div>
                     </div>
                   );
@@ -212,4 +217,4 @@ function SearchPage() {
       </div>
     </div>
   );
-}
+} 

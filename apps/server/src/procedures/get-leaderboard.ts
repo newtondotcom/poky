@@ -19,16 +19,12 @@ export interface LeaderboardEntry {
     name: string;
     username: string | null;
     image: string | null;
-    usernameAnonymized: string | null;
-    pictureAnonymized: string | null;
   };
   userB: {
     id: string;
     name: string;
     username: string | null;
     image: string | null;
-    usernameAnonymized: string | null;
-    pictureAnonymized: string | null;
   };
 }
 
@@ -49,6 +45,7 @@ export const getLeaderboardProcedure = protectedProcedure
           visibleLeaderboard: pokes.visibleLeaderboard,
         })
         .from(pokes)
+        .where(eq(pokes.visibleLeaderboard, true))
         .orderBy(desc(pokes.count))
         .limit(50);
 
@@ -73,8 +70,6 @@ export const getLeaderboardProcedure = protectedProcedure
           name: user.name,
           username: user.username,
           image: user.image,
-          usernameAnonymized: user.usernameAnonymized,
-          pictureAnonymized: user.pictureAnonymized,
         })
         .from(user)
         .where(inArray(user.id, Array.from(userIds)));
@@ -83,7 +78,7 @@ export const getLeaderboardProcedure = protectedProcedure
       const userMap = new Map(users.map(u => [u.id, u]));
 
       // Combine poke relations with user details
-      const leaderboardEntries: LeaderboardEntry[] = topPokeRelations.map((relation, _) => {
+      const leaderboardEntries: LeaderboardEntry[] = topPokeRelations.map((relation, index) => {
         const userA = userMap.get(relation.userAId);
         const userB = userMap.get(relation.userBId);
 
@@ -104,16 +99,12 @@ export const getLeaderboardProcedure = protectedProcedure
             name: userA.name,
             username: userA.username,
             image: userA.image,
-            usernameAnonymized: userA.usernameAnonymized,
-            pictureAnonymized: userA.pictureAnonymized,
           },
           userB: {
             id: userB.id,
             name: userB.name,
             username: userB.username,
             image: userB.image,
-            usernameAnonymized: userB.usernameAnonymized,
-            pictureAnonymized: userB.pictureAnonymized,
           },
         };
       });
