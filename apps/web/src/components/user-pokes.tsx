@@ -11,6 +11,7 @@ export function UserPokes() {
   const { data: pokesData, isLoading, error } = usePokeData();
   const orderedPokeRelations = useOrderedPokeRelations();
   const flipKey = orderedPokeRelations.map((r) => r.id).join(",");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   if (isLoading) {
     return (
@@ -41,6 +42,16 @@ export function UserPokes() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white/70 hover:text-white hover:bg-white/10"
+            disabled={isRefreshing}
+          >
+            <RefreshCw
+              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+            />
+          </Button>
         </div>
         <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <p className="text-red-400 font-medium">Failed to load your pokes</p>
@@ -55,6 +66,16 @@ export function UserPokes() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white/70 hover:text-white hover:bg-white/10"
+            disabled={isRefreshing}
+          >
+            <RefreshCw
+              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+            />
+          </Button>
         </div>
         <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <Zap className="h-12 w-12 mx-auto mb-3 text-white/50" />
@@ -77,6 +98,16 @@ export function UserPokes() {
               {pokesData.count} relations • {pokesData.totalPokes} total pokes
             </span>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white/70 hover:text-white hover:bg-white/10"
+            disabled={isLoading || isRefreshing}
+          >
+            <RefreshCw
+              className={`h-4 w-4 ${isLoading || isRefreshing ? "animate-spin" : ""}`}
+            />
+          </Button>
         </div>
       </div>
 
