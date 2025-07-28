@@ -13,9 +13,13 @@ const pub = redisService.getPublisher();
 async function decideWhichActionToPerform(targetUserId: string) {
   // if users logged as online in the map
   const targetUserConnected = await isUserConnected(targetUserId);
+  console.log(`Target user ${targetUserId} connected: ${targetUserConnected}`);
+  
   if (targetUserConnected) {
+    console.log(`Publishing to target user channel: ${targetUserId}`);
     pub.publish(targetUserId, targetUserId);
   } else {
+    console.log(`Target user ${targetUserId} is offline, sending web push notification`);
     notifyTargetUser(targetUserId);
   }
 }
@@ -72,8 +76,6 @@ export const pokeUserProcedure = protectedProcedure
         )
         .limit(1);
 
-      decideWhichActionToPerform(targetUserId);
-
       if (existingRelation.length > 0) {
         // Update existing relation
         const relation = existingRelation[0];
@@ -89,8 +91,12 @@ export const pokeUserProcedure = protectedProcedure
           })
           .where(eq(pokes.id, relation.id));
 
-          // publish so that user ui is refreshed
-          pub.publish(currentUserId, currentUserId);
+        // Notify target user after database update
+        decideWhichActionToPerform(targetUserId);
+        
+        // publish so that user ui is refreshed
+        console.log(`Publishing to Redis channel: ${currentUserId}`);
+        pub.publish(currentUserId, currentUserId);
 
         return {
           success: true,
@@ -118,8 +124,11 @@ export const pokeUserProcedure = protectedProcedure
           visibleLeaderboard: true, // Default to visible
         });
 
+        // Notify target user after database update
+        decideWhichActionToPerform(targetUserId);
 
         // publish so that user ui is refreshed
+        console.log(`Publishing to Redis channel: ${currentUserId}`);
         pub.publish(currentUserId, currentUserId);
 
         return {
