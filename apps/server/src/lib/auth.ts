@@ -6,10 +6,11 @@ import { genericOAuth } from "better-auth/plugins";
 import { generateUserAnonymizedData } from "@/lib/anonymization";
 import { user } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
+import logger from "@/lib/logger";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "sqlite",
+    provider: "pg",
     schema: schema,
   }),
   user: {
@@ -63,7 +64,7 @@ export const auth = betterAuth({
 
                 const userInfo = await response.json();
 
-                console.log(userInfo)
+                logger.info("User info received", { userInfo });
 
                 const userId = userInfo.sub || "";
 
