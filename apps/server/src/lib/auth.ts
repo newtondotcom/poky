@@ -35,10 +35,10 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    genericOAuth({ 
-      config: [ 
-          { 
-              providerId: "churros", 
+    genericOAuth({
+      config: [
+          {
+              providerId: "churros",
               clientId: process.env.CHURROS_CLIENT_ID || "",
               clientSecret: process.env.CHURROS_CLIENT_SECRET || "",
               authorizationUrl : process.env.CHURROS_AUTHORIZATION_URL || "",
@@ -66,7 +66,7 @@ export const auth = betterAuth({
                 console.log(userInfo)
 
                 const userId = userInfo.sub || "";
-                
+
                 // Check if user already exists and has anonymized data
                 const existingUser = await db
                   .select({
@@ -83,8 +83,8 @@ export const auth = betterAuth({
                 };
 
                 // Only generate new anonymized data if user doesn't exist or has null anonymized data
-                if (existingUser.length === 0 || 
-                    !existingUser[0].usernameAnonymized || 
+                if (existingUser.length === 0 ||
+                    !existingUser[0].usernameAnonymized ||
                     !existingUser[0].pictureAnonymized) {
                   anonymizedData = generateUserAnonymizedData(userId);
                 } else {
@@ -96,7 +96,7 @@ export const auth = betterAuth({
                 }
 
                 return {
-                  id: userId,
+                  id: userInfo.sub || "", // could be uid but sub will be used for anonuymsation
                   name: userInfo.fullName ||"",
                   username: userInfo.uid || userInfo.nickname || "",
                   image: userInfo.pictureURL || null,
@@ -105,11 +105,11 @@ export const auth = betterAuth({
                   email : userInfo.email,
                   usernameAnonymized: anonymizedData.usernameAnonymized,
                   pictureAnonymized: anonymizedData.pictureAnonymized,
-                  emailVerified : true,
+                  emailVerified : userInfo.email_verified,
                 };
               },
-          }, 
-      ] 
+          },
+      ]
   }) ],
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,

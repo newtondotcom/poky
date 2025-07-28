@@ -9,8 +9,6 @@ export const user = pgTable("user", {
   image: text("image"),
   createdAt: timestamp("created_at", { withTimezone: false, mode: "date" }).notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: false, mode: "date" }).notNull(),
-  usernameAnonymized: text('username_anon'),
-  pictureAnonymized: text('picture_anon'),
 });
 
 export const session = pgTable("session", {

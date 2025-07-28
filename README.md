@@ -12,7 +12,7 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 - **tRPC** - End-to-end type-safe APIs
 - **Bun** - Runtime environment
 - **Drizzle** - TypeScript-first ORM
-- **SQLite/Turso** then and now **Postgres** - Database engine
+- **SQLite/Turso** - Database engine
 - **Authentication** - Email & password authentication with Better Auth
 - **Turborepo** - Optimized monorepo build system
 

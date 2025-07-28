@@ -2,10 +2,6 @@ import { db } from "@/db";
 import { webpush } from "@/db/schema/pok7";
 import { eq } from "drizzle-orm";
 import { sendWebPush } from "@/lib/webpush";
-import { redisService } from "@/lib/redis";
-
-
-const sub = redisService.getSubscriber();
 
 export async function notifyTargetUser(targetUserId: string) {
     const subs = await db
@@ -30,5 +26,5 @@ export async function notifyTargetUser(targetUserId: string) {
       });
       console.log("webpush sent");
     }
-    console.log("User is offline");
+    console.log("User is offline", targetUserId);
   }
