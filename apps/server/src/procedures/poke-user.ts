@@ -5,12 +5,30 @@ import { user } from "@/db/schema/auth";
 import { pokes } from "@/db/schema/pok7";
 import { eq, or, and } from "drizzle-orm";
 import { notifyTargetUser } from "@/lib/notify-target-user";
+import { redisService } from "@/lib/redis";
+import { isUserConnected } from "@/lib/user-connected";
+
+const pub = redisService.getPublisher();
+
+async function decideWhichActionToPerform(targetUserId: string) {
+  // if users logged as online in the map
+  const targetUserConnected = await isUserConnected(targetUserId);
+  console.log(`Target user ${targetUserId} connected: ${targetUserConnected}`);
+  
+  if (targetUserConnected) {
+    console.log(`Publishing to target user channel: ${targetUserId}`);
+    pub.publish(targetUserId, targetUserId);
+  } else {
+    console.log(`Target user ${targetUserId} is offline, sending web push notification`);
+    notifyTargetUser(targetUserId);
+  }
+}
 
 export const pokeUserProcedure = protectedProcedure
   .input(
     z.object({
       targetUserId: z.string().min(1, "Target user ID is required"),
-    })
+    }),
   )
   .mutation(async ({ ctx, input }) => {
     const currentUserId = ctx.session.user.id;
@@ -46,9 +64,15 @@ export const pokeUserProcedure = protectedProcedure
         .from(pokes)
         .where(
           or(
-            and(eq(pokes.userAId, currentUserId), eq(pokes.userBId, targetUserId)),
-            and(eq(pokes.userAId, targetUserId), eq(pokes.userBId, currentUserId))
-          )
+            and(
+              eq(pokes.userAId, currentUserId),
+              eq(pokes.userBId, targetUserId),
+            ),
+            and(
+              eq(pokes.userAId, targetUserId),
+              eq(pokes.userBId, currentUserId),
+            ),
+          ),
         )
         .limit(1);
 
@@ -67,7 +91,12 @@ export const pokeUserProcedure = protectedProcedure
           })
           .where(eq(pokes.id, relation.id));
 
-        notifyTargetUser(targetUserId);
+        // Notify target user after database update
+        decideWhichActionToPerform(targetUserId);
+        
+        // publish so that user ui is refreshed
+        console.log(`Publishing to Redis channel: ${currentUserId}`);
+        pub.publish(currentUserId, currentUserId);
 
         return {
           success: true,
@@ -95,7 +124,12 @@ export const pokeUserProcedure = protectedProcedure
           visibleLeaderboard: true, // Default to visible
         });
 
-        notifyTargetUser(targetUserId);
+        // Notify target user after database update
+        decideWhichActionToPerform(targetUserId);
+
+        // publish so that user ui is refreshed
+        console.log(`Publishing to Redis channel: ${currentUserId}`);
+        pub.publish(currentUserId, currentUserId);
 
         return {
           success: true,
@@ -111,11 +145,11 @@ export const pokeUserProcedure = protectedProcedure
       }
     } catch (error) {
       console.error("Error poking user:", error);
-      
+
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      
+
       throw new Error("Failed to poke user");
     }
   });
