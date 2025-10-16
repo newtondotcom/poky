@@ -28,9 +28,9 @@ COPY --from=builder /usr/src/app/server ./server
 # Ensure permissions
 RUN chown appuser:appuser ./server && chmod +x ./server
 
-USER appuser
+RUN mkdir -p logs && chown -R appuser:appuser /app
 
-RUN mkdir -p logs
+USER appuser
 
 EXPOSE 3000
 ENTRYPOINT ["./server"]
