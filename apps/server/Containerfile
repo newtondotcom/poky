@@ -30,5 +30,7 @@ RUN chown appuser:appuser ./server && chmod +x ./server
 
 USER appuser
 
+RUN mkdir -p logs
+
 EXPOSE 3000
 ENTRYPOINT ["./server"]
