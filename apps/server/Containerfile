@@ -1,39 +1,34 @@
-# Build stage - Use Bun to compile the binary
-FROM --platform=$BUILDPLATFORM oven/bun:1 AS builder
+# ===== Build Stage =====
+FROM oven/bun:1.3.0 AS builder
 WORKDIR /usr/src/app
 
-# Copy package files
-COPY package.json bun.lockb* ./
+# Copy dependency manifests first (for caching)
+COPY package.json ./
 
 # Install dependencies
 RUN bun install --frozen-lockfile
 
-# Copy source code
+# Copy the rest of the source
 COPY . .
 
-# Build the binary (statically linked)
+# Compile the app into a static binary
 RUN bun run compile && ls -la server
 
-# Runtime stage - Use Debian slim for glibc compatibility
+# ===== Runtime Stage =====
 FROM debian:12-slim AS runtime
 
-# Create user
+# Create non-root user
 RUN useradd -r -u 1001 -s /bin/false appuser
 
-# Set working directory
 WORKDIR /app
 
-# Copy the compiled binary
+# Copy binary from build stage
 COPY --from=builder /usr/src/app/server ./server
 
-# Change ownership and make executable
+# Ensure permissions
 RUN chown appuser:appuser ./server && chmod +x ./server
 
-# Switch to non-root user
 USER appuser
 
-# Expose port
 EXPOSE 3000
-
-# Run the binary
 ENTRYPOINT ["./server"]

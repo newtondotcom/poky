@@ -96,11 +96,6 @@ export const auth = betterAuth({
                   };
                 }
 
-                const userId = userInfo.sub || "";
-                
-                // Generate consistent anonymized data based on user ID
-                const anonymizedData = generateUserAnonymizedData(userId);
-
                 return {
                   id: userId,
                   name: userInfo.fullName ||"",
