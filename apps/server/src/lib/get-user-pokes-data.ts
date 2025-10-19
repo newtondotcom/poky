@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { user } from "@/db/schema/auth";
-import { pokes } from "@/db/schema/pok7";
+import { pokes, user } from "@/db/schema";
+import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { eq, or } from "drizzle-orm";
 
 export interface UserPokeRelation {
@@ -32,16 +32,11 @@ export async function getUserPokesData(userId: string) {
       visibleLeaderboard: pokes.visibleLeaderboard,
     })
     .from(pokes)
-    .where(
-      or(
-        eq(pokes.userAId, userId),
-        eq(pokes.userBId, userId)
-      )
-    );
+    .where(or(eq(pokes.userAId, userId), eq(pokes.userBId, userId)));
 
   // Get user details for all the other users in poke relations
-  const otherUserIds = pokeRelations.map(relation =>
-    relation.userAId === userId ? relation.userBId : relation.userAId
+  const otherUserIds = pokeRelations.map((relation) =>
+    relation.userAId === userId ? relation.userBId : relation.userAId,
   );
 
   const otherUsers = await db
@@ -52,44 +47,57 @@ export async function getUserPokesData(userId: string) {
       image: user.image,
     })
     .from(user)
-    .where(
-      or(...otherUserIds.map(id => eq(user.id, id)))
-    );
+    .where(or(...otherUserIds.map((id) => eq(user.id, id))));
 
-  const userMap = new Map(otherUsers.map(u => [u.id, u]));
+  const userMap = new Map(otherUsers.map((u) => [u.id, u]));
 
-  const pokeRelationsWithUsers: UserPokeRelation[] = pokeRelations.map(relation => {
-    const otherUserId = relation.userAId === userId ? relation.userBId : relation.userAId;
-    const otherUser = userMap.get(otherUserId);
+  const pokeRelationsWithUsers: UserPokeRelation[] = pokeRelations.map(
+    (relation) => {
+      const otherUserId =
+        relation.userAId === userId ? relation.userBId : relation.userAId;
+      const otherUser = userMap.get(otherUserId);
 
-    if (!otherUser) {
-      throw new Error(`User not found: ${otherUserId}`);
-    }
+      if (!otherUser) {
+        throw new Error(`User not found: ${otherUserId}`);
+      }
 
-    return {
-      id: relation.id,
-      userAId: relation.userAId,
-      userBId: relation.userBId,
-      count: relation.count,
-      lastPokeDate: relation.lastPokeDate.toISOString(),
-      lastPokeBy: relation.lastPokeBy,
-      visibleLeaderboard: relation.visibleLeaderboard,
-      otherUser: {
-        id: otherUser.id,
-        name: otherUser.name,
-        username: otherUser.username,
-        image: otherUser.image,
-      },
-    };
-  });
+      return {
+        id: relation.id,
+        userAId: relation.userAId,
+        userBId: relation.userBId,
+        count: relation.count,
+        lastPokeDate: relation.lastPokeDate.toISOString(),
+        lastPokeBy: relation.lastPokeBy,
+        visibleLeaderboard: relation.visibleLeaderboard,
+        otherUser: {
+          id: otherUser.id,
+          name: otherUser.name,
+          username: otherUser.username,
+          image: otherUser.image,
+        },
+      };
+    },
+  );
 
-  pokeRelationsWithUsers.sort((a, b) =>
-    new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime()
+  pokeRelationsWithUsers.sort(
+    (a, b) =>
+      new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime(),
+  );
+
+  const pokeRelationMessage = (pokeRelationsWithUsers as any).forEach(
+    (relation: any) => {
+      relation.lastPokeDate = timestampFromDate(
+        new Date(relation.lastPokeDate),
+      );
+    },
   );
 
   return {
-    pokeRelations: pokeRelationsWithUsers,
-    count: pokeRelationsWithUsers.length,
-    totalPokes: pokeRelationsWithUsers.reduce((sum, relation) => sum + relation.count, 0),
+    pokeRelations: pokeRelationMessage,
+    count: pokeRelationMessage.length,
+    totalPokes: pokeRelationMessage.reduce(
+      (sum: number, relation: any) => sum + relation.count,
+      0,
+    ),
   };
-} 
+}

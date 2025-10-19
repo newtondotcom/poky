@@ -1,24 +1,63 @@
 const adjectives = [
-  'Petit', 'Grand', 'Fou', 'Triste', 'Heureux', 'Coquin',
-  'Sombre', 'Drôle', 'Curieux', 'Rapide', 'Lent', 'Rusé',
-  "Ailé", "Gourmand", "Tchateur", "DOrEtDePlatine", "Légendaire",
+  "Petit",
+  "Grand",
+  "Fou",
+  "Triste",
+  "Heureux",
+  "Coquin",
+  "Sombre",
+  "Drôle",
+  "Curieux",
+  "Rapide",
+  "Lent",
+  "Rusé",
+  "Ailé",
+  "Gourmand",
+  "Tchateur",
+  "DOrEtDePlatine",
+  "Légendaire",
 ];
 
 const nouns = [
-  'Lapin', 'Pigeon', 'Hérisson', 'Licorne', 'Canard',
-  'Chat', 'Chien', 'Panda', 'Renard', 'Mouton', 'Cochon',
-  "Gazo", "Macron", "Modric", "Sinner", "Wembanyama"
+  "Lapin",
+  "Pigeon",
+  "Hérisson",
+  "Licorne",
+  "Canard",
+  "Chat",
+  "Chien",
+  "Panda",
+  "Renard",
+  "Mouton",
+  "Cochon",
+  "Gazo",
+  "Macron",
+  "Modric",
+  "Sinner",
+  "Wembanyama",
 ];
 
 function pickRandom<T>(array: T[], seed: string): T {
-  // Create a simple hash from the seed
+  if (array.length === 0) {
+    throw new Error("Cannot pick from an empty array");
+  }
+
+  // Create a simple deterministic hash from the seed
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
     const char = seed.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    hash = (hash << 5) - hash + char;
+    hash |= 0; // force 32-bit int
   }
-  return array[Math.abs(hash) % array.length];
+
+  const index = Math.abs(hash) % array.length;
+
+  // TypeScript now knows this is safe
+  const value = array[index];
+  if (value === undefined) {
+    throw new Error("Unexpected undefined value");
+  }
+  return value;
 }
 
 export function generateFunnyFrenchName(seed?: string): string {
