@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package proto.poky.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// ======================
+// ENTITIES
+// ======================
+
+message UserAnonymizedData {
+  string username_anonymized = 1;
+  string picture_anonymized = 2;
+}
+
+message LeaderboardEntry {
+  string relation_id = 1;
+  string user_a_id = 2;
+  string user_b_id = 3;
+  string last_poke_by = 4;
+  int32 count = 5;
+  google.protobuf.Timestamp last_poke_date = 6;
+  bool visible_leaderboard = 7;
+  UserAnonymizedData user_a = 8;
+  UserAnonymizedData user_b = 9;
+}
+
+// ======================
+// REQUESTS & RESPONSES
+// ======================
+
+// 1️⃣ Get leaderboard
+message GetLeaderboardRequest {}
+
+message GetLeaderboardResponse {
+  repeated LeaderboardEntry entries = 1;
+}
+
+// 2️⃣ Toggle poke visibility
+message TogglePokeVisibilityRequest {
+  string relation_id = 1;
+  bool visible = 2;
+}
+
+message TogglePokeVisibilityResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 3️⃣ Get anonymized data of the current user
+message GetUserAnonymizedDataRequest {}
+
+message GetUserAnonymizedDataResponse {
+  string username_anonymized = 1;
+  string picture_anonymized = 2;
+}
+
+// 4️⃣ Refresh anonymized picture
+message RefreshAnonymizedPictureRequest {}
+
+message RefreshAnonymizedPictureResponse {
+  string picture_anonymized = 1;
+}
+
+// 5️⃣ Refresh anonymized picture
+message RefreshAnonymizedNameRequest {}
+
+message RefreshAnonymizedNameResponse {
+  string usernameAnonymized = 1;
+}
+
+// ======================
+// SERVICE
+// ======================
+
+service LeaderboardService {
+  // Fetch leaderboard data
+  rpc GetLeaderboard (GetLeaderboardRequest)
+      returns (GetLeaderboardResponse);
+
+  // Toggle visibility of a poke relation on leaderboard
+  rpc TogglePokeVisibility (TogglePokeVisibilityRequest)
+      returns (TogglePokeVisibilityResponse);
+
+  // Get anonymized user data (username + picture)
+  rpc GetUserAnonymizedData (GetUserAnonymizedDataRequest)
+      returns (GetUserAnonymizedDataResponse);
+
+  // Refresh anonymized picture
+  rpc RefreshAnonymizedPicture (RefreshAnonymizedPictureRequest)
+      returns (RefreshAnonymizedPictureResponse);
+
+  // Refresh anonymized username
+  rpc RefreshAnonymizedName (RefreshAnonymizedNameRequest)
+      returns (RefreshAnonymizedNameResponse);
+}

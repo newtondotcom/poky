@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package proto.poky.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// ======================
+// ENTITIES
+// ======================
+
+message User {
+  string id = 1;
+  string name = 2;
+  string username = 3;
+  string image = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message UserPokeRelation {
+  string id = 1;
+  string user_a_id = 2;
+  string user_b_id = 3;
+  int32 count = 4;
+  google.protobuf.Timestamp last_poke_date = 5;
+  string last_poke_by = 6;
+  bool visible_leaderboard = 7;
+  User other_user = 8; // simplified info about the other user in the relation
+}
+
+message PokeRelationUpdate {
+  string id = 1;
+  int32 count = 2;
+  google.protobuf.Timestamp last_poke_date = 3;
+  string last_poke_by = 4;
+  bool is_new_relation = 5;
+}
+
+// ======================
+// REQUESTS & RESPONSES
+// ======================
+
+// 1️⃣ Get user poke relations (subscription)
+message GetUserPokesRequest {
+  string user_id = 1; // optional, server can get from session
+}
+
+message GetUserPokesResponse {
+  repeated UserPokeRelation poke_relations = 1;
+}
+
+// 2️⃣ Poke a user
+message PokeUserRequest {
+  string target_user_id = 1;
+}
+
+message PokeUserResponse {
+  bool success = 1;
+  string message = 2;
+  PokeRelationUpdate poke_relation = 3;
+}
+
+// 3️⃣ Search users
+message SearchUsersRequest {
+  string query = 1;
+}
+
+message SearchUserResult {
+  string id = 1;
+  string name = 2;
+  string username = 3;
+  string image = 4;
+  google.protobuf.Timestamp created_at = 5;
+  bool has_poke_relation = 6;
+  int32 poke_count = 7;
+  string last_poke_by = 8;
+  google.protobuf.Timestamp last_poke_date = 9;
+}
+
+message SearchUsersResponse {
+  repeated SearchUserResult users = 1;
+  int32 count = 2;
+}
+
+// ======================
+// SERVICE
+// ======================
+
+service PokesService {
+  // Subscription: receive live updates of user's poke relations
+  rpc GetUserPokes (GetUserPokesRequest) returns (stream GetUserPokesResponse);
+
+  // Mutation: poke another user
+  rpc PokeUser (PokeUserRequest) returns (PokeUserResponse);
+
+  // Query: search users and include poke relation info
+  rpc SearchUsers (SearchUsersRequest) returns (SearchUsersResponse);
+}
