@@ -1,39 +1,30 @@
-import "dotenv/config";
-import { trpcServer } from "@hono/trpc-server";
-import { createContext } from "@/lib/context";
-import { appRouter } from "@/routers/index";
-import { auth } from "@/lib/auth";
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { logger } from "hono/logger";
+import { fastify } from "fastify";
+import { fastifyConnectPlugin } from "@connectrpc/connect-fastify";
+import routes from "@/connect";
+import fastifyCors from "@fastify/cors";
+import { cors as connectCors } from "@connectrpc/connect";
+import { authInterceptor } from "./rpc/interceptor";
 
-const app = new Hono();
-
-app.use(logger());
-app.use(
-  "/*",
-  cors({
-    origin: process.env.CORS_ORIGIN || "",
-    allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  }),
-);
-
-app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
-
-app.use(
-  "/trpc/*",
-  trpcServer({
-    router: appRouter,
-    createContext: (_opts, context) => {
-      return createContext({ context });
-    },
-  }),
-);
-
-app.get("/", (c) => {
-  return c.text("OK");
+const server = fastify();
+// Options for configuring CORS. The @connectrpc/connect package exports
+// convenience variables for configuring a CORS setup.
+await server.register(fastifyCors, {
+  // Reflects the request origin. This should only be used for development.
+  // Production should explicitly specify an origin
+  origin: true,
+  methods: [...connectCors.allowedMethods],
+  allowedHeaders: [...connectCors.allowedHeaders],
+  exposedHeaders: [...connectCors.exposedHeaders],
 });
 
-export default app;
+await server.register(fastifyConnectPlugin, {
+  routes,
+  interceptors: [authInterceptor],
+});
+server.get("/", (_, reply) => {
+  reply.type("text/plain");
+  reply.code(200);
+  reply.send("Hello World!");
+});
+await server.listen({ host: "localhost", port: 8080 });
+console.log("server is listening at", server.addresses());
