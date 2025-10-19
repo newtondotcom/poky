@@ -6,7 +6,25 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { user } from "@/db/schema/auth";
+
+export const user = pgTable("user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  username: text("username"),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull(),
+  image: text("image"),
+  createdAt: timestamp("created_at", {
+    withTimezone: false,
+    mode: "date",
+  }).notNull(),
+  updatedAt: timestamp("updated_at", {
+    withTimezone: false,
+    mode: "date",
+  }).notNull(),
+  usernameAnonymized: text("username_anon"),
+  pictureAnonymized: text("picture_anon"),
+});
 
 // Devices table
 export const devices = pgTable("devices", {
