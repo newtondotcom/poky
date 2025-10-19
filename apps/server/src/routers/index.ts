@@ -1,14 +1,14 @@
 import { publicProcedure, router } from "@/lib/trpc";
-import { searchUsersProcedure } from "@/procedures/search-users";
-import { getUserPokesProcedure } from "@/procedures/get-user-pokes";
-import { getUserAnonymizedDataProcedure, refreshAnonymizedNameProcedure, refreshAnonymizedPictureProcedure } from "@/procedures/user-anonymized-data";
-import { pokeUserProcedure } from "@/procedures/poke-user";
-import { getLeaderboardProcedure } from "@/procedures/get-leaderboard";
-import { registerWebPushProcedure } from "@/procedures/register-webpush";
-import { deleteWebPushProcedure } from "@/procedures/delete-webpush";
-import { getWebPushProcedure } from "@/procedures/get-webpush";
-import { togglePokeVisibilityProcedure } from "@/procedures/toggle-poke-visibility";
-import { testWebPushProcedure } from "@/procedures/test-webpush";
+import { searchUsersProcedure } from "@/procedures/pokes/search-users";
+import { getUserPokesProcedure } from "@/procedures/pokes/get-user-pokes";
+import { getUserAnonymizedDataProcedure, refreshAnonymizedNameProcedure, refreshAnonymizedPictureProcedure } from "@/procedures/leaderboard/user-anonymized-data";
+import { pokeUserProcedure } from "@/procedures/pokes/poke-user";
+import { getLeaderboardProcedure } from "@/procedures/leaderboard/get-leaderboard";
+import { registerWebPushProcedure } from "@/procedures/webpush/register-webpush";
+import { deleteWebPushProcedure } from "@/procedures/webpush/delete-webpush";
+import { getWebPushProcedure } from "@/procedures/webpush/get-webpush";
+import { togglePokeVisibilityProcedure } from "@/procedures/leaderboard/toggle-poke-visibility";
+import { testWebPushProcedure } from "@/procedures/webpush/test-webpush";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
