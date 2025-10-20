@@ -1,15 +1,11 @@
-import { trpcClient } from "@/utils/trpc";
+import { PokesService } from "@/rpc/proto/poky/v1/pokes_service_pb";
+import { useMutation } from "@connectrpc/connect-query";
 import { toast } from "@pheralb/toast";
-import { useMutation } from "@tanstack/react-query";
 
 // Hook to poke a user
 export const usePokeUser = (onPokeSuccess?: () => void) => {
-  const mutation = useMutation({
-    mutationFn: (targetUserId: string) =>
-      trpcClient.pokeUser.mutate({ targetUserId }),
+  const mutation = useMutation(PokesService.method.pokeUser, {
     onSuccess: () => {
-      // For subscriptions, the data will be updated automatically
-      // No need to invalidate queries
       toast.success({ text: `Poked ! 🎯` });
       onPokeSuccess?.();
     },

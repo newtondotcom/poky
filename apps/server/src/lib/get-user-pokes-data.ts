@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { pokes, user } from "@/db/schema";
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { eq, or } from "drizzle-orm";
+import logger from "./logger";
 
 export interface UserPokeRelation {
   id: string;
@@ -33,6 +34,10 @@ export async function getUserPokesData(userId: string) {
     })
     .from(pokes)
     .where(or(eq(pokes.userAId, userId), eq(pokes.userBId, userId)));
+
+  if (pokeRelations.length == 0) {
+    return []
+  }
 
   // Get user details for all the other users in poke relations
   const otherUserIds = pokeRelations.map((relation) =>
@@ -84,13 +89,11 @@ export async function getUserPokesData(userId: string) {
       new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime(),
   );
 
-  const pokeRelationMessage = (pokeRelationsWithUsers as any).forEach(
-    (relation: any) => {
-      relation.lastPokeDate = timestampFromDate(
-        new Date(relation.lastPokeDate),
-      );
-    },
-  );
+  logger.info(pokeRelationsWithUsers.length)
+  const pokeRelationMessage = pokeRelationsWithUsers.map((relation: any) => ({
+    ...relation,
+    lastPokeDate: timestampFromDate(new Date(relation.lastPokeDate)),
+  }));
 
   return {
     pokeRelations: pokeRelationMessage,

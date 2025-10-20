@@ -1,22 +1,20 @@
 import { fastify } from "fastify";
 import { fastifyConnectPlugin } from "@connectrpc/connect-fastify";
-import routes from "@/connect";
+import routes from "@/rpc/connect";
 import fastifyCors from "@fastify/cors";
 import { cors as connectCors } from "@connectrpc/connect";
-import { authInterceptor } from "./rpc/interceptor";
+import { authInterceptor } from "@/rpc/interceptor";
+import logger from "./lib/logger";
 
 const server = fastify();
-// Options for configuring CORS. The @connectrpc/connect package exports
-// convenience variables for configuring a CORS setup.
 await server.register(fastifyCors, {
   // Reflects the request origin. This should only be used for development.
   // Production should explicitly specify an origin
   origin: true,
   methods: [...connectCors.allowedMethods],
-  allowedHeaders: [...connectCors.allowedHeaders],
+  allowedHeaders: [...connectCors.allowedHeaders, "Authorization"],
   exposedHeaders: [...connectCors.exposedHeaders],
 });
-
 await server.register(fastifyConnectPlugin, {
   routes,
   interceptors: [authInterceptor],
@@ -27,4 +25,4 @@ server.get("/", (_, reply) => {
   reply.send("Hello World!");
 });
 await server.listen({ host: "localhost", port: 8080 });
-console.log("server is listening at", server.addresses());
+logger.info("server is listening at", server.addresses());

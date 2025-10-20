@@ -9,6 +9,7 @@ import { kUser } from "./context";
 import { UserSchema, type User } from "./proto/poky/v1/pokes_service_pb";
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { create } from "@bufbuild/protobuf";
+import logger from "@/lib/logger";
 
 // -----------------------------------------------------------------------------
 // CONFIG
@@ -26,11 +27,15 @@ const JWKS = createRemoteJWKSet(new URL(JWKS_URI));
 // TOKEN VERIFICATION
 // -----------------------------------------------------------------------------
 async function verifyToken(token: string) {
-  const { payload } = await jwtVerify(token, JWKS, {
-    audience: AUDIENCE,
-    issuer: "https://myr-project.eu/application/o/newton/",
-  });
-  return payload;
+  try {
+    const { payload } = await jwtVerify(token, JWKS, {
+      audience: AUDIENCE,
+      issuer: "https://myr-project.eu/application/o/newton/",
+    });
+    return payload;
+  } catch (error) {
+    logger.error(error);
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -39,13 +44,13 @@ async function verifyToken(token: string) {
 async function getOrCreateUser(userInfo: any) {
   const userId = userInfo.sub;
 
-  const existing = await db
+  const [existing] = await db
     .select()
     .from(user)
     .where(eq(user.id, userId))
     .limit(1);
 
-  if (existing.length > 0) return existing[0];
+  if (existing) return existing;
 
   const anonymized = generateUserAnonymizedData(userId);
 
@@ -87,12 +92,14 @@ async function fetchUserInfo(accessToken: string) {
 // INTERCEPTOR
 // -----------------------------------------------------------------------------
 export const authInterceptor: Interceptor = (next) => async (req) => {
-  const authHeader = req.header.get("Authorization");
-  if (!authHeader || !authHeader.startsWith("Bearer "))
+  const authHeader = req.header.get("authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")){
+    logger.error("Missing or invalid Authorization header");
     throw new ConnectError(
       "Missing or invalid Authorization header",
       Code.Unauthenticated,
     );
+  };
 
   const token = authHeader.slice("Bearer ".length);
 
@@ -103,6 +110,8 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
     // still valid
     req.contextValues.set(kUser, cached.user);
     return next(req);
+  } else {
+    logger.info("token is not cached")
   }
 
   // 🔐 Verify token
@@ -110,7 +119,8 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
   try {
     payload = await verifyToken(token);
   } catch (err) {
-    throw new ConnectError("Invalid or expired token", Code.Unauthenticated);
+    logger.error("Token verification failed:", err);
+    // throw new ConnectError("Invalid or expired token", Code.Unauthenticated);
   }
 
   // 🧾 Fetch user info if needed
@@ -123,6 +133,7 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
     image: dbUser?.image,
     createdAt: timestampFromDate(dbUser?.createdAt || new Date()),
   });
+  logger.info("user added to context")
 
   // 🧠 Cache it until the JWT expires
   tokenCache.set(token, {

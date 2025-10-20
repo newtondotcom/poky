@@ -5,6 +5,6 @@ import { PokesServiceImpl } from "@/rpc/implementations/poky/v1/pokes";
 import { LeaderboardServiceImpl } from "@/rpc/implementations/poky/v1/leaderboard";
 
 export default (router: ConnectRouter) => {
-  router.service(PokesService, new PokesServiceImpl());
+  router.service(PokesService, new PokesServiceImpl(), {maxTimeoutMs : 20*60*1000});
   router.service(LeaderboardService, new LeaderboardServiceImpl());
 };

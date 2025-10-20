@@ -43,14 +43,16 @@ async function decideWhichActionToPerform(targetUserId: string) {
 }
 
 export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
-  async *getUserPokes(req: GetUserPokesRequest, context: HandlerContext) {
+  async *getUserPokes(_: GetUserPokesRequest, context: HandlerContext) {
     const currentUser = context.values.get(kUser);
     const currentUserId = currentUser.id;
     logger.info(`Starting subscription for user: ${currentUserId}`);
     addUserConnected(currentUserId);
 
     const firstDatas = await getUserPokesData(currentUserId);
+    logger.info(`First data sent : ${firstDatas}`);
     yield firstDatas;
+    logger.info(`First data sent : ${firstDatas}`);
 
     try {
       // Subscribe to the channel
@@ -80,7 +82,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
             logger.info(`Subscription timeout for user: ${currentUserId}`);
             sub.off("message", messageHandler);
             reject(new Error("Subscription timeout"));
-          }, 30000); // 30 second timeout
+          }, 300000000); // 30 second timeout
         });
 
         logger.info(`Processing update for user: ${currentUserId}`);
@@ -104,18 +106,22 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
 
     // Prevent self-poking
     if (currentUserId === targetUserId) {
+      logger.error("poke yourself")
       throw new Error("You cannot poke yourself");
     }
 
+    logger.error(targetUserId)
+
     try {
       // Check if target user exists
-      const targetUser = await db
+      const [targetUser] = await db
         .select({ id: user.id })
         .from(user)
         .where(eq(user.id, targetUserId))
         .limit(1);
 
-      if (targetUser.length === 0) {
+      if (!targetUser) {
+        logger.error("targe user not found")
         throw new Error("Target user not found");
       }
 

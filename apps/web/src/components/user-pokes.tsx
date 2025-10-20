@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { PokeButton } from "@/components/poke-button";
 import { Flipper, Flipped } from "react-flip-toolkit";
 import { PokeItemSkeleton } from "@/components/skeletons/poke-item";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 
 export function UserPokes() {
   const { data: pokesData, isLoading, error, isConnected } = usePokeData();
@@ -46,7 +47,7 @@ export function UserPokes() {
     );
   }
 
-  if (!pokesData || pokesData.count === 0) {
+  if (!orderedPokeRelations || orderedPokeRelations.length === 0) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -73,7 +74,7 @@ export function UserPokes() {
           <div className="flex flex-col gap-2 text-sm text-white/70 text-start">
             <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
             <span>
-              {pokesData.count} relations • {pokesData.totalPokes} total pokes
+              {pokesData?.count} relations • {pokesData?.totalPokes} total pokes
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -110,7 +111,7 @@ export function UserPokes() {
                       <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
                         <Calendar className="h-3 w-3" />
                         <span>
-                          {formatDistanceToNow(pokeRelation.lastPokeDate, {
+                          {formatDistanceToNow(timestampDate(pokeRelation.lastPokeDate), {
                             addSuffix: true,
                           })}
                         </span>
