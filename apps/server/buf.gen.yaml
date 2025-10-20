@@ -5,6 +5,6 @@ plugins:
     include_imports: true
     opt: target=ts
   - local: protoc-gen-es
-    out: ../frontend/rpc
+    out: ../web/src/rpc
     include_imports: true
     opt: target=ts
