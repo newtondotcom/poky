@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package proto.poky.v1;
+
+service WebPushService {
+  rpc RegisterWebPush (RegisterWebPushRequest) returns (RegisterWebPushResponse);
+  rpc GetWebPush (GetWebPushRequest) returns (GetWebPushResponse);
+  rpc DeleteWebPush (DeleteWebPushRequest) returns (DeleteWebPushResponse);
+  rpc TestWebPush (TestWebPushRequest) returns (TestWebPushResponse);
+}
+
+// ----- Register -----
+message RegisterWebPushRequest {
+  string endpoint = 1;
+  optional int64 expiration_time = 2;
+  string options = 3;
+  string id = 4;
+  string device_id = 5;
+  optional string device_name = 6;
+  optional string user_agent = 7;
+}
+
+message RegisterWebPushResponse {
+  bool success = 1;
+}
+
+// ----- Get -----
+message GetWebPushRequest {
+  string id = 1;
+}
+
+message GetWebPushResponse {
+  string id = 1;
+  string endpoint = 2;
+  optional int64 expiration_time = 3;
+  string options = 4;
+  string user_id = 5;
+  string device_id = 6;
+}
+
+// ----- Delete -----
+message DeleteWebPushRequest {
+  string id = 1;
+}
+
+message DeleteWebPushResponse {
+  bool success = 1;
+}
+
+// ----- Test -----
+message TestWebPushRequest {}
+
+message TestWebPushResponse {
+  bool success = 1;
+  int32 sent_to = 2;
+}
