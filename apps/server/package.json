@@ -7,7 +7,7 @@
     "dev-infra": "docker compose up -d",
     "dev": "bun run --hot src/index.ts",
     "build": "tsc",
-    "migrate": "drizzle-kit"
+    "migrate": "drizzle-kit push"
   },
   "devDependencies": {
     "@bufbuild/protoc-gen-es": "^2.9.0",
