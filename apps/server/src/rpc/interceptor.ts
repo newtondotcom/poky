@@ -40,7 +40,7 @@ async function verifyToken(token: string) {
 // -----------------------------------------------------------------------------
 
 // Non-blocking user creation function
-async function createUserInBackgroundIfNeeded(userInfo: any, userId: string) {
+async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
   try {
     // First check if user already exists
     const [existing] = await db
@@ -53,6 +53,9 @@ async function createUserInBackgroundIfNeeded(userInfo: any, userId: string) {
       logger.info(`User already exists: ${userId}`);
       return;
     }
+
+    // Fetch user info from OAuth provider
+    const userInfo = await fetchUserInfo(oauthToken);
 
     const anonymized = generateUserAnonymizedData(userId);
 
@@ -115,8 +118,6 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
     // still valid
     req.contextValues.set(kUserId, cached.userId);
     return next(req);
-  } else {
-    logger.info("token is not cached")
   }
 
   // 🔐 Verify token
@@ -125,7 +126,7 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
     payload = await verifyToken(token);
   } catch (err) {
     logger.error("Token verification failed:", err);
-    // throw new ConnectError("Invalid or expired token", Code.Unauthenticated);
+    throw new ConnectError("Invalid or expired token", Code.Unauthenticated);
   }
 
   // 🧾 Get user ID from payload and ensure user exists in background
@@ -134,9 +135,8 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
     throw new ConnectError("Invalid token: missing user ID", Code.Unauthenticated);
   }
 
-  // Fetch user info and ensure user exists in database (non-blocking)
-  const userInfo = await fetchUserInfo(token);
-  createUserInBackgroundIfNeeded(userInfo, userId);
+  // Ensure user exists in database (non-blocking)
+  createUserInBackgroundIfNeeded(token,userId);
   
   logger.info("user ID added to context")
 
