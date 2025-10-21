@@ -57,7 +57,6 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
       email_verified : boolean,
       name? : string
     };
-    logger.info(`User info: ${JSON.stringify(userInfo)}`);
 
     if (existing) {
       // Check if values have changed and update if necessary
@@ -68,7 +67,7 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
         existing.emailVerified !== userInfo.email_verified;
 
       if (hasChanged) {
-        logger.info(`User data changed for ${userId}, updating...`);
+        logger.debug(`User data changed for ${userId}, updating...`);
         await db
           .update(user)
           .set({
@@ -79,9 +78,9 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
             updatedAt: new Date(),
           })
           .where(eq(user.id, userId));
-        logger.info(`User data updated for: ${userId}`);
+        logger.debug(`User data updated for: ${userId}`);
       } else {
-        logger.info(`User data unchanged for: ${userId}`);
+        logger.debug(`User data unchanged for: ${userId}`);
       }
       return;
     }

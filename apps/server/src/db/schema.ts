@@ -54,7 +54,7 @@ export const webpush = pgTable("webpush", {
   expirationTime: timestamp("expiration_time", {
     withTimezone: false,
     mode: "date",
-  }), // nullable
+  }),
   options: text("options").notNull(), // JSON with keys
   createdAt: timestamp("created_at", { withTimezone: false, mode: "date" })
     .defaultNow()

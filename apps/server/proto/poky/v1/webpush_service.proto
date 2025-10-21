@@ -48,7 +48,9 @@ message DeleteWebPushResponse {
 }
 
 // ----- Test -----
-message TestWebPushRequest {}
+message TestWebPushRequest {
+  string device_id = 1;
+}
 
 message TestWebPushResponse {
   bool success = 1;

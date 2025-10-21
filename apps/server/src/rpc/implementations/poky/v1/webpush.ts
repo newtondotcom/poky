@@ -3,12 +3,13 @@ import { devices, webpush } from "@/db/schema";
 import logger from "@/lib/logger";
 import { sendWebPush } from "@/lib/webpush";
 import { kUserId } from "@/rpc/context";
-import type { DeleteWebPushRequest, GetWebPushRequest, RegisterWebPushRequest, TestWebPushRequest, WebPushService } from "@/rpc/proto/poky/v1/webpush_service_pb";
-import type { HandlerContext, ServiceImpl } from "@connectrpc/connect";
-import { eq } from "drizzle-orm";
+import { GetWebPushResponseSchema, type DeleteWebPushRequest, type GetWebPushRequest, type RegisterWebPushRequest, type TestWebPushRequest, type WebPushService } from "@/rpc/proto/poky/v1/webpush_service_pb";
+import { create } from "@bufbuild/protobuf";
+import { Code, ConnectError, type HandlerContext, type ServiceImpl } from "@connectrpc/connect";
+import { and, eq } from "drizzle-orm";
 
 export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
-  async RegisterWebPush(req : RegisterWebPushRequest, context: HandlerContext){
+  async registerWebPush(req : RegisterWebPushRequest, context: HandlerContext){
     const userId = context.values.get(kUserId);
     try {
       // First, ensure the device is registered
@@ -59,23 +60,33 @@ export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
     }
   }
 
-  async GetWebPush(req: GetWebPushRequest, context: HandlerContext) {
+  async getWebPush(req: GetWebPushRequest, context: HandlerContext) {
     const userId = context.values.get(kUserId);
     try {
       const [result] = await db.select().from(webpush).where(
-        eq(webpush.id, req.id)
+        and(
+          eq(webpush.deviceId, req.id),
+          eq(webpush.userId, userId)
+        )
       );
-      if (!result || result.userId !== userId) {
-        return null;
+      if (!result) {
+        throw new ConnectError("No webpush subcription found", Code.NotFound);
       }
-      return result;
+      const resultMessage = create(GetWebPushResponseSchema, {
+        id: result.id,
+        endpoint: result.endpoint,
+        options: result.options,
+        userId: result.userId,
+        deviceId: result.deviceId,
+      });
+      return resultMessage;
     } catch (error) {
       logger.error("Failed to get web push subscription", { error });
       throw new Error("Failed to get web push subscription");
     }
   }
 
-  async DeleteWebPush(req: DeleteWebPushRequest, context: HandlerContext){
+  async deleteWebPush(req: DeleteWebPushRequest, context: HandlerContext){
     const userId = context.values.get(kUserId);
     // assert user Id is the same as webpush user_id
     try {
@@ -97,41 +108,36 @@ export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
     }
   }
 
-  async TestWebPush(req: TestWebPushRequest, context: HandlerContext){
+  async testWebPush(req: TestWebPushRequest, context: HandlerContext){
     const userId = context.values.get(kUserId);
     try {
-      // Get user's web push subscriptions
-      const subscriptions = await db
-        .select()
-        .from(webpush)
-        .where(eq(webpush.userId, userId));
+      const deviceId = req.deviceId;
+      const [subscription] = await db.select().from(webpush).where(
+        and(eq(webpush.deviceId, deviceId),
+      eq(webpush.userId, userId)));
 
-      if (subscriptions.length === 0) {
-        throw new Error("No web push subscriptions found for user");
+      if (!subscription) {
+        throw new Error("No web push subscription found for device");
       }
 
-      // Send test notification to all user's devices
-      const promises = subscriptions.map(async (sub) => {
-        const subscription = {
-          endpoint: sub.endpoint,
+      // Send test notification to the device
+        const subscriptionToSend = {
+          endpoint: subscription.endpoint,
           expirationTime:
-            sub.expirationTime instanceof Date
-              ? sub.expirationTime.valueOf()
-              : (sub.expirationTime ?? undefined),
-          keys: JSON.parse(sub.options).keys,
+            subscription.expirationTime instanceof Date
+              ? subscription.expirationTime.valueOf()
+              : (subscription.expirationTime ?? undefined),
+          keys: JSON.parse(subscription.options).keys,
         };
 
-        await sendWebPush(subscription, {
+        await sendWebPush(subscriptionToSend, {
           title: "Test Notification",
-          body: "This is a test notification from Pok7!",
+          body: "This is a test notification from Poky!",
           icon: "/favicon-32x32.png",
           data: { type: "test" },
         });
-      });
-
-      await Promise.all(promises);
-
-      return { success: true, sentTo: subscriptions.length };
+        logger.debug("Push has been sent")
+        return { success: true, sentTo: 1 };
     } catch (error) {
       console.error("Failed to send test web push notification", error);
       throw new Error("Failed to send test notification");

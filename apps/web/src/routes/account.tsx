@@ -213,7 +213,7 @@ function AccountPage() {
       return;
     }
     // Send a test notification to the current user
-    testWebPushMutation.mutate({});
+    testWebPushMutation.mutate({ deviceId: getDeviceId() });
   }
 
   return (
@@ -239,22 +239,21 @@ function AccountPage() {
             <div className="flex flex-col items-center text-center">
               {/* User Avatar */}
               <div className="w-24 h-24 rounded-full mb-4 ring-2 ring-white/30 overflow-hidden bg-white/20 flex items-center justify-center">
-                {tokenData.user.image ? (
+                {tokenData.picture ? (
                   <img
-                    src={tokenData.user.image}
-                    alt={tokenData.user.name || "Profile picture"}
+                    src={tokenData.picture}
+                    alt={tokenData.nickname || "Profile picture"}
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   <span className="text-2xl font-semibold text-white/70">
-                    {tokenData.user.name ? getInitials(tokenData.user.name) : "U"}
+                    {tokenData.nickname ? getInitials(tokenData.nickname) : "U"}
                   </span>
                 )}
               </div>
 
               {/* User Info */}
-              <h2 className="text-md font-semibold mb-1">{tokenData.user.name || "User"}</h2>
-              <p className="text-sm opacity-70 mb-6">{tokenData.user.email || "No email provided"}</p>
+              <h2 className="text-md font-semibold mb-1">{tokenData.nickname || "User"}</h2>
 
               {/* Anonymized Data Section */}
               <div className="w-full mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
