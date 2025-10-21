@@ -4,7 +4,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
 import { TransportProvider } from "@connectrpc/connect-query";
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { AuthContext, AuthProvider } from "react-oauth2-code-pkce";
+import { AuthProvider } from "react-oauth2-code-pkce";
 import Loader from "./components/loader";
 import { toast } from "@pheralb/toast";
 import { routeTree } from "./routeTree.gen";
@@ -18,7 +18,7 @@ const authConfig: TAuthConfig = {
   authorizationEndpoint: "https://myr-project.eu/application/o/authorize/",
   tokenEndpoint: "https://myr-project.eu/application/o/token/",
   redirectUri: "http://localhost:3001/",
-  scope: "profile openid email offline_access",
+  scope: "profile openid offline_access picture",
   onRefreshTokenExpire: (event: TRefreshTokenExpiredEvent) => console.log(event),
 };
 

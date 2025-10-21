@@ -53,17 +53,20 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
       logger.info(`User already exists: ${userId}`);
       return;
     }
+    
+    // check values hasnt changed
 
     // Fetch user info from OAuth provider
     const userInfo = await fetchUserInfo(oauthToken);
+    logger.info(`User info: ${JSON.stringify(userInfo)}`);
 
     const anonymized = generateUserAnonymizedData(userId);
 
     const newUser = {
       id: userId,
-      name: userInfo.fullName || "",
-      username: userInfo.uid || userInfo.nickname || "",
-      image: userInfo.pictureURL || null,
+      name: userInfo.name || "",
+      username: userInfo.preferred_username || userInfo.nickname || "",
+      picture: userInfo.picture || null,
       email: userInfo.email,
       emailVerified: userInfo.email_verified,
       usernameAnonymized: anonymized.usernameAnonymized,
