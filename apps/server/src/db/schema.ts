@@ -10,10 +10,10 @@ import { relations } from "drizzle-orm";
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-  username: text("username"),
+  username: text("username").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
-  picture: text("image"),
+  picture: text("image").notNull(),
   createdAt: timestamp("created_at", {
     withTimezone: false,
     mode: "date",
@@ -22,8 +22,8 @@ export const user = pgTable("user", {
     withTimezone: false,
     mode: "date",
   }).notNull(),
-  usernameAnonymized: text("username_anon"),
-  pictureAnonymized: text("picture_anon"),
+  usernameAnonymized: text("username_anon").notNull(),
+  pictureAnonymized: text("picture_anon").notNull(),
 });
 
 // Devices table
