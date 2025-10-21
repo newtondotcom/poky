@@ -19,7 +19,7 @@ const authConfig: TAuthConfig = {
   tokenEndpoint: "https://myr-project.eu/application/o/token/",
   redirectUri: "http://localhost:3001/",
   scope: "profile openid email offline_access",
-  onRefreshTokenExpire: (event: TRefreshTokenExpiredEvent) => event.logIn(undefined, undefined, "popup"),
+  onRefreshTokenExpire: (event: TRefreshTokenExpiredEvent) => console.log(event),
 };
 
 // -------------------
