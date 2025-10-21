@@ -2,15 +2,14 @@ import { db } from "@/db";
 import { devices, webpush } from "@/db/schema";
 import logger from "@/lib/logger";
 import { sendWebPush } from "@/lib/webpush";
-import { kUser } from "@/rpc/context";
+import { kUserId } from "@/rpc/context";
 import type { DeleteWebPushRequest, GetWebPushRequest, RegisterWebPushRequest, TestWebPushRequest, WebPushService } from "@/rpc/proto/poky/v1/webpush_service_pb";
 import type { HandlerContext, ServiceImpl } from "@connectrpc/connect";
 import { eq } from "drizzle-orm";
 
 export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
   async RegisterWebPush(req : RegisterWebPushRequest, context: HandlerContext){
-    const currentUser = context.values.get(kUser);
-    const userId = currentUser.id;
+    const userId = context.values.get(kUserId);
     try {
       // First, ensure the device is registered
       const deviceData = {
@@ -61,8 +60,7 @@ export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
   }
 
   async GetWebPush(req: GetWebPushRequest, context: HandlerContext) {
-    const currentUser = context.values.get(kUser);
-    const userId = currentUser.id;
+    const userId = context.values.get(kUserId);
     try {
       const [result] = await db.select().from(webpush).where(
         eq(webpush.id, req.id)
@@ -78,8 +76,7 @@ export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
   }
 
   async DeleteWebPush(req: DeleteWebPushRequest, context: HandlerContext){
-    const currentUser = context.values.get(kUser);
-    const userId = currentUser.id;
+    const userId = context.values.get(kUserId);
     // assert user Id is the same as webpush user_id
     try {
       // First, check if the subscription exists and belongs to the user
@@ -101,8 +98,7 @@ export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
   }
 
   async TestWebPush(req: TestWebPushRequest, context: HandlerContext){
-    const currentUser = context.values.get(kUser);
-    const userId = currentUser.id;
+    const userId = context.values.get(kUserId);
     try {
       // Get user's web push subscriptions
       const subscriptions = await db

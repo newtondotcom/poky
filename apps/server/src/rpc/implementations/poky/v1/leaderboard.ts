@@ -5,7 +5,7 @@ import {
   generateFunnyPicture,
 } from "@/lib/anonymization";
 import logger from "@/lib/logger";
-import { kUser } from "@/rpc/context";
+import { kUserId } from "@/rpc/context";
 import {
   GetUserAnonymizedDataResponseSchema,
   type GetLeaderboardRequest,
@@ -24,7 +24,7 @@ export class LeaderboardServiceImpl
   implements ServiceImpl<typeof LeaderboardService>
 {
   async getLeaderboard(req: GetLeaderboardRequest, context: HandlerContext) {
-    const currentUser = context.values.get(kUser);
+    const currentUserId = context.values.get(kUserId);
 
     try {
       // Get top 50 poke relations ordered by count (highest first)
@@ -123,7 +123,7 @@ export class LeaderboardServiceImpl
     req: GetUserAnonymizedDataRequest,
     context: HandlerContext,
   ) {
-    const currentUser = context.values.get(kUser);
+    const currentUserId = context.values.get(kUserId);
     try {
       const [userData] = await db
         .select({
@@ -131,7 +131,7 @@ export class LeaderboardServiceImpl
           pictureAnonymized: user.pictureAnonymized,
         })
         .from(user)
-        .where(eq(user.id, currentUser.id))
+        .where(eq(user.id, currentUserId))
         .limit(1);
 
       if (!userData) {
@@ -153,8 +153,7 @@ export class LeaderboardServiceImpl
     req: TogglePokeVisibilityRequest,
     context: HandlerContext,
   ) {
-    const currentUser = context.values.get(kUser);
-    const currentUserId = currentUser.id;
+    const currentUserId = context.values.get(kUserId);
     const { relationId, visible } = req;
 
     try {
@@ -206,8 +205,7 @@ export class LeaderboardServiceImpl
     context: HandlerContext,
   ) {
     try {
-      const currentUser = context.values.get(kUser);
-      const userId = currentUser.id;
+      const userId = context.values.get(kUserId);
       const newPicture = generateFunnyPicture();
 
       await db
@@ -230,8 +228,7 @@ export class LeaderboardServiceImpl
     context: HandlerContext,
   ) {
     try {
-      const currentUser = context.values.get(kUser);
-      const userId = currentUser.id;
+      const userId = context.values.get(kUserId);
       const newName = generateFunnyFrenchName();
 
       await db

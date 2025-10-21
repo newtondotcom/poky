@@ -5,10 +5,7 @@ import type { Interceptor } from "@connectrpc/connect";
 import { Code, ConnectError } from "@connectrpc/connect";
 import { eq } from "drizzle-orm";
 import { createRemoteJWKSet, jwtVerify } from "jose";
-import { kUser } from "./context";
-import { UserSchema, type User } from "./proto/poky/v1/pokes_service_pb";
-import { timestampFromDate } from "@bufbuild/protobuf/wkt";
-import { create } from "@bufbuild/protobuf";
+import { kUserId } from "./context";
 import logger from "@/lib/logger";
 
 // -----------------------------------------------------------------------------
@@ -19,7 +16,7 @@ const USER_INFO_URI = "https://myr-project.eu/application/o/userinfo/";
 const AUDIENCE = "t9xFI53nHMTMRduUB1Kt2fUpV1IcFOfNXUZHjpmZ";
 
 // Simple in-memory cache (can be swapped with Redis)
-const tokenCache = new Map<string, { user: User; exp: number }>();
+const tokenCache = new Map<string, { userId: string; exp: number }>();
 
 const JWKS = createRemoteJWKSet(new URL(JWKS_URI));
 
@@ -39,36 +36,44 @@ async function verifyToken(token: string) {
 }
 
 // -----------------------------------------------------------------------------
-// USER FETCHING / CREATION
+// USER CREATION (NON-BLOCKING)
 // -----------------------------------------------------------------------------
-async function getOrCreateUser(userInfo: any) {
-  const userId = userInfo.sub;
 
-  const [existing] = await db
-    .select()
-    .from(user)
-    .where(eq(user.id, userId))
-    .limit(1);
+// Non-blocking user creation function
+async function createUserInBackgroundIfNeeded(userInfo: any, userId: string) {
+  try {
+    // First check if user already exists
+    const [existing] = await db
+      .select()
+      .from(user)
+      .where(eq(user.id, userId))
+      .limit(1);
 
-  if (existing) return existing;
+    if (existing) {
+      logger.info(`User already exists: ${userId}`);
+      return;
+    }
 
-  const anonymized = generateUserAnonymizedData(userId);
+    const anonymized = generateUserAnonymizedData(userId);
 
-  const newUser = {
-    id: userId,
-    name: userInfo.fullName || "",
-    username: userInfo.uid || userInfo.nickname || "",
-    image: userInfo.pictureURL || null,
-    email: userInfo.email,
-    emailVerified: userInfo.email_verified,
-    usernameAnonymized: anonymized.usernameAnonymized,
-    pictureAnonymized: anonymized.pictureAnonymized,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+    const newUser = {
+      id: userId,
+      name: userInfo.fullName || "",
+      username: userInfo.uid || userInfo.nickname || "",
+      image: userInfo.pictureURL || null,
+      email: userInfo.email,
+      emailVerified: userInfo.email_verified,
+      usernameAnonymized: anonymized.usernameAnonymized,
+      pictureAnonymized: anonymized.pictureAnonymized,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-  await db.insert(user).values(newUser);
-  return newUser;
+    await db.insert(user).values(newUser);
+    logger.info(`User created in background: ${userId}`);
+  } catch (error) {
+    logger.error(`Failed to create user in background: ${userId}`, error);
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -108,7 +113,7 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
   const now = Math.floor(Date.now() / 1000);
   if (cached && cached.exp > now) {
     // still valid
-    req.contextValues.set(kUser, cached.user);
+    req.contextValues.set(kUserId, cached.userId);
     return next(req);
   } else {
     logger.info("token is not cached")
@@ -123,26 +128,26 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
     // throw new ConnectError("Invalid or expired token", Code.Unauthenticated);
   }
 
-  // 🧾 Fetch user info if needed
+  // 🧾 Get user ID from payload and ensure user exists in background
+  const userId = payload?.sub;
+  if (!userId) {
+    throw new ConnectError("Invalid token: missing user ID", Code.Unauthenticated);
+  }
+
+  // Fetch user info and ensure user exists in database (non-blocking)
   const userInfo = await fetchUserInfo(token);
-  const dbUser = await getOrCreateUser(userInfo);
-  const userMessage = create(UserSchema, {
-    id: dbUser?.id,
-    name: dbUser?.name,
-    username: dbUser?.username,
-    image: dbUser?.image,
-    createdAt: timestampFromDate(dbUser?.createdAt || new Date()),
-  });
-  logger.info("user added to context")
+  createUserInBackgroundIfNeeded(userInfo, userId);
+  
+  logger.info("user ID added to context")
 
   // 🧠 Cache it until the JWT expires
   tokenCache.set(token, {
-    user: userMessage,
-    exp: payload.exp || now + 3600, // fallback: 1 hour
+    userId: userId,
+    exp: payload?.exp || now + 3600, // fallback: 1 hour
   });
 
-  // Add user to context
-  req.contextValues.set(kUser, userMessage);
+  // Add user ID to context
+  req.contextValues.set(kUserId, userId);
 
   return next(req);
 };

@@ -9,7 +9,7 @@ import {
   isUserConnected,
   removeUserConnected,
 } from "@/lib/user-connected";
-import { kUser } from "@/rpc/context";
+import { kUserId } from "@/rpc/context";
 import {
   SearchUserResultSchema,
   SearchUsersResponseSchema,
@@ -44,8 +44,7 @@ async function decideWhichActionToPerform(targetUserId: string) {
 
 export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
   async *getUserPokes(_: GetUserPokesRequest, context: HandlerContext) {
-    const currentUser = context.values.get(kUser);
-    const currentUserId = currentUser.id;
+    const currentUserId = context.values.get(kUserId);
     logger.info(`Starting subscription for user: ${currentUserId}`);
     addUserConnected(currentUserId);
 
@@ -100,8 +99,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
   }
 
   async pokeUser(req: PokeUserRequest, context: HandlerContext) {
-    const currentUser = context.values.get(kUser);
-    const currentUserId = currentUser.id;
+    const currentUserId = context.values.get(kUserId);
     const targetUserId = req.targetUserId;
 
     // Prevent self-poking
@@ -228,8 +226,8 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
   }
 
   async searchUsers(req: SearchUsersRequest, context: HandlerContext) {
-    const currentUser = context.values.get(kUser);
-    if (!currentUser) throw new Error("Unauthenticated");
+    const currentUserId = context.values.get(kUserId);
+    if (!currentUserId) throw new Error("Unauthenticated");
 
     const query = req.query.trim();
 
@@ -250,12 +248,10 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
               like(user.username, `%${query}%`),
               like(user.name, `%${query}%`),
             ),
-            not(eq(user.id, currentUser.id)),
+            not(eq(user.id, currentUserId)),
           ),
         )
         .limit(20);
-
-      const currentUserId = currentUser.id;
 
       // ⚡ Fetch poke relations of the current user
       const pokeRelations = await db
