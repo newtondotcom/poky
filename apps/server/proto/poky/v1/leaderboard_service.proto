@@ -8,9 +8,11 @@ import "google/protobuf/timestamp.proto";
 // ENTITIES
 // ======================
 
-message UserAnonymizedData {
+message UserData {
   string username_anonymized = 1;
   string picture_anonymized = 2;
+  string username = 3;
+  string picture = 4;
 }
 
 message LeaderboardEntry {
@@ -21,8 +23,8 @@ message LeaderboardEntry {
   int32 count = 5;
   google.protobuf.Timestamp last_poke_date = 6;
   bool visible_leaderboard = 7;
-  UserAnonymizedData user_a = 8;
-  UserAnonymizedData user_b = 9;
+  UserData user_a = 8;
+  UserData user_b = 9;
 }
 
 // ======================

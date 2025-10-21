@@ -66,6 +66,12 @@ export function Leaderboard() {
         const rankIcon = getRankIcon(rank);
         const rankColor = getRankColor(rank);
 
+        // Determine if this relation should show anonymized data
+        // For now, we'll use visibleLeaderboard as the indicator:
+        // - true = show real data
+        // - false = show anonymized data
+        const showAnonymized = !entry.visibleLeaderboard;
+
         return (
           <div
             key={entry.relationId}
@@ -88,7 +94,7 @@ export function Leaderboard() {
                 <div className="flex items-center gap-1 text-xs text-white/60 mt-1">
                   <Calendar className="h-3 w-3" />
                   <span>
-                    {formatDistanceToNow(timestampDate(entry.lastPokeDate), {
+                    {entry.lastPokeDate && formatDistanceToNow(timestampDate(entry.lastPokeDate), {
                       addSuffix: true,
                     })}
                   </span>
@@ -103,16 +109,22 @@ export function Leaderboard() {
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
                     <img
                       src={
-                        entry.visibleLeaderboard
-                          ? entry.userA?.image || undefined
-                          : entry.userA?.pictureAnonymized ?? undefined
+                        showAnonymized
+                          ? entry.userA?.pictureAnonymized || undefined
+                          : entry.userA?.picture || undefined
                       }
-                      alt={entry.visibleLeaderboard ? entry.userA?.name : entry.userA?.usernameAnonymized || undefined}
+                      alt={
+                        showAnonymized
+                          ? entry.userA?.usernameAnonymized || undefined
+                          : entry.userA?.username || undefined
+                      }
                       className="w-full h-full object-cover"
                     />
                 </div>
                 <span className="text-sm font-medium text-white/90 truncate">
-                  {entry.visibleLeaderboard ? entry.userA?.name : entry.userA?.usernameAnonymized}
+                  {showAnonymized
+                    ? entry.userA?.usernameAnonymized
+                    : entry.userA?.username}
                 </span>
               </div>
 
@@ -123,16 +135,22 @@ export function Leaderboard() {
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
                     <img
                       src={
-                        entry.visibleLeaderboard
-                          ? entry.userB?.image || undefined
-                          : entry.userB?.pictureAnonymized ?? undefined
+                        showAnonymized
+                          ? entry.userB?.pictureAnonymized || undefined
+                          : entry.userB?.picture || undefined
                       }
-                      alt={entry.visibleLeaderboard ? entry.userB?.name : entry.userB?.usernameAnonymized || undefined}
+                      alt={
+                        showAnonymized
+                          ? entry.userB?.usernameAnonymized || undefined
+                          : entry.userB?.username || undefined
+                      }
                       className="w-full h-full object-cover"
                     />
                 </div>
                 <span className="text-sm font-medium text-white/90 truncate">
-                  {entry.visibleLeaderboard ? entry.userB?.name : entry.userB?.usernameAnonymized}
+                  {showAnonymized
+                    ? entry.userB?.usernameAnonymized
+                    : entry.userB?.username}
                 </span>
               </div>
             </div>

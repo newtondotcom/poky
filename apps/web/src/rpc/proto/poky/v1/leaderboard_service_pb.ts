@@ -12,12 +12,12 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/poky/v1/leaderboard_service.proto.
  */
 export const file_proto_poky_v1_leaderboard_service: GenFile = /*@__PURE__*/
-  fileDesc("Cidwcm90by9wb2t5L3YxL2xlYWRlcmJvYXJkX3NlcnZpY2UucHJvdG8SDXByb3RvLnBva3kudjEiTQoSVXNlckFub255bWl6ZWREYXRhEhsKE3VzZXJuYW1lX2Fub255bWl6ZWQYASABKAkSGgoScGljdHVyZV9hbm9ueW1pemVkGAIgASgJIqkCChBMZWFkZXJib2FyZEVudHJ5EhMKC3JlbGF0aW9uX2lkGAEgASgJEhEKCXVzZXJfYV9pZBgCIAEoCRIRCgl1c2VyX2JfaWQYAyABKAkSFAoMbGFzdF9wb2tlX2J5GAQgASgJEg0KBWNvdW50GAUgASgFEjIKDmxhc3RfcG9rZV9kYXRlGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIbChN2aXNpYmxlX2xlYWRlcmJvYXJkGAcgASgIEjEKBnVzZXJfYRgIIAEoCzIhLnByb3RvLnBva3kudjEuVXNlckFub255bWl6ZWREYXRhEjEKBnVzZXJfYhgJIAEoCzIhLnByb3RvLnBva3kudjEuVXNlckFub255bWl6ZWREYXRhIhcKFUdldExlYWRlcmJvYXJkUmVxdWVzdCJKChZHZXRMZWFkZXJib2FyZFJlc3BvbnNlEjAKB2VudHJpZXMYASADKAsyHy5wcm90by5wb2t5LnYxLkxlYWRlcmJvYXJkRW50cnkiQwobVG9nZ2xlUG9rZVZpc2liaWxpdHlSZXF1ZXN0EhMKC3JlbGF0aW9uX2lkGAEgASgJEg8KB3Zpc2libGUYAiABKAgiQAocVG9nZ2xlUG9rZVZpc2liaWxpdHlSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEg8KB21lc3NhZ2UYAiABKAkiHgocR2V0VXNlckFub255bWl6ZWREYXRhUmVxdWVzdCJYCh1HZXRVc2VyQW5vbnltaXplZERhdGFSZXNwb25zZRIbChN1c2VybmFtZV9hbm9ueW1pemVkGAEgASgJEhoKEnBpY3R1cmVfYW5vbnltaXplZBgCIAEoCSIhCh9SZWZyZXNoQW5vbnltaXplZFBpY3R1cmVSZXF1ZXN0Ij4KIFJlZnJlc2hBbm9ueW1pemVkUGljdHVyZVJlc3BvbnNlEhoKEnBpY3R1cmVfYW5vbnltaXplZBgBIAEoCSIeChxSZWZyZXNoQW5vbnltaXplZE5hbWVSZXF1ZXN0IjwKHVJlZnJlc2hBbm9ueW1pemVkTmFtZVJlc3BvbnNlEhsKE3VzZXJuYW1lX2Fub255bWl6ZWQYASABKAkyyQQKEkxlYWRlcmJvYXJkU2VydmljZRJdCg5HZXRMZWFkZXJib2FyZBIkLnByb3RvLnBva3kudjEuR2V0TGVhZGVyYm9hcmRSZXF1ZXN0GiUucHJvdG8ucG9reS52MS5HZXRMZWFkZXJib2FyZFJlc3BvbnNlEm8KFFRvZ2dsZVBva2VWaXNpYmlsaXR5EioucHJvdG8ucG9reS52MS5Ub2dnbGVQb2tlVmlzaWJpbGl0eVJlcXVlc3QaKy5wcm90by5wb2t5LnYxLlRvZ2dsZVBva2VWaXNpYmlsaXR5UmVzcG9uc2UScgoVR2V0VXNlckFub255bWl6ZWREYXRhEisucHJvdG8ucG9reS52MS5HZXRVc2VyQW5vbnltaXplZERhdGFSZXF1ZXN0GiwucHJvdG8ucG9reS52MS5HZXRVc2VyQW5vbnltaXplZERhdGFSZXNwb25zZRJ7ChhSZWZyZXNoQW5vbnltaXplZFBpY3R1cmUSLi5wcm90by5wb2t5LnYxLlJlZnJlc2hBbm9ueW1pemVkUGljdHVyZVJlcXVlc3QaLy5wcm90by5wb2t5LnYxLlJlZnJlc2hBbm9ueW1pemVkUGljdHVyZVJlc3BvbnNlEnIKFVJlZnJlc2hBbm9ueW1pemVkTmFtZRIrLnByb3RvLnBva3kudjEuUmVmcmVzaEFub255bWl6ZWROYW1lUmVxdWVzdBosLnByb3RvLnBva3kudjEuUmVmcmVzaEFub255bWl6ZWROYW1lUmVzcG9uc2ViBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("Cidwcm90by9wb2t5L3YxL2xlYWRlcmJvYXJkX3NlcnZpY2UucHJvdG8SDXByb3RvLnBva3kudjEiZgoIVXNlckRhdGESGwoTdXNlcm5hbWVfYW5vbnltaXplZBgBIAEoCRIaChJwaWN0dXJlX2Fub255bWl6ZWQYAiABKAkSEAoIdXNlcm5hbWUYAyABKAkSDwoHcGljdHVyZRgEIAEoCSKVAgoQTGVhZGVyYm9hcmRFbnRyeRITCgtyZWxhdGlvbl9pZBgBIAEoCRIRCgl1c2VyX2FfaWQYAiABKAkSEQoJdXNlcl9iX2lkGAMgASgJEhQKDGxhc3RfcG9rZV9ieRgEIAEoCRINCgVjb3VudBgFIAEoBRIyCg5sYXN0X3Bva2VfZGF0ZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGwoTdmlzaWJsZV9sZWFkZXJib2FyZBgHIAEoCBInCgZ1c2VyX2EYCCABKAsyFy5wcm90by5wb2t5LnYxLlVzZXJEYXRhEicKBnVzZXJfYhgJIAEoCzIXLnByb3RvLnBva3kudjEuVXNlckRhdGEiFwoVR2V0TGVhZGVyYm9hcmRSZXF1ZXN0IkoKFkdldExlYWRlcmJvYXJkUmVzcG9uc2USMAoHZW50cmllcxgBIAMoCzIfLnByb3RvLnBva3kudjEuTGVhZGVyYm9hcmRFbnRyeSJDChtUb2dnbGVQb2tlVmlzaWJpbGl0eVJlcXVlc3QSEwoLcmVsYXRpb25faWQYASABKAkSDwoHdmlzaWJsZRgCIAEoCCJAChxUb2dnbGVQb2tlVmlzaWJpbGl0eVJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDwoHbWVzc2FnZRgCIAEoCSIeChxHZXRVc2VyQW5vbnltaXplZERhdGFSZXF1ZXN0IlgKHUdldFVzZXJBbm9ueW1pemVkRGF0YVJlc3BvbnNlEhsKE3VzZXJuYW1lX2Fub255bWl6ZWQYASABKAkSGgoScGljdHVyZV9hbm9ueW1pemVkGAIgASgJIiEKH1JlZnJlc2hBbm9ueW1pemVkUGljdHVyZVJlcXVlc3QiPgogUmVmcmVzaEFub255bWl6ZWRQaWN0dXJlUmVzcG9uc2USGgoScGljdHVyZV9hbm9ueW1pemVkGAEgASgJIh4KHFJlZnJlc2hBbm9ueW1pemVkTmFtZVJlcXVlc3QiPAodUmVmcmVzaEFub255bWl6ZWROYW1lUmVzcG9uc2USGwoTdXNlcm5hbWVfYW5vbnltaXplZBgBIAEoCTLJBAoSTGVhZGVyYm9hcmRTZXJ2aWNlEl0KDkdldExlYWRlcmJvYXJkEiQucHJvdG8ucG9reS52MS5HZXRMZWFkZXJib2FyZFJlcXVlc3QaJS5wcm90by5wb2t5LnYxLkdldExlYWRlcmJvYXJkUmVzcG9uc2USbwoUVG9nZ2xlUG9rZVZpc2liaWxpdHkSKi5wcm90by5wb2t5LnYxLlRvZ2dsZVBva2VWaXNpYmlsaXR5UmVxdWVzdBorLnByb3RvLnBva3kudjEuVG9nZ2xlUG9rZVZpc2liaWxpdHlSZXNwb25zZRJyChVHZXRVc2VyQW5vbnltaXplZERhdGESKy5wcm90by5wb2t5LnYxLkdldFVzZXJBbm9ueW1pemVkRGF0YVJlcXVlc3QaLC5wcm90by5wb2t5LnYxLkdldFVzZXJBbm9ueW1pemVkRGF0YVJlc3BvbnNlEnsKGFJlZnJlc2hBbm9ueW1pemVkUGljdHVyZRIuLnByb3RvLnBva3kudjEuUmVmcmVzaEFub255bWl6ZWRQaWN0dXJlUmVxdWVzdBovLnByb3RvLnBva3kudjEuUmVmcmVzaEFub255bWl6ZWRQaWN0dXJlUmVzcG9uc2UScgoVUmVmcmVzaEFub255bWl6ZWROYW1lEisucHJvdG8ucG9reS52MS5SZWZyZXNoQW5vbnltaXplZE5hbWVSZXF1ZXN0GiwucHJvdG8ucG9reS52MS5SZWZyZXNoQW5vbnltaXplZE5hbWVSZXNwb25zZWIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
- * @generated from message proto.poky.v1.UserAnonymizedData
+ * @generated from message proto.poky.v1.UserData
  */
-export type UserAnonymizedData = Message<"proto.poky.v1.UserAnonymizedData"> & {
+export type UserData = Message<"proto.poky.v1.UserData"> & {
   /**
    * @generated from field: string username_anonymized = 1;
    */
@@ -27,13 +27,23 @@ export type UserAnonymizedData = Message<"proto.poky.v1.UserAnonymizedData"> & {
    * @generated from field: string picture_anonymized = 2;
    */
   pictureAnonymized: string;
+
+  /**
+   * @generated from field: string username = 3;
+   */
+  username: string;
+
+  /**
+   * @generated from field: string picture = 4;
+   */
+  picture: string;
 };
 
 /**
- * Describes the message proto.poky.v1.UserAnonymizedData.
- * Use `create(UserAnonymizedDataSchema)` to create a new message.
+ * Describes the message proto.poky.v1.UserData.
+ * Use `create(UserDataSchema)` to create a new message.
  */
-export const UserAnonymizedDataSchema: GenMessage<UserAnonymizedData> = /*@__PURE__*/
+export const UserDataSchema: GenMessage<UserData> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 0);
 
 /**
@@ -76,14 +86,14 @@ export type LeaderboardEntry = Message<"proto.poky.v1.LeaderboardEntry"> & {
   visibleLeaderboard: boolean;
 
   /**
-   * @generated from field: proto.poky.v1.UserAnonymizedData user_a = 8;
+   * @generated from field: proto.poky.v1.UserData user_a = 8;
    */
-  userA?: UserAnonymizedData;
+  userA?: UserData;
 
   /**
-   * @generated from field: proto.poky.v1.UserAnonymizedData user_b = 9;
+   * @generated from field: proto.poky.v1.UserData user_b = 9;
    */
-  userB?: UserAnonymizedData;
+  userB?: UserData;
 };
 
 /**

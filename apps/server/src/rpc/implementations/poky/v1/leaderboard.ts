@@ -24,8 +24,6 @@ export class LeaderboardServiceImpl
   implements ServiceImpl<typeof LeaderboardService>
 {
   async getLeaderboard(req: GetLeaderboardRequest, context: HandlerContext) {
-    const currentUserId = context.values.get(kUserId);
-
     try {
       // Get top 50 poke relations ordered by count (highest first)
       const topPokeRelations = await db
@@ -62,7 +60,7 @@ export class LeaderboardServiceImpl
           id: user.id,
           name: user.name,
           username: user.username,
-          image: user.image,
+          image: user.picture,
           usernameAnonymized: user.usernameAnonymized,
           pictureAnonymized: user.pictureAnonymized,
         })
@@ -84,7 +82,7 @@ export class LeaderboardServiceImpl
         }
 
         return {
-          id: relation.id,
+          relationId: relation.id,
           userAId: relation.userAId,
           userBId: relation.userBId,
           count: relation.count,
@@ -92,23 +90,20 @@ export class LeaderboardServiceImpl
           lastPokeBy: relation.lastPokeBy,
           visibleLeaderboard: relation.visibleLeaderboard,
           userA: {
-            id: userA.id,
-            name: userA.name,
+            usernameAnonymized: userA.usernameAnonymized,
+            pictureAnonymized: userA.pictureAnonymized,
             username: userA.username,
-            image: userA.image,
-            usernameAnonymized: userA.usernameAnonymized ?? undefined,
-            pictureAnonymized: userA.pictureAnonymized ?? undefined,
+            picture: userA.image,
           },
           userB: {
-            id: userB.id,
-            name: userB.name,
+            usernameAnonymized: userB.usernameAnonymized,
+            pictureAnonymized: userB.pictureAnonymized,
             username: userB.username,
-            image: userB.image,
-            usernameAnonymized: userB.usernameAnonymized ?? undefined,
-            pictureAnonymized: userB.pictureAnonymized ?? undefined,
+            picture: userB.image,
           },
         };
       });
+      logger.error(leaderboardEntries[0]?.userA.picture)
       return {
         entries: leaderboardEntries,
         count: leaderboardEntries.length,
