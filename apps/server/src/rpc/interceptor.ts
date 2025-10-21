@@ -49,23 +49,50 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
       .where(eq(user.id, userId))
       .limit(1);
 
+    // Fetch user info from OAuth provider
+    const userInfo = await fetchUserInfo(oauthToken) as {
+      preferred_username : string,
+      picture : string,
+      email : string,
+      email_verified : boolean,
+      name? : string
+    };
+    logger.info(`User info: ${JSON.stringify(userInfo)}`);
+
     if (existing) {
-      logger.info(`User already exists: ${userId}`);
+      // Check if values have changed and update if necessary
+      const hasChanged = 
+        existing.username !== (userInfo.preferred_username || "") ||
+        existing.picture !== (userInfo.picture || null) ||
+        existing.email !== userInfo.email ||
+        existing.emailVerified !== userInfo.email_verified;
+
+      if (hasChanged) {
+        logger.info(`User data changed for ${userId}, updating...`);
+        await db
+          .update(user)
+          .set({
+            username: userInfo.preferred_username || "",
+            picture: userInfo.picture || null,
+            email: userInfo.email,
+            emailVerified: userInfo.email_verified,
+            updatedAt: new Date(),
+          })
+          .where(eq(user.id, userId));
+        logger.info(`User data updated for: ${userId}`);
+      } else {
+        logger.info(`User data unchanged for: ${userId}`);
+      }
       return;
     }
-    
-    // check values hasnt changed
 
-    // Fetch user info from OAuth provider
-    const userInfo = await fetchUserInfo(oauthToken);
-    logger.info(`User info: ${JSON.stringify(userInfo)}`);
 
     const anonymized = generateUserAnonymizedData(userId);
 
     const newUser = {
       id: userId,
       name: userInfo.name || "",
-      username: userInfo.preferred_username || userInfo.nickname || "",
+      username: userInfo.preferred_username || "",
       picture: userInfo.picture || null,
       email: userInfo.email,
       emailVerified: userInfo.email_verified,
@@ -78,7 +105,7 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
     await db.insert(user).values(newUser);
     logger.info(`User created in background: ${userId}`);
   } catch (error) {
-    logger.error(`Failed to create user in background: ${userId}`, error);
+    logger.error(`Failed to create/update user in background: ${userId}`, error);
   }
 }
 
