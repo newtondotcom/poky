@@ -24,7 +24,7 @@ export async function notifyTargetUser(targetUserId: string) {
       icon: "/favicon-32x32.png",
       data: { type: "poke" },
     });
-    logger.info("Web push notification sent", { targetUserId });
+    logger.debug("Web push notification sent", { targetUserId });
   }
-  logger.info("User is offline", { targetUserId });
+  logger.debug("User is offline", { targetUserId });
 }

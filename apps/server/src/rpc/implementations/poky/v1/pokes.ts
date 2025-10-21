@@ -29,13 +29,13 @@ const pub = redisService.getPublisher();
 async function decideWhichActionToPerform(targetUserId: string) {
   // if users logged as online in the map
   const targetUserConnected = await isUserConnected(targetUserId);
-  logger.info(`Target user ${targetUserId} connected: ${targetUserConnected}`);
+  logger.debug(`Target user ${targetUserId} connected: ${targetUserConnected}`);
 
   if (targetUserConnected) {
-    logger.info(`Publishing to target user channel: ${targetUserId}`);
+    logger.debug(`Publishing to target user channel: ${targetUserId}`);
     pub.publish(targetUserId, targetUserId);
   } else {
-    logger.info(
+    logger.debug(
       `Target user ${targetUserId} is offline, sending web push notification`,
     );
     notifyTargetUser(targetUserId);
@@ -45,27 +45,27 @@ async function decideWhichActionToPerform(targetUserId: string) {
 export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
   async *getUserPokes(_: GetUserPokesRequest, context: HandlerContext) {
     const currentUserId = context.values.get(kUserId);
-    logger.info(`Starting subscription for user: ${currentUserId}`);
+    logger.debug(`Starting subscription for user: ${currentUserId}`);
     addUserConnected(currentUserId);
 
     const firstDatas = await getUserPokesData(currentUserId);
-    logger.info(`First data sent : ${firstDatas}`);
+    logger.debug(`First data sent : ${firstDatas}`);
     yield firstDatas;
-    logger.info(`First data sent : ${firstDatas}`);
+    logger.debug(`First data sent : ${firstDatas}`);
 
     try {
       // Subscribe to the channel
       await sub.subscribe(currentUserId);
-      logger.info(`Subscribed to Redis channel: ${currentUserId}`);
+      logger.debug(`Subscribed to Redis channel: ${currentUserId}`);
 
       // Create async iterator to receive messages
       while (true) {
-        logger.info(`Waiting for message on channel: ${currentUserId}`);
+        logger.debug(`Waiting for message on channel: ${currentUserId}`);
         await new Promise<string>((resolve, reject) => {
           // Create a one-time message handler
           const messageHandler = (ch: string, msg: string) => {
             if (ch === currentUserId) {
-              logger.info(`Received message on channel ${ch}: ${msg}`);
+              logger.debug(`Received message on channel ${ch}: ${msg}`);
               // Remove the listener to prevent memory leaks
               sub.off("message", messageHandler);
               clearTimeout(timeout);
@@ -78,13 +78,13 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
 
           // Set a timeout to prevent hanging
           const timeout = setTimeout(() => {
-            logger.info(`Subscription timeout for user: ${currentUserId}`);
+            logger.debug(`Subscription timeout for user: ${currentUserId}`);
             sub.off("message", messageHandler);
             reject(new Error("Subscription timeout"));
           }, 300000000); // 30 second timeout
         });
 
-        logger.info(`Processing update for user: ${currentUserId}`);
+        logger.debug(`Processing update for user: ${currentUserId}`);
         const nextDatas = await getUserPokesData(currentUserId);
         yield nextDatas;
       }
@@ -92,7 +92,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
       logger.error("Subscription error:", { error });
       throw error;
     } finally {
-      logger.info("Subscription ended for user:", currentUserId);
+      logger.debug("Subscription ended for user:", currentUserId);
       await sub.unsubscribe(currentUserId);
       removeUserConnected(currentUserId);
     }
@@ -166,7 +166,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
         decideWhichActionToPerform(targetUserId);
 
         // publish so that user ui is refreshed
-        logger.info(`Publishing to Redis channel: ${currentUserId}`);
+        logger.debug(`Publishing to Redis channel: ${currentUserId}`);
         pub.publish(currentUserId, currentUserId);
 
         return {
@@ -199,7 +199,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
         decideWhichActionToPerform(targetUserId);
 
         // publish so that user ui is refreshed
-        logger.info(`Publishing to Redis channel: ${currentUserId}`);
+        logger.debug(`Publishing to Redis channel: ${currentUserId}`);
         pub.publish(currentUserId, currentUserId);
 
         return {

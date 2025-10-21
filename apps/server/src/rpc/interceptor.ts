@@ -102,7 +102,7 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
     };
 
     await db.insert(user).values(newUser);
-    logger.info(`User created in background: ${userId}`);
+    logger.debug(`User created in background: ${userId}`);
   } catch (error) {
     logger.error(`Failed to create/update user in background: ${userId}`, error);
   }
@@ -167,7 +167,7 @@ export const authInterceptor: Interceptor = (next) => async (req) => {
   // Ensure user exists in database (non-blocking)
   createUserInBackgroundIfNeeded(token,userId);
   
-  logger.info("user ID added to context")
+  logger.debug("user ID added to context")
 
   // 🧠 Cache it until the JWT expires
   tokenCache.set(token, {

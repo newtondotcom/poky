@@ -25,4 +25,4 @@ server.get("/", (_, reply) => {
   reply.send("Hello World!");
 });
 await server.listen({ host: "localhost", port: 8080 });
-logger.info("server is listening at", server.addresses());
+logger.debug("server is listening at", server.addresses());

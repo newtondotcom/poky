@@ -15,7 +15,7 @@ export class RedisService {
       });
       
       this.publisher.on('connect', () => {
-        logger.info('Redis publisher connected');
+        logger.debug('Redis publisher connected');
       });
     }
     return this.publisher;
@@ -31,7 +31,7 @@ export class RedisService {
       });
       
       this.subscriber.on('connect', () => {
-        logger.info('Redis subscriber connected');
+        logger.debug('Redis subscriber connected');
       });
     }
     return this.subscriber;

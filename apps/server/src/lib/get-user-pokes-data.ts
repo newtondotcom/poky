@@ -89,7 +89,7 @@ export async function getUserPokesData(userId: string) {
       new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime(),
   );
 
-  logger.info(pokeRelationsWithUsers.length)
+  logger.debug(pokeRelationsWithUsers.length)
   const pokeRelationMessage = pokeRelationsWithUsers.map((relation: any) => ({
     ...relation,
     lastPokeDate: timestampFromDate(new Date(relation.lastPokeDate)),
