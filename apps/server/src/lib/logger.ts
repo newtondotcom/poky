@@ -15,7 +15,8 @@ const logger = winston.createLogger({
         winston.format.colorize(),
         winston.format.simple()
       ),
-      level: "debug"
+      level: process.env.NODE_ENV === "env"
+      ? "debug" : "error"
     }),
     ...(process.env.NODE_ENV === "env"
       ? [new winston.transports.File({ filename: "logs/error.log", level: "error" })]
