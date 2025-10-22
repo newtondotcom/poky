@@ -1,0 +1,10 @@
+version: v2
+plugins:
+  - local: protoc-gen-es
+    out: src/rpc
+    include_imports: true
+    opt: target=ts
+  - local: protoc-gen-es
+    out: ../web/src/rpc
+    include_imports: true
+    opt: target=ts

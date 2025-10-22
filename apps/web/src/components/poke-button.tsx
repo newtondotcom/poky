@@ -30,8 +30,9 @@ export function PokeButton({
 
   const handlePoke = async () => {
     try {
-      pokeUser(targetUserId);
-      // Call the success callback if provided
+      pokeUser({
+        targetUserId
+      });
     } catch (err) {
       toast.error({ text: `Failed to poke ${targetUserName}` });
     }

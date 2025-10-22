@@ -9,17 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VisibilityRouteImport } from './routes/visibility'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 
-const VisibilityRoute = VisibilityRouteImport.update({
-  id: '/visibility',
-  path: '/visibility',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -46,14 +40,12 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/leaderboard': typeof LeaderboardRoute
   '/search': typeof SearchRoute
-  '/visibility': typeof VisibilityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/leaderboard': typeof LeaderboardRoute
   '/search': typeof SearchRoute
-  '/visibility': typeof VisibilityRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,14 +53,13 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/leaderboard': typeof LeaderboardRoute
   '/search': typeof SearchRoute
-  '/visibility': typeof VisibilityRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/account' | '/leaderboard' | '/search' | '/visibility'
+  fullPaths: '/' | '/account' | '/leaderboard' | '/search'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account' | '/leaderboard' | '/search' | '/visibility'
-  id: '__root__' | '/' | '/account' | '/leaderboard' | '/search' | '/visibility'
+  to: '/' | '/account' | '/leaderboard' | '/search'
+  id: '__root__' | '/' | '/account' | '/leaderboard' | '/search'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,18 +67,10 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   LeaderboardRoute: typeof LeaderboardRoute
   SearchRoute: typeof SearchRoute
-  VisibilityRoute: typeof VisibilityRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/visibility': {
-      id: '/visibility'
-      path: '/visibility'
-      fullPath: '/visibility'
-      preLoaderRoute: typeof VisibilityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -124,7 +107,6 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   LeaderboardRoute: LeaderboardRoute,
   SearchRoute: SearchRoute,
-  VisibilityRoute: VisibilityRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -6,7 +6,25 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { user } from "@/db/schema/auth";
+
+export const user = pgTable("user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  username: text("username").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull(),
+  picture: text("image").notNull(),
+  createdAt: timestamp("created_at", {
+    withTimezone: false,
+    mode: "date",
+  }).notNull(),
+  updatedAt: timestamp("updated_at", {
+    withTimezone: false,
+    mode: "date",
+  }).notNull(),
+  usernameAnonymized: text("username_anon").notNull(),
+  pictureAnonymized: text("picture_anon").notNull(),
+});
 
 // Devices table
 export const devices = pgTable("devices", {
@@ -36,7 +54,7 @@ export const webpush = pgTable("webpush", {
   expirationTime: timestamp("expiration_time", {
     withTimezone: false,
     mode: "date",
-  }), // nullable
+  }),
   options: text("options").notNull(), // JSON with keys
   createdAt: timestamp("created_at", { withTimezone: false, mode: "date" })
     .defaultNow()

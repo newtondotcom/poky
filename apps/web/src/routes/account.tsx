@@ -1,16 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, Bell, LogOut, Moon, Sun, Wifi, RotateCcw, Loader2 } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
-import { authClient } from "@/lib/auth-client";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery as useRQQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-import { trpc, trpcClient } from "@/utils/trpc";
-import { useTheme } from "@/components/theme-provider";
-import { useEffect, useState } from "react";
 import Loader from "@/components/loader";
+import { useTheme } from "@/components/theme-provider";
+import { getBrowserName, getDeviceId, getOSName } from "@/lib/device_id";
+import { LeaderboardService } from "@/rpc/proto/poky/v1/leaderboard_service_pb";
+import { WebPushService } from "@/rpc/proto/poky/v1/webpush_service_pb";
+import { useMutation, useQuery } from "@connectrpc/connect-query";
 import { toast } from "@pheralb/toast";
-import { getDeviceId, getBrowserName, getOSName } from "@/lib/device_id";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, Bell, Loader2, LogOut, Moon, RotateCcw, Sun, TestTube } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext, type IAuthContext } from "react-oauth2-code-pkce";
 
 export const Route = createFileRoute("/account")({
   component: AccountPage,
@@ -29,40 +27,38 @@ function urlBase64ToUint8Array(base64String: string) {
 
 function AccountPage() {
   const navigate = useNavigate();
+  const { tokenData, token,logOut}: IAuthContext = useContext(AuthContext);
+  if (!token) {
+      navigate({ to: "/" });
+      return null;
+  }
+
   const { setTheme, theme } = useTheme();
-  const healthCheck = useRQQuery(trpc.healthCheck.queryOptions());
-  const { data: session, isPending } = authClient.useSession();
   const [pushEnabled, setPushEnabled] = useState(false);
   const [checkingPush, setCheckingPush] = useState(true);
   const [subscriptionValid, setSubscriptionValid] = useState(false);
 
   // Fetch anonymized data
-  const anonymizedDataQuery = useRQQuery({
-    ...trpc.getUserAnonymizedData.queryOptions(),
-    enabled: !!session?.user,
-  });
+  const anonymizedDataQuery = useQuery(LeaderboardService.method.getUserAnonymizedData);
 
   // Add mutation for registering web push
-  const registerWebPushMutation = useMutation({
-    mutationFn: (input: {
-      id: string;
-      endpoint: string;
-      expirationTime: number | null;
-      options: string;
-      deviceId: string;
-      deviceName?: string;
-      userAgent?: string;
-    }) => trpcClient.registerWebPush.mutate(input),
-  });
+  const registerWebPushMutation = useMutation(WebPushService.method.registerWebPush);
+  // Add mutation for deleting web push
+  const deleteWebPushMutation = useMutation(WebPushService.method.deleteWebPush);
 
-  const deleteWebPushMutation = useMutation({
-    mutationFn: (input: { id: string }) =>
-      trpcClient.deleteWebPush.mutate(input),
+  // Add mutation to test web push
+  const testWebPushMutation = useMutation(WebPushService.method.testWebPush,{
+    onSuccess: () => {
+      toast.success({ text: "Test notification sent!" });
+    },
+    onError: (err) => {
+    toast.error({ text: "Failed to send test notification." });
+    console.error(err);
+    }
   });
 
   // Add mutations for refreshing anonymized data
-  const refreshNameMutation = useMutation({
-    mutationFn: () => trpcClient.refreshAnonymizedName.mutate(),
+  const refreshNameMutation = useMutation(LeaderboardService.method.refreshAnonymizedName, {
     onSuccess: () => {
       anonymizedDataQuery.refetch();
       toast.success({ text: "Anonymous name refreshed!" });
@@ -72,8 +68,7 @@ function AccountPage() {
     },
   });
 
-  const refreshPictureMutation = useMutation({
-    mutationFn: () => trpcClient.refreshAnonymizedPicture.mutate(),
+  const refreshPictureMutation = useMutation(LeaderboardService.method.refreshAnonymizedPicture, {
     onSuccess: () => {
       anonymizedDataQuery.refetch();
       toast.success({ text: "Anonymous picture refreshed!" });
@@ -96,10 +91,10 @@ function AccountPage() {
           if (sub) {
             endpoint = sub.endpoint;
             // Validate with backend
-            const backendSub = await trpcClient.getWebPush.query({
-              id: endpoint,
-            });
-            valid = !!backendSub;
+            const getWebPushQuery = useQuery(WebPushService.method.getWebPush, {
+                id: endpoint, // will be set dynamically
+              });
+            valid = !!getWebPushQuery;
           }
         } catch (e) {
           // ignore
@@ -128,21 +123,6 @@ function AccountPage() {
     setTheme(newTheme);
     console.log(`Theme changed to ${newTheme}`);
   };
-
-  if (isPending) {
-    return (
-      <div className="min-h-screen w-full bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20">
-        <div className="flex items-center justify-center min-h-screen">
-          <Skeleton className="h-32 w-80 rounded-lg" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!session) {
-    navigate({ to: "/" });
-    return null;
-  }
 
   async function manageWebPush() {
     if (pushEnabled) {
@@ -203,7 +183,7 @@ function AccountPage() {
         await registerWebPushMutation.mutateAsync({
           id: subscription.endpoint,
           endpoint: subscription.endpoint,
-          expirationTime: subscription.expirationTime ?? null,
+          expirationTime: BigInt(subscription.expirationTime ?? 0),
           options: JSON.stringify({
             keys: subObj.keys,
           }),
@@ -232,15 +212,8 @@ function AccountPage() {
       toast.error({ text: "Please enable notifications first." });
       return;
     }
-    
-    try {
-      // Send a test notification to the current user
-      await trpcClient.testWebPush.mutate();
-      toast.success({ text: "Test notification sent!" });
-    } catch (err) {
-      toast.error({ text: "Failed to send test notification." });
-      console.error(err);
-    }
+    // Send a test notification to the current user
+    testWebPushMutation.mutate({ deviceId: getDeviceId() });
   }
 
   return (
@@ -266,23 +239,22 @@ function AccountPage() {
             <div className="flex flex-col items-center text-center">
               {/* User Avatar */}
               <div className="w-24 h-24 rounded-full mb-4 ring-2 ring-white/30 overflow-hidden bg-white/20 flex items-center justify-center">
-                {session.user.image ? (
+                {tokenData.picture ? (
                   <img
-                    src={session.user.image}
-                    alt={session.user.name || "Profile picture"}
+                    src={tokenData.picture}
+                    alt={tokenData.nickname || "Profile picture"}
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   <span className="text-2xl font-semibold text-white/70">
-                    {session.user.name ? getInitials(session.user.name) : "U"}
+                    {tokenData.nickname ? getInitials(tokenData.nickname) : "U"}
                   </span>
                 )}
               </div>
 
               {/* User Info */}
-              <h2 className="text-md font-semibold mb-1">{session.user.name || "User"}</h2>
-              <p className="text-sm opacity-70 mb-6">{session.user.email || "No email provided"}</p>
-              
+              <h2 className="text-md font-semibold mb-1">{tokenData.nickname || "User"}</h2>
+
               {/* Anonymized Data Section */}
               <div className="w-full mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
                 <h3 className="text-sm font-medium text-white/80 mb-3">Anonymous Identity</h3>
@@ -294,9 +266,9 @@ function AccountPage() {
                         {anonymizedDataQuery.isLoading ? (
                           <Loader />
                         ) : anonymizedDataQuery.data?.pictureAnonymized ? (
-                          <img 
-                            src={anonymizedDataQuery.data.pictureAnonymized} 
-                            alt="Anonymous avatar" 
+                          <img
+                            src={anonymizedDataQuery.data.pictureAnonymized}
+                            alt="Anonymous avatar"
                             className="w-full h-full object-cover"
                           />
                         ) : (
@@ -304,7 +276,7 @@ function AccountPage() {
                         )}
                       </div>
                       <button
-                        onClick={() => refreshPictureMutation.mutate()}
+                        onClick={() => refreshPictureMutation.mutate({})}
                         disabled={refreshPictureMutation.isPending}
                         className="absolute -top-1 -right-1 w-6 h-6 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 border border-white/30"
                       >
@@ -321,7 +293,7 @@ function AccountPage() {
                           {anonymizedDataQuery.isLoading ? "Loading..." : anonymizedDataQuery.data?.usernameAnonymized || "Generating..."}
                         </p>
                         <button
-                          onClick={() => refreshNameMutation.mutate()}
+                          onClick={() => refreshNameMutation.mutate({})}
                           disabled={refreshNameMutation.isPending}
                           className="w-5 h-5 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 border border-white/30"
                         >
@@ -336,7 +308,7 @@ function AccountPage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Settings Options */}
               <div className="w-full space-y-3">
                 {/* Theme Color */}
@@ -372,8 +344,8 @@ function AccountPage() {
                       onClick={manageWebPush}
                       disabled={checkingPush}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent ${
-                        pushEnabled 
-                          ? 'bg-green-500 hover:bg-green-600' 
+                        pushEnabled
+                          ? 'bg-green-500 hover:bg-green-600'
                           : 'bg-gray-400 hover:bg-gray-500'
                       }`}
                     >
@@ -399,29 +371,11 @@ function AccountPage() {
                   </button>
                 )}
 
-                {/* API Status */}
-                <div className="w-full flex items-center justify-between p-3 bg-white/20 rounded-lg border border-white/30">
-                  <div className="flex items-center gap-3">
-                    <Wifi className={`w-4 h-4`} />
-                    <span className="text-sm">API status</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
-                    />
-                  </div>
-                </div>
-
                 {/* Logout Button */}
                 <button
                   onClick={() => {
-                    authClient.signOut({
-                      fetchOptions: {
-                        onSuccess: () => {
-                          navigate({ to: "/" });
-                        },
-                      },
-                    });
+                    logOut();
+                    navigate({ to: "/" });
                   }}
                   className="w-full flex items-center justify-between p-3 bg-white/20 rounded-lg border border-white/30"
                 >

@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Search, User, Calendar, Zap } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { trpc } from "@/utils/trpc";
+import { useState, useEffect, useContext } from "react";
+import { useQuery } from "@connectrpc/connect-query";
 import { PokeButton } from "@/components/poke-button";
 import { formatDistanceToNow } from "date-fns";
-import type { SearchUserResult } from "../../../server/src/procedures/search-users";
 import { SearchResultSkeleton } from "@/components/skeletons/search-result";
+import { PokesService, type SearchUserResult } from "@/rpc/proto/poky/v1/pokes_service_pb";
+import { type IAuthContext, AuthContext } from "react-oauth2-code-pkce";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 
 export const Route = createFileRoute("/search")({
   component: SearchPage,
@@ -15,12 +16,17 @@ export const Route = createFileRoute("/search")({
 
 function SearchPage() {
   const navigate = useNavigate();
+  const { token}: IAuthContext = useContext(AuthContext);
+  if (!token) {
+      navigate({ to: "/" });
+      return null;
+  }
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
-  // Use tRPC query for searching users
+  // Query to seach users
   const searchUsersQuery = useQuery(
-    trpc.searchUsers.queryOptions(
+    PokesService.method.searchUsers,
       {
         query: searchQuery,
       },
@@ -29,8 +35,7 @@ function SearchPage() {
         retry: false,
         staleTime: 30000, // Cache results for 30 seconds
       },
-    ),
-  );
+    );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -141,14 +146,14 @@ function SearchPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate text-white/90">
-                            {user.name}
+                            {user.username}
                           </p>
                           <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
                             <Calendar className="h-3 w-3" />
                             {user.hasPokeRelation && user.lastPokeDate ? (
                               <span>
                                 {formatDistanceToNow(
-                                  new Date(user.lastPokeDate),
+                                  timestampDate(user.lastPokeDate),
                                   {
                                     addSuffix: true,
                                   },
@@ -157,7 +162,7 @@ function SearchPage() {
                             ) : (
                               <span>
                                 Joined{" "}
-                                {new Date(user.createdAt).toLocaleDateString()}
+                                {user.createdAt ? timestampDate(user.createdAt).toLocaleDateString() : ""}
                               </span>
                             )}
                           </div>

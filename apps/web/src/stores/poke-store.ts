@@ -1,109 +1,103 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { trpcClient } from "@/utils/trpc";
-import React from "react";
+import { useContext, useMemo, useEffect } from "react";
+import { createCallbackClient, type ConnectError } from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-web";
+import { PokesService, type UserPokeRelation } from "@/rpc/proto/poky/v1/pokes_service_pb";
+import { AuthContext, type IAuthContext } from "react-oauth2-code-pkce";
+import { timestampDate} from "@bufbuild/protobuf/wkt";
 
-interface PokeRelation {
-  id: string;
-  count: number;
-  userAId: string;
-  userBId: string;
-  lastPokeDate: string;
-  lastPokeBy: string;
-  visibleLeaderboard: boolean;
-  otherUser: {
-    id: string;
-    name: string;
-    username: string | null;
-    image: string | null;
-  };
-}
-
+// -------------------
+// Zustand store
+// -------------------
 interface PokeData {
   count: number;
   totalPokes: number;
-  pokeRelations: PokeRelation[];
+  pokeRelations: UserPokeRelation[];
 }
 
 interface PokeStore {
-  // State
   pokesData: PokeData | null;
   isLoading: boolean;
   error: any;
-  orderedPokeRelations: PokeRelation[];
+  orderedPokeRelations: UserPokeRelation[];
   isConnected: boolean;
 
-  // Actions
   setPokesData: (data: PokeData | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: any) => void;
   setConnectionStatus: (connected: boolean) => void;
-  getOrderedPokeRelations: (pokeRelations: PokeRelation[]) => PokeRelation[];
+  getOrderedPokeRelations: (pokeRelations: UserPokeRelation[]) => UserPokeRelation[];
 }
 
 export const usePokeStore = create<PokeStore>((set, get) => ({
-  // Initial state
   pokesData: null,
   isLoading: false,
   error: null,
   orderedPokeRelations: [],
   isConnected: false,
 
-  // Set pokes data and update ordered relations in a single state update
   setPokesData: (data) => {
     const orderedRelations = data?.pokeRelations
       ? get().getOrderedPokeRelations(data.pokeRelations)
       : [];
-
-    set({
-      pokesData: data,
-      orderedPokeRelations: orderedRelations,
-    });
+    set({ pokesData: data, orderedPokeRelations: orderedRelations });
   },
 
-  // Set loading state
-  setLoading: (loading) => {
-    set({ isLoading: loading });
-  },
+  setLoading: (loading) => set({ isLoading: loading }),
+  setError: (error) => set({ error }),
+  setConnectionStatus: (connected) => set({ isConnected: connected }),
 
-  // Set error state
-  setError: (error) => {
-    set({ error });
-  },
-
-  // Set connection status
-  setConnectionStatus: (connected) => {
-    set({ isConnected: connected });
-  },
-
-  // Get ordered poke relations based on the provided data
-  getOrderedPokeRelations: (pokeRelations) => {
+  getOrderedPokeRelations: (pokeRelations: UserPokeRelation[]) => {
     if (!pokeRelations) return [];
-
     return [...pokeRelations].sort((a, b) => {
-      const aIsYourTurn = a.lastPokeBy == a.otherUser.id;
-      const bIsYourTurn = b.lastPokeBy == b.otherUser.id;
+      const aIsYourTurn = a.lastPokeBy === a.otherUser?.id;
+      const bIsYourTurn = b.lastPokeBy === b.otherUser?.id;
 
-      // First priority: Show relations where it's your turn to poke (someone is waiting for you)
       if (aIsYourTurn && !bIsYourTurn) return -1;
       if (!aIsYourTurn && bIsYourTurn) return 1;
 
-      // Second priority: When both are in the same state (both your turn or both their turn),
-      // sort by highest count first
-      if (a.count !== b.count) {
-        return b.count - a.count; // Higher count first
-      }
+      if (a.count !== b.count) return b.count - a.count;
 
-      // Third priority: If counts are equal, sort by most recent last poke date
-      return (
-        new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime()
-      );
+      const aTime = a.lastPokeDate ? timestampDate(a.lastPokeDate).getTime() : 0;
+      const bTime = b.lastPokeDate ? timestampDate(b.lastPokeDate).getTime() : 0;
+      return bTime - aTime;
     });
   },
 }));
 
-// Hook to use poke data Server Send Events
+// -------------------
+// Hook: create client with token
+// -------------------
+export const usePokesClient = () => {
+  const { token } = useContext<IAuthContext>(AuthContext);
+
+  const client = useMemo(() => {
+    const transport = createConnectTransport({
+      baseUrl: import.meta.env.VITE_SERVER_URL,
+      interceptors: [
+        (next) => (request) => {
+          if (!token) {
+            throw new Error("No token found");
+          }
+          request.header.append("Authorization", `Bearer ${token}`);
+          return next(request);
+        },
+      ],
+      defaultTimeoutMs : 20*60*1000
+    });
+
+    return createCallbackClient(PokesService, transport);
+  }, [token]);
+
+  return client;
+};
+
+// -------------------
+// Hook: streaming poke data
+// -------------------
 export const usePokeData = () => {
+  const client = usePokesClient();
   const { setPokesData, setLoading, setError, setConnectionStatus } = usePokeStore(
     useShallow((state) => ({
       setPokesData: state.setPokesData,
@@ -113,35 +107,45 @@ export const usePokeData = () => {
     })),
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLoading(true);
-    setConnectionStatus(false); // Start disconnected
+    setConnectionStatus(false);
 
-    const subscription = trpcClient.getUserPokes.subscribe(undefined, {
-      onData: (data: any) => {
-        console.log(">>> Observed new event:", data);
-        setPokesData(data);
+    // Start streaming
+    const stream = client.getUserPokes(
+      {},
+      (res) => {
+        const pokeData: PokeData = {
+          count: res.pokeRelations.length,
+          totalPokes: res.pokeRelations.reduce((acc, curr) => acc + curr.count, 0),
+          pokeRelations: res.pokeRelations,
+        };
+        setPokesData(pokeData);
         setLoading(false);
-        setConnectionStatus(true); // Connected when we receive data
+        setConnectionStatus(true);
       },
-      onError: (error: any) => {
-        console.error(">>> Subscription error:", error);
-        setError(error);
-        setLoading(false);
-        setConnectionStatus(false); // Disconnected on error
+      (err?: ConnectError) => {
+        if (err) {
+          setError(err);
+          setLoading(false);
+          setConnectionStatus(false);
+        }
       },
-      onComplete: () => {
-        console.log(">>> User subscription completed");
-        setLoading(false);
-        setConnectionStatus(false); // Disconnected when completed
-      },
-    });
+    );
 
+    // Cleanup
     return () => {
-      subscription.unsubscribe();
       setConnectionStatus(false);
+      setError(null);
+      if (stream && typeof stream === "function") {
+        try {
+          stream();
+        } catch (error) {
+          console.warn("Error closing stream:", error);
+        }
+      }
     };
-  }, [setPokesData, setLoading, setError, setConnectionStatus]);
+  }, [client, setPokesData, setLoading, setError, setConnectionStatus]);
 
   return usePokeStore(
     useShallow((state) => ({
@@ -153,10 +157,11 @@ export const usePokeData = () => {
   );
 };
 
-// Helper hook for easier access
+// -------------------
+// Helper hooks
+// -------------------
 export const useOrderedPokeRelations = () =>
   usePokeStore((state) => state.orderedPokeRelations);
 
-// Helper hook for connection status
 export const useConnectionStatus = () =>
   usePokeStore((state) => state.isConnected);

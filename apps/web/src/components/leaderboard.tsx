@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { trpc } from "@/utils/trpc";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from '@connectrpc/connect-query';
 import { Trophy, Medal, Award, Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "@pheralb/toast";
 import { LeaderboardItemSkeleton } from "@/components/skeletons/leaderbord";
+import { LeaderboardService } from '@/rpc/proto/poky/v1/leaderboard_service_pb';
+import { timestampDate } from '@bufbuild/protobuf/wkt';
 
 function getRankIcon(rank: number) {
   if (rank === 1) return <Trophy className="h-5 w-5 text-yellow-400" />;
@@ -25,7 +25,7 @@ export function Leaderboard() {
     data: leaderboardData,
     isLoading,
     error,
-  } = useQuery(trpc.getLeaderboard.queryOptions());
+  } = useQuery(LeaderboardService.method.getLeaderboard);
 
   if (isLoading) {
     return (
@@ -47,7 +47,7 @@ export function Leaderboard() {
     );
   }
 
-  if (!leaderboardData || leaderboardData.count === 0) {
+  if (!leaderboardData || leaderboardData.entries.length === 0) {
     return (
       <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
         <Trophy className="h-12 w-12 mx-auto mb-3 text-white/50" />
@@ -66,9 +66,12 @@ export function Leaderboard() {
         const rankIcon = getRankIcon(rank);
         const rankColor = getRankColor(rank);
 
+        // Data is now pre-filtered on the server based on visibility
+        // No need to choose between anonymized/non-anonymized data
+
         return (
           <div
-            key={entry.id}
+            key={entry.relationId}
             className="p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
           >
             {/* Rank and Stats Row */}
@@ -88,7 +91,7 @@ export function Leaderboard() {
                 <div className="flex items-center gap-1 text-xs text-white/60 mt-1">
                   <Calendar className="h-3 w-3" />
                   <span>
-                    {formatDistanceToNow(new Date(entry.lastPokeDate), {
+                    {entry.lastPokeDate && formatDistanceToNow(timestampDate(entry.lastPokeDate), {
                       addSuffix: true,
                     })}
                   </span>
@@ -102,17 +105,13 @@ export function Leaderboard() {
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
                     <img
-                      src={
-                        entry.visibleLeaderboard
-                          ? entry.userA.image || undefined
-                          : entry.userA.pictureAnonymized ?? undefined
-                      }
-                      alt={entry.visibleLeaderboard ? entry.userA.name : entry.userA.usernameAnonymized || undefined}
+                      src={entry.userA?.picture || undefined}
+                      alt={entry.userA?.username || undefined}
                       className="w-full h-full object-cover"
-                    />                
+                    />
                 </div>
                 <span className="text-sm font-medium text-white/90 truncate">
-                  {entry.visibleLeaderboard ? entry.userA.name : entry.userA.usernameAnonymized}
+                  {entry.userA?.username}
                 </span>
               </div>
 
@@ -122,17 +121,13 @@ export function Leaderboard() {
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
                     <img
-                      src={
-                        entry.visibleLeaderboard
-                          ? entry.userB.image || undefined
-                          : entry.userB.pictureAnonymized ?? undefined
-                      }
-                      alt={entry.visibleLeaderboard ? entry.userB.name : entry.userB.usernameAnonymized || undefined}
+                      src={entry.userB?.picture || undefined}
+                      alt={entry.userB?.username || undefined}
                       className="w-full h-full object-cover"
                     />
                 </div>
                 <span className="text-sm font-medium text-white/90 truncate">
-                  {entry.visibleLeaderboard ? entry.userB.name : entry.userB.usernameAnonymized}
+                  {entry.userB?.username}
                 </span>
               </div>
             </div>

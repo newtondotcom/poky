@@ -1,42 +1,40 @@
 {
-  "name": "server",
-  "main": "src/index.ts",
+  "name": "backend",
+  "module": "index.ts",
   "type": "module",
+  "private": true,
   "scripts": {
-    "build": "tsc && tsc-alias",
-    "check-types": "tsc --noEmit",
-    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+    "dev-infra": "docker compose up -d",
     "dev": "bun run --hot src/index.ts",
-    "start": "bun run dist/src/index.js",
-    "db:local": "turso dev --db-file local.db",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
-  },
-  "dependencies": {
-    "@hono/trpc-server": "^0.4.0",
-    "@trpc/client": "^11.4.2",
-    "@trpc/server": "^11.4.2",
-    "@types/web-push": "^3.6.4",
-    "@types/winston": "^2.4.4",
-    "better-auth": "^1.2.10",
-    "dotenv": "^17.2.0",
-    "drizzle-orm": "^0.44.3",
-    "hono": "^4.9.12",
-    "ioredis": "^5.6.1",
-    "pg": "^8.16.3",
-    "postgres": "^3.4.7",
-    "web-push": "^3.6.7",
-    "winston": "^3.17.0",
-    "zod": "^4.0.2"
+    "check-types": "tsc -b",
+    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.6",
-    "@types/pg": "^8.15.4",
-    "drizzle-kit": "^0.31.4",
-    "tsc-alias": "^1.8.11",
-    "tsx": "^4.20.3",
-    "typescript": "^5.8.2"
+    "@bufbuild/protoc-gen-es": "^2.10.0",
+    "@types/bun": "latest",
+    "@types/pg": "^8.15.5",
+    "@types/web-push": "^3.6.4",
+    "drizzle-kit": "^0.31.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@bufbuild/buf": "^1.59.0",
+    "@bufbuild/protobuf": "^2.10.0",
+    "@connectrpc/connect": "^2.1.0",
+    "@connectrpc/connect-fastify": "^2.1.0",
+    "@connectrpc/connect-node": "^2.1.0",
+    "@fastify/cors": "^11.1.0",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.44.6",
+    "fastify": "^5.6.1",
+    "ioredis": "^5.8.2",
+    "jose": "^6.1.0",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7",
+    "tsx": "^4.20.6",
+    "web-push": "^3.6.7",
+    "winston": "^3.18.3"
   }
 }

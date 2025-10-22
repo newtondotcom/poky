@@ -14,9 +14,9 @@ services:
     image: postgres:17
     container_name: reddit_postgres
     environment:
-      POSTGRES_DB: db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
