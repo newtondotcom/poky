@@ -43,9 +43,21 @@ async function startServer() {
     reply.send("Hello World!");
   });
   
+  // Health check endpoint for Traefik
+  server.get("/health", (_, reply) => {
+    reply.type("application/json");
+    reply.code(200);
+    reply.send({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      version: process.env.npm_package_version || "1.0.0"
+    });
+  });
+  
   // Configuration serveur pour production
   const host = process.env.HOST || "0.0.0.0";
-  const port = parseInt(process.env.PORT || "8080");
+  const port = parseInt(process.env.PORT || "3000");
   
   await server.listen({ host, port });
   logger.info(`Server is listening at http://${host}:${port}`);
