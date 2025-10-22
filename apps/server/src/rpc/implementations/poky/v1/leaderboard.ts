@@ -103,7 +103,6 @@ export class LeaderboardServiceImpl
           },
         };
       });
-      logger.error(leaderboardEntries[0]?.userA.picture)
       return {
         entries: leaderboardEntries,
         count: leaderboardEntries.length,

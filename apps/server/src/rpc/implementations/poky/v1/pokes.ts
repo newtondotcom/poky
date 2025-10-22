@@ -115,8 +115,6 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
       throw new Error("You cannot poke yourself");
     }
 
-    logger.error(targetUserId)
-
     try {
       // Check if target user exists
       const [targetUser] = await db
