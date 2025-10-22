@@ -18,7 +18,7 @@ const authConfig: TAuthConfig = {
   authorizationEndpoint: "https://myr-project.eu/application/o/authorize/",
   tokenEndpoint: "https://myr-project.eu/application/o/token/",
   redirectUri: window.location.origin,
-  scope: "profile openid offline_access picture",
+  scope: "profile openid offline_access picture email",
   onRefreshTokenExpire: (event: TRefreshTokenExpiredEvent) => console.log(event),
 };
 
