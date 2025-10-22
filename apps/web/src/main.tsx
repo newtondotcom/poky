@@ -8,7 +8,7 @@ import { AuthProvider } from "react-oauth2-code-pkce";
 import Loader from "./components/loader";
 import { toast } from "@pheralb/toast";
 import { routeTree } from "./routeTree.gen";
-import type { IAuthContext, TAuthConfig, TRefreshTokenExpiredEvent } from "react-oauth2-code-pkce";
+import type { TAuthConfig, TRefreshTokenExpiredEvent } from "react-oauth2-code-pkce";
 
 // -------------------
 // Auth config
@@ -17,7 +17,7 @@ const authConfig: TAuthConfig = {
   clientId: "t9xFI53nHMTMRduUB1Kt2fUpV1IcFOfNXUZHjpmZ",
   authorizationEndpoint: "https://myr-project.eu/application/o/authorize/",
   tokenEndpoint: "https://myr-project.eu/application/o/token/",
-  redirectUri: "http://localhost:3001/",
+  redirectUri: window.location.origin,
   scope: "profile openid offline_access picture",
   onRefreshTokenExpire: (event: TRefreshTokenExpiredEvent) => console.log(event),
 };
@@ -52,7 +52,7 @@ const router = createRouter({
     const transport = useMemo(
       () =>
         createConnectTransport({
-          baseUrl: "http://localhost:8080",
+          baseUrl: import.meta.env.VITE_SERVER_URL,
           interceptors: [
             (next) => (request) => {
               const token = JSON.parse(window.localStorage.getItem("ROCP_token"))

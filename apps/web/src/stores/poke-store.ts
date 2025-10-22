@@ -74,7 +74,7 @@ export const usePokesClient = () => {
 
   const client = useMemo(() => {
     const transport = createConnectTransport({
-      baseUrl: "http://localhost:8080",
+      baseUrl: import.meta.env.VITE_SERVER_URL,
       interceptors: [
         (next) => (request) => {
           if (!token) {
