@@ -57,7 +57,7 @@ function SearchPage() {
   }, [searchUsersQuery.isLoading, searchQuery]);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20">
+    <div className="h-full w-full bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20">
       {/* Header */}
       <div className="flex items-center justify-between p-6">
         <button
