@@ -81,6 +81,27 @@ export class LeaderboardServiceImpl
           );
         }
 
+        // Determine which data to send based on visibility
+        const userAData = relation.visibleLeaderboard
+          ? {
+              username: userA.username ?? "",
+              picture: userA.image ?? "",
+            }
+          : {
+              username: userA.usernameAnonymized ?? "",
+              picture: userA.pictureAnonymized ?? "",
+            };
+
+        const userBData = relation.visibleLeaderboard
+          ? {
+              username: userB.username ?? "",
+              picture: userB.image ?? "",
+            }
+          : {
+              username: userB.usernameAnonymized ?? "",
+              picture: userB.pictureAnonymized ?? "",
+            };
+
         return {
           relationId: relation.id,
           userAId: relation.userAId,
@@ -89,18 +110,8 @@ export class LeaderboardServiceImpl
           lastPokeDate: timestampFromDate(relation.lastPokeDate),
           lastPokeBy: relation.lastPokeBy,
           visibleLeaderboard: relation.visibleLeaderboard,
-          userA: {
-            usernameAnonymized: userA.usernameAnonymized,
-            pictureAnonymized: userA.pictureAnonymized,
-            username: userA.username,
-            picture: userA.image,
-          },
-          userB: {
-            usernameAnonymized: userB.usernameAnonymized,
-            pictureAnonymized: userB.pictureAnonymized,
-            username: userB.username,
-            picture: userB.image,
-          },
+          userA: userAData,
+          userB: userBData,
         };
       });
       return {

@@ -66,11 +66,8 @@ export function Leaderboard() {
         const rankIcon = getRankIcon(rank);
         const rankColor = getRankColor(rank);
 
-        // Determine if this relation should show anonymized data
-        // For now, we'll use visibleLeaderboard as the indicator:
-        // - true = show real data
-        // - false = show anonymized data
-        const showAnonymized = !entry.visibleLeaderboard;
+        // Data is now pre-filtered on the server based on visibility
+        // No need to choose between anonymized/non-anonymized data
 
         return (
           <div
@@ -108,23 +105,13 @@ export function Leaderboard() {
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
                     <img
-                      src={
-                        showAnonymized
-                          ? entry.userA?.pictureAnonymized || undefined
-                          : entry.userA?.picture || undefined
-                      }
-                      alt={
-                        showAnonymized
-                          ? entry.userA?.usernameAnonymized || undefined
-                          : entry.userA?.username || undefined
-                      }
+                      src={entry.userA?.picture || undefined}
+                      alt={entry.userA?.username || undefined}
                       className="w-full h-full object-cover"
                     />
                 </div>
                 <span className="text-sm font-medium text-white/90 truncate">
-                  {showAnonymized
-                    ? entry.userA?.usernameAnonymized
-                    : entry.userA?.username}
+                  {entry.userA?.username}
                 </span>
               </div>
 
@@ -134,23 +121,13 @@ export function Leaderboard() {
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
                     <img
-                      src={
-                        showAnonymized
-                          ? entry.userB?.pictureAnonymized || undefined
-                          : entry.userB?.picture || undefined
-                      }
-                      alt={
-                        showAnonymized
-                          ? entry.userB?.usernameAnonymized || undefined
-                          : entry.userB?.username || undefined
-                      }
+                      src={entry.userB?.picture || undefined}
+                      alt={entry.userB?.username || undefined}
                       className="w-full h-full object-cover"
                     />
                 </div>
                 <span className="text-sm font-medium text-white/90 truncate">
-                  {showAnonymized
-                    ? entry.userB?.usernameAnonymized
-                    : entry.userB?.username}
+                  {entry.userB?.username}
                 </span>
               </div>
             </div>

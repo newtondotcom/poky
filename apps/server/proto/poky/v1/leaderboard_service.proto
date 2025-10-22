@@ -9,10 +9,8 @@ import "google/protobuf/timestamp.proto";
 // ======================
 
 message UserData {
-  string username_anonymized = 1;
-  string picture_anonymized = 2;
-  string username = 3;
-  string picture = 4;
+  string username = 1;
+  string picture = 2;
 }
 
 message LeaderboardEntry {
