@@ -24,7 +24,7 @@ message UserPokeRelation {
   google.protobuf.Timestamp last_poke_date = 5;
   string last_poke_by = 6;
   bool visible_leaderboard = 7;
-  User other_user = 8; // simplified info about the other user in the relation
+  User other_user = 8;
 }
 
 message PokeRelationUpdate {
@@ -81,6 +81,15 @@ message SearchUsersResponse {
   int32 count = 2;
 }
 
+// 4️⃣ Get poke relation details
+message GetPokeRelationRequest {
+  string relation_id = 1;
+}
+
+message GetPokeRelationResponse {
+  UserPokeRelation relation = 1;
+}
+
 // ======================
 // SERVICE
 // ======================
@@ -94,4 +103,7 @@ service PokesService {
 
   // Query: search users and include poke relation info
   rpc SearchUsers (SearchUsersRequest) returns (SearchUsersResponse);
+
+  // Query: get specific poke relation details
+  rpc GetPokeRelation (GetPokeRelationRequest) returns (GetPokeRelationResponse);
 }

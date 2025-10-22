@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file proto/poky/v1/pokes_service.proto.
  */
 export const file_proto_poky_v1_pokes_service: GenFile = /*@__PURE__*/
-  fileDesc("CiFwcm90by9wb2t5L3YxL3Bva2VzX3NlcnZpY2UucHJvdG8SDXByb3RvLnBva3kudjEicQoEVXNlchIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhAKCHVzZXJuYW1lGAMgASgJEg0KBWltYWdlGAQgASgJEi4KCmNyZWF0ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIuMBChBVc2VyUG9rZVJlbGF0aW9uEgoKAmlkGAEgASgJEhEKCXVzZXJfYV9pZBgCIAEoCRIRCgl1c2VyX2JfaWQYAyABKAkSDQoFY291bnQYBCABKAUSMgoObGFzdF9wb2tlX2RhdGUYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGxhc3RfcG9rZV9ieRgGIAEoCRIbChN2aXNpYmxlX2xlYWRlcmJvYXJkGAcgASgIEicKCm90aGVyX3VzZXIYCCABKAsyEy5wcm90by5wb2t5LnYxLlVzZXIikgEKElBva2VSZWxhdGlvblVwZGF0ZRIKCgJpZBgBIAEoCRINCgVjb3VudBgCIAEoBRIyCg5sYXN0X3Bva2VfZGF0ZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFAoMbGFzdF9wb2tlX2J5GAQgASgJEhcKD2lzX25ld19yZWxhdGlvbhgFIAEoCCImChNHZXRVc2VyUG9rZXNSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiTwoUR2V0VXNlclBva2VzUmVzcG9uc2USNwoOcG9rZV9yZWxhdGlvbnMYASADKAsyHy5wcm90by5wb2t5LnYxLlVzZXJQb2tlUmVsYXRpb24iKQoPUG9rZVVzZXJSZXF1ZXN0EhYKDnRhcmdldF91c2VyX2lkGAEgASgJIm4KEFBva2VVc2VyUmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCBIPCgdtZXNzYWdlGAIgASgJEjgKDXBva2VfcmVsYXRpb24YAyABKAsyIS5wcm90by5wb2t5LnYxLlBva2VSZWxhdGlvblVwZGF0ZSIjChJTZWFyY2hVc2Vyc1JlcXVlc3QSDQoFcXVlcnkYASABKAki9gEKEFNlYXJjaFVzZXJSZXN1bHQSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIQCgh1c2VybmFtZRgDIAEoCRINCgVpbWFnZRgEIAEoCRIuCgpjcmVhdGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIZChFoYXNfcG9rZV9yZWxhdGlvbhgGIAEoCBISCgpwb2tlX2NvdW50GAcgASgFEhQKDGxhc3RfcG9rZV9ieRgIIAEoCRIyCg5sYXN0X3Bva2VfZGF0ZRgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiVAoTU2VhcmNoVXNlcnNSZXNwb25zZRIuCgV1c2VycxgBIAMoCzIfLnByb3RvLnBva3kudjEuU2VhcmNoVXNlclJlc3VsdBINCgVjb3VudBgCIAEoBTKMAgoMUG9rZXNTZXJ2aWNlElkKDEdldFVzZXJQb2tlcxIiLnByb3RvLnBva3kudjEuR2V0VXNlclBva2VzUmVxdWVzdBojLnByb3RvLnBva3kudjEuR2V0VXNlclBva2VzUmVzcG9uc2UwARJLCghQb2tlVXNlchIeLnByb3RvLnBva3kudjEuUG9rZVVzZXJSZXF1ZXN0Gh8ucHJvdG8ucG9reS52MS5Qb2tlVXNlclJlc3BvbnNlElQKC1NlYXJjaFVzZXJzEiEucHJvdG8ucG9reS52MS5TZWFyY2hVc2Vyc1JlcXVlc3QaIi5wcm90by5wb2t5LnYxLlNlYXJjaFVzZXJzUmVzcG9uc2ViBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("CiFwcm90by9wb2t5L3YxL3Bva2VzX3NlcnZpY2UucHJvdG8SDXByb3RvLnBva3kudjEicQoEVXNlchIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhAKCHVzZXJuYW1lGAMgASgJEg0KBWltYWdlGAQgASgJEi4KCmNyZWF0ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIuMBChBVc2VyUG9rZVJlbGF0aW9uEgoKAmlkGAEgASgJEhEKCXVzZXJfYV9pZBgCIAEoCRIRCgl1c2VyX2JfaWQYAyABKAkSDQoFY291bnQYBCABKAUSMgoObGFzdF9wb2tlX2RhdGUYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGxhc3RfcG9rZV9ieRgGIAEoCRIbChN2aXNpYmxlX2xlYWRlcmJvYXJkGAcgASgIEicKCm90aGVyX3VzZXIYCCABKAsyEy5wcm90by5wb2t5LnYxLlVzZXIikgEKElBva2VSZWxhdGlvblVwZGF0ZRIKCgJpZBgBIAEoCRINCgVjb3VudBgCIAEoBRIyCg5sYXN0X3Bva2VfZGF0ZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFAoMbGFzdF9wb2tlX2J5GAQgASgJEhcKD2lzX25ld19yZWxhdGlvbhgFIAEoCCImChNHZXRVc2VyUG9rZXNSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiTwoUR2V0VXNlclBva2VzUmVzcG9uc2USNwoOcG9rZV9yZWxhdGlvbnMYASADKAsyHy5wcm90by5wb2t5LnYxLlVzZXJQb2tlUmVsYXRpb24iKQoPUG9rZVVzZXJSZXF1ZXN0EhYKDnRhcmdldF91c2VyX2lkGAEgASgJIm4KEFBva2VVc2VyUmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCBIPCgdtZXNzYWdlGAIgASgJEjgKDXBva2VfcmVsYXRpb24YAyABKAsyIS5wcm90by5wb2t5LnYxLlBva2VSZWxhdGlvblVwZGF0ZSIjChJTZWFyY2hVc2Vyc1JlcXVlc3QSDQoFcXVlcnkYASABKAki9gEKEFNlYXJjaFVzZXJSZXN1bHQSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIQCgh1c2VybmFtZRgDIAEoCRINCgVpbWFnZRgEIAEoCRIuCgpjcmVhdGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIZChFoYXNfcG9rZV9yZWxhdGlvbhgGIAEoCBISCgpwb2tlX2NvdW50GAcgASgFEhQKDGxhc3RfcG9rZV9ieRgIIAEoCRIyCg5sYXN0X3Bva2VfZGF0ZRgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiVAoTU2VhcmNoVXNlcnNSZXNwb25zZRIuCgV1c2VycxgBIAMoCzIfLnByb3RvLnBva3kudjEuU2VhcmNoVXNlclJlc3VsdBINCgVjb3VudBgCIAEoBSItChZHZXRQb2tlUmVsYXRpb25SZXF1ZXN0EhMKC3JlbGF0aW9uX2lkGAEgASgJIkwKF0dldFBva2VSZWxhdGlvblJlc3BvbnNlEjEKCHJlbGF0aW9uGAEgASgLMh8ucHJvdG8ucG9reS52MS5Vc2VyUG9rZVJlbGF0aW9uMu4CCgxQb2tlc1NlcnZpY2USWQoMR2V0VXNlclBva2VzEiIucHJvdG8ucG9reS52MS5HZXRVc2VyUG9rZXNSZXF1ZXN0GiMucHJvdG8ucG9reS52MS5HZXRVc2VyUG9rZXNSZXNwb25zZTABEksKCFBva2VVc2VyEh4ucHJvdG8ucG9reS52MS5Qb2tlVXNlclJlcXVlc3QaHy5wcm90by5wb2t5LnYxLlBva2VVc2VyUmVzcG9uc2USVAoLU2VhcmNoVXNlcnMSIS5wcm90by5wb2t5LnYxLlNlYXJjaFVzZXJzUmVxdWVzdBoiLnByb3RvLnBva3kudjEuU2VhcmNoVXNlcnNSZXNwb25zZRJgCg9HZXRQb2tlUmVsYXRpb24SJS5wcm90by5wb2t5LnYxLkdldFBva2VSZWxhdGlvblJlcXVlc3QaJi5wcm90by5wb2t5LnYxLkdldFBva2VSZWxhdGlvblJlc3BvbnNlYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message proto.poky.v1.User
@@ -91,8 +91,6 @@ export type UserPokeRelation = Message<"proto.poky.v1.UserPokeRelation"> & {
   visibleLeaderboard: boolean;
 
   /**
-   * simplified info about the other user in the relation
-   *
    * @generated from field: proto.poky.v1.User other_user = 8;
    */
   otherUser?: User;
@@ -325,6 +323,42 @@ export const SearchUsersResponseSchema: GenMessage<SearchUsersResponse> = /*@__P
   messageDesc(file_proto_poky_v1_pokes_service, 9);
 
 /**
+ * 4️⃣ Get poke relation details
+ *
+ * @generated from message proto.poky.v1.GetPokeRelationRequest
+ */
+export type GetPokeRelationRequest = Message<"proto.poky.v1.GetPokeRelationRequest"> & {
+  /**
+   * @generated from field: string relation_id = 1;
+   */
+  relationId: string;
+};
+
+/**
+ * Describes the message proto.poky.v1.GetPokeRelationRequest.
+ * Use `create(GetPokeRelationRequestSchema)` to create a new message.
+ */
+export const GetPokeRelationRequestSchema: GenMessage<GetPokeRelationRequest> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 10);
+
+/**
+ * @generated from message proto.poky.v1.GetPokeRelationResponse
+ */
+export type GetPokeRelationResponse = Message<"proto.poky.v1.GetPokeRelationResponse"> & {
+  /**
+   * @generated from field: proto.poky.v1.UserPokeRelation relation = 1;
+   */
+  relation?: UserPokeRelation;
+};
+
+/**
+ * Describes the message proto.poky.v1.GetPokeRelationResponse.
+ * Use `create(GetPokeRelationResponseSchema)` to create a new message.
+ */
+export const GetPokeRelationResponseSchema: GenMessage<GetPokeRelationResponse> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 11);
+
+/**
  * @generated from service proto.poky.v1.PokesService
  */
 export const PokesService: GenService<{
@@ -357,6 +391,16 @@ export const PokesService: GenService<{
     methodKind: "unary";
     input: typeof SearchUsersRequestSchema;
     output: typeof SearchUsersResponseSchema;
+  },
+  /**
+   * Query: get specific poke relation details
+   *
+   * @generated from rpc proto.poky.v1.PokesService.GetPokeRelation
+   */
+  getPokeRelation: {
+    methodKind: "unary";
+    input: typeof GetPokeRelationRequestSchema;
+    output: typeof GetPokeRelationResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_proto_poky_v1_pokes_service, 0);

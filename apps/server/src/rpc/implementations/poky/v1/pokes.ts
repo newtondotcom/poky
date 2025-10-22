@@ -13,14 +13,16 @@ import { kUserId } from "@/rpc/context";
 import {
   SearchUserResultSchema,
   SearchUsersResponseSchema,
+  GetPokeRelationResponseSchema,
   type GetUserPokesRequest,
   type PokesService,
   type PokeUserRequest,
   type SearchUsersRequest,
+  type GetPokeRelationRequest,
 } from "@/rpc/proto/poky/v1/pokes_service_pb";
 import { create } from "@bufbuild/protobuf";
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
-import type { HandlerContext, ServiceImpl } from "@connectrpc/connect";
+import { Code, ConnectError, type HandlerContext, type ServiceImpl } from "@connectrpc/connect";
 import { and, eq, like, not, or } from "drizzle-orm";
 
 const sub = redisService.getSubscriber();
@@ -90,7 +92,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
       }
     } catch (error) {
       logger.error("Subscription error:", { error });
-      throw error;
+      throw new ConnectError("Subscription error:", Code.NotFound);
     } finally {
       logger.debug("Subscription ended for user:", currentUserId);
       await sub.unsubscribe(currentUserId);
@@ -216,12 +218,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
       }
     } catch (error) {
       logger.error("Error poking user:", { error });
-
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-
-      throw new Error("Failed to poke user");
+      throw new ConnectError("Failed to poke user:", Code.NotFound);
     }
   }
 
@@ -238,7 +235,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
           id: user.id,
           name: user.name,
           username: user.username,
-          image: user.image,
+          image: user.picture,
           createdAt: user.createdAt,
         })
         .from(user)
@@ -299,7 +296,83 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
       });
     } catch (error) {
       logger.error("Error searching users:", { error });
-      throw new Error("Failed to search users");
+      throw new ConnectError("Failed to search users:", Code.NotFound);
+    }
+  }
+
+  async getPokeRelation(req: GetPokeRelationRequest, context: HandlerContext) {
+    const currentUserId = context.values.get(kUserId);
+    const relationId = req.relationId;
+
+    try {
+      // Get the poke relation
+      const [relation] = await db
+        .select({
+          id: pokes.id,
+          userAId: pokes.userAId,
+          userBId: pokes.userBId,
+          count: pokes.count,
+          lastPokeDate: pokes.lastPokeDate,
+          lastPokeBy: pokes.lastPokeBy,
+          visibleLeaderboard: pokes.visibleLeaderboard,
+        })
+        .from(pokes)
+        .where(
+          and(
+            eq(pokes.id, relationId),
+            or(
+              eq(pokes.userAId, currentUserId),
+              eq(pokes.userBId, currentUserId),
+            ),
+          ),
+        )
+        .limit(1);
+
+      if (!relation) {
+        throw new ConnectError("Poke relation not found", Code.NotFound);
+      }
+
+      // Get the other user's details
+      const otherUserId = relation.userAId === currentUserId ? relation.userBId : relation.userAId;
+      const [otherUser] = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          image: user.picture,
+        })
+        .from(user)
+        .where(eq(user.id, otherUserId))
+        .limit(1);
+
+      if (!otherUser) {
+        throw new ConnectError("User not found", Code.NotFound);
+      }
+
+      // Create the response
+      const relationWithUser = create(GetPokeRelationResponseSchema, {
+        relation: {
+          id: relation.id,
+          userAId: relation.userAId,
+          userBId: relation.userBId,
+          count: relation.count,
+          lastPokeDate: timestampFromDate(relation.lastPokeDate),
+          lastPokeBy: relation.lastPokeBy,
+          visibleLeaderboard: relation.visibleLeaderboard,
+          otherUser: {
+            id: otherUser.id,
+            name: otherUser.name,
+            username: otherUser.username ?? "",
+            image: otherUser.image ?? "",
+            createdAt: undefined,
+          },
+        },
+      });
+
+      return relationWithUser;
+    } catch (error) {
+      logger.error("Error getting poke relation:", { error });
+      throw new ConnectError("Failed to get poke relation:", Code.NotFound);
     }
   }
 }
