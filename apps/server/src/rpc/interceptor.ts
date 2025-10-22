@@ -63,8 +63,7 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
       const hasChanged = 
         existing.username !== (userInfo.preferred_username || "") ||
         existing.picture !== (userInfo.picture || null) ||
-        existing.email !== userInfo.email ||
-        existing.emailVerified !== userInfo.email_verified;
+        existing.email !== userInfo.email
 
       if (hasChanged) {
         logger.debug(`User data changed for ${userId}, updating...`);
@@ -74,7 +73,6 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
             username: userInfo.preferred_username,
             picture: userInfo.picture,
             email: userInfo.email || "none",
-            emailVerified: userInfo.email_verified,
             updatedAt: new Date(),
           })
           .where(eq(user.id, userId));
@@ -94,7 +92,7 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
       username: userInfo.preferred_username,
       picture: userInfo.picture,
       email: userInfo.email || "none",
-      emailVerified: userInfo.email_verified,
+      emailVerified: true,
       usernameAnonymized: anonymized.usernameAnonymized,
       pictureAnonymized: anonymized.pictureAnonymized,
       createdAt: new Date(),
