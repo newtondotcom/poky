@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { Leaderboard } from "@/components/leaderboard";
-import { FloatingVisibilityButton } from "@/components/floating-visibility-button";
 import { useContext } from "react";
 import { type IAuthContext, AuthContext } from "react-oauth2-code-pkce";
 
@@ -36,9 +35,6 @@ function LeaderboardPage() {
       <div className="flex-1 overflow-y-auto px-6 pb-6">
         <Leaderboard />
       </div>
-
-      {/* Floating Visibility Button */}
-      <FloatingVisibilityButton />
     </div>
   );
 }
