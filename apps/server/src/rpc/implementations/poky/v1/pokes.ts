@@ -64,26 +64,31 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
       while (true) {
         logger.debug(`Waiting for message on channel: ${currentUserId}`);
         await new Promise<string>((resolve, reject) => {
+          let isResolved = false;
+          
           // Create a one-time message handler
           const messageHandler = (ch: string, msg: string) => {
-            if (ch === currentUserId) {
+            if (ch === currentUserId && !isResolved) {
               logger.debug(`Received message on channel ${ch}: ${msg}`);
-              // Remove the listener to prevent memory leaks
+              isResolved = true;
               sub.off("message", messageHandler);
               clearTimeout(timeout);
               resolve(msg);
             }
           };
 
-          // Add the listener
-          sub.on("message", messageHandler);
-
           // Set a timeout to prevent hanging
           const timeout = setTimeout(() => {
-            logger.debug(`Subscription timeout for user: ${currentUserId}`);
-            sub.off("message", messageHandler);
-            reject(new Error("Subscription timeout"));
+            if (!isResolved) {
+              logger.debug(`Subscription timeout for user: ${currentUserId}`);
+              isResolved = true;
+              sub.off("message", messageHandler);
+              reject(new Error("Subscription timeout"));
+            }
           }, 300000000); // 30 second timeout
+
+          // Add the listener
+          sub.on("message", messageHandler);
         });
 
         logger.debug(`Processing update for user: ${currentUserId}`);
