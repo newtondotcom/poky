@@ -72,7 +72,7 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
           .update(user)
           .set({
             username: userInfo.preferred_username || "",
-            picture: userInfo.picture || null,
+            picture: userInfo.picture,
             email: userInfo.email,
             emailVerified: userInfo.email_verified,
             updatedAt: new Date(),
@@ -91,8 +91,8 @@ async function createUserInBackgroundIfNeeded(oauthToken: any, userId: string) {
     const newUser = {
       id: userId,
       name: userInfo.name || "",
-      username: userInfo.preferred_username || "",
-      picture: userInfo.picture || null,
+      username: userInfo.preferred_username,
+      picture: userInfo.picture,
       email: userInfo.email,
       emailVerified: userInfo.email_verified,
       usernameAnonymized: anonymized.usernameAnonymized,
