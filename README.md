@@ -11,30 +11,41 @@ Une application moderne de pokes à la Meta avec des fonctionnalités temps rée
 - **🔍 Recherche d'utilisateurs** - Trouvez facilement d'autres personnes
 - **🌙 Thème sombre/clair** - Interface adaptée à vos préférences
 - **📱 PWA** - Installation sur mobile et desktop
-- **🔐 Authentification sécurisée** - Connexion email/mot de passe
+- **🔐 Authentification sécurisée** - Authentification centralisée
 
 ## 🛠️ Stack Technique
 
 ### Frontend
-- **React 19** - Bibliothèque UI moderne
+- **React 19** - Bibliothèque UI moderne avec les dernières fonctionnalités
 - **TypeScript** - Typage statique pour la sécurité du code
 - **TanStack Router** - Routage basé sur les fichiers avec sécurité des types
-- **TailwindCSS** - Framework CSS utilitaire-first
-- **shadcn/ui** - Composants UI réutilisables et accessibles
+- **TanStack Query** - Gestion d'état serveur et cache intelligent
+- **Vite** - Build tool ultra-rapide avec HMR
+- **TailwindCSS 4** - Framework CSS utilitaire-first nouvelle génération
+- **Radix UI** - Composants UI accessibles et headless
+- **shadcn/ui** - Composants UI réutilisables basés sur Radix
 - **Zustand** - Gestion d'état légère et performante
+- **React Flip Toolkit** - Animations fluides et transitions
+- **PWA** - Application Web Progressive avec Service Workers
+- **OAuth2 PKCE** - Authentification sécurisée
 
 ### Backend
-- **Hono** - Framework serveur léger et performant
-- **tRPC** - APIs end-to-end avec sécurité des types
-- **Drizzle ORM** - ORM TypeScript-first
+- **Fastify** - Framework serveur Node.js ultra-rapide
+- **Connect RPC** - APIs gRPC-Web avec sécurité des types
+- **Protocol Buffers** - Sérialisation binaire efficace
+- **Drizzle ORM** - ORM TypeScript-first avec migrations
 - **PostgreSQL** - Base de données relationnelle robuste
-- **Redis** - Cache et gestion des sessions
-- **Better Auth** - Authentification moderne et sécurisée
+- **Redis (ioredis)** - Cache et gestion des sessions temps réel
+- **Web Push** - Notifications push natives
+- **JOSE** - Gestion sécurisée des tokens JWT
+- **Winston** - Logging structuré et performant
 
-### Infrastructure
-- **Bun** - Runtime JavaScript ultra-rapide
+### Infrastructure & Tools
+- **Bun 1.2.17** - Runtime JavaScript ultra-rapide
 - **Turborepo** - Monorepo optimisé pour la performance
 - **Docker** - Conteneurisation et déploiement
+- **Buf** - Outils Protocol Buffers modernes
+- **Drizzle Kit** - Outils de migration et introspection DB
 
 ## 🚀 Démarrage Rapide
 
@@ -92,20 +103,27 @@ pok7/
 ├── apps/
 │   ├── web/                 # Application frontend React
 │   │   ├── src/
-│   │   │   ├── components/  # Composants réutilisables
-│   │   │   ├── routes/      # Pages et routage
+│   │   │   ├── components/  # Composants réutilisables (UI, sheets, etc.)
+│   │   │   ├── routes/      # Pages et routage TanStack Router
 │   │   │   ├── stores/      # Gestion d'état Zustand
-│   │   │   └── utils/       # Utilitaires et helpers
-│   │   └── public/          # Assets statiques
-│   └── server/              # API backend Hono + tRPC
+│   │   │   ├── hooks/       # Hooks personnalisés
+│   │   │   ├── lib/         # Utilitaires et helpers
+│   │   │   ├── rpc/         # Types Protocol Buffers générés
+│   │   │   └── utils/       # Fonctions utilitaires
+│   │   ├── public/          # Assets statiques et PWA
+│   │   └── dist/            # Build de production
+│   └── server/              # API backend Fastify + Connect RPC
 │       ├── src/
-│       │   ├── procedures/  # Procédures tRPC
-│       │   ├── routers/     # Routeurs API
-│       │   ├── db/          # Schémas et configuration DB
-│       │   └── lib/         # Utilitaires serveur
-│       └── drizzle.config.ts
-├── packages/                 # Packages partagés (si applicable)
-├── compose.yml              # Configuration Docker
+│       │   ├── rpc/         # Implémentations Connect RPC
+│       │   │   ├── implementations/  # Services protobuf
+│       │   │   └── proto/    # Types protobuf générés
+│       │   ├── db/          # Schémas Drizzle et configuration
+│       │   ├── lib/         # Utilitaires serveur (Redis, WebPush, etc.)
+│       │   └── index.ts     # Point d'entrée Fastify
+│       ├── proto/           # Définitions Protocol Buffers
+│       ├── drizzle.config.ts
+│       └── Containerfile    # Docker pour production
+├── compose.yml              # Configuration Docker (PostgreSQL + Redis)
 └── turbo.json              # Configuration Turborepo
 ```
 
@@ -113,9 +131,9 @@ pok7/
 
 ### Schémas Principaux
 - **Users** - Gestion des utilisateurs et authentification
-- **Pokes** - Système de poke entre utilisateurs
-- **WebPush** - Notifications push
-- **Leaderboard** - Classements et statistiques
+- **Pokes** - Système de poke entre utilisateurs avec visibilité leaderboard
+- **WebPush** - Notifications push et subscriptions
+- **Leaderboard** - Classements et statistiques anonymisées
 
 ### Commandes Utiles
 ```bash
@@ -130,6 +148,9 @@ bun db:generate
 
 # Appliquer les migrations
 bun db:migrate
+
+# Démarrer l'infrastructure (PostgreSQL + Redis)
+bun dev:server dev-infra
 ```
 
 ## 📜 Scripts Disponibles
@@ -138,30 +159,55 @@ bun db:migrate
 |----------|-------------|
 | `bun dev` | Démarre tous les services en mode développement |
 | `bun build` | Compile tous les projets |
-| `bun dev:web` | Démarre uniquement le frontend |
-| `bun dev:server` | Démarre uniquement l'API |
+| `bun dev:web` | Démarre uniquement le frontend (port 3001) |
+| `bun dev:server` | Démarre uniquement l'API (port 8080) |
 | `bun check-types` | Vérifie les types TypeScript |
 | `bun db:push` | Applique les changements de schéma |
 | `bun db:studio` | Ouvre l'interface de gestion de la DB |
+| `bun db:generate` | Génère les migrations Drizzle |
+| `bun db:migrate` | Applique les migrations |
 
 ## 🔧 Configuration
 
-### Variables d'Environnement (Server)
+### Variables d'Environnement
 
+#### Server (.env)
 ```bash
-# Base de données
+# Base de données PostgreSQL
 DATABASE_URL="postgresql://user:password@localhost:5432/pok7"
 
-# Redis
+# Redis pour les sessions et cache
 REDIS_URL="redis://localhost:6379"
 
-# Authentification
-AUTH_SECRET="your-secret-key"
-AUTH_URL="http://localhost:3000"
-
-# Notifications Push
+# Notifications Push Web (VAPID)
+VAPID_EMAIL="your-email@example.com"
 VAPID_PUBLIC_KEY="your-vapid-public-key"
 VAPID_PRIVATE_KEY="your-vapid-private-key"
+
+# Configuration serveur
+NODE_ENV="development"
+LOG_LEVEL="info"
+```
+
+#### Web (.env)
+```bash
+# URL du serveur backend
+VITE_SERVER_URL="http://localhost:8080"
+
+# Notifications Push Web (VAPID Public Key pour le frontend)
+VITE_VAPID_PUBLIC_KEY="your-vapid-public-key"
+```
+
+#### Configuration OAuth2 (Hardcodée)
+```typescript
+// Configuration OAuth2 centralisée dans main.tsx
+const authConfig = {
+  clientId: "t9xFI53nHMTMRduUB1Kt2fUpV1IcFOfNXUZHjpmZ",
+  authorizationEndpoint: "https://myr-project.eu/application/o/authorize/",
+  tokenEndpoint: "https://myr-project.eu/application/o/token/",
+  redirectUri: window.location.origin,
+  scope: "profile openid offline_access picture",
+};
 ```
 
 ## 🚀 Déploiement
