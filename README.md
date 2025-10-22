@@ -187,6 +187,11 @@ VAPID_PRIVATE_KEY="your-vapid-private-key"
 # Configuration serveur
 NODE_ENV="development"
 LOG_LEVEL="info"
+HOST="0.0.0.0"
+PORT="8080"
+
+# CORS - Origines autorisées (séparées par des virgules)
+ALLOWED_ORIGINS="http://localhost:3001,https://pokes.myr-project.eu"
 ```
 
 #### Web (.env)

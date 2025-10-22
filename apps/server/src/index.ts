@@ -9,13 +9,27 @@ import logger from "./lib/logger";
 async function startServer() {
   const server = fastify();
   
+  // Configuration CORS pour production
+  const allowedOrigins = process.env.ALLOWED_ORIGINS 
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['http://localhost:3001', 'https://poky-eta.vercel.app'];
+  
   await server.register(fastifyCors, {
-    // Reflects the request origin. This should only be used for development.
-    // Production should explicitly specify an origin
-    origin: true,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, etc.)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      
+      logger.warn(`CORS blocked origin: ${origin}`);
+      return callback(new Error('Not allowed by CORS'), false);
+    },
     methods: [...connectCors.allowedMethods],
     allowedHeaders: [...connectCors.allowedHeaders, "Authorization"],
     exposedHeaders: [...connectCors.exposedHeaders],
+    credentials: true,
   });
   
   await server.register(fastifyConnectPlugin, {
@@ -29,8 +43,12 @@ async function startServer() {
     reply.send("Hello World!");
   });
   
-  await server.listen({ host: "localhost", port: 8080 });
-  logger.debug("server is listening at", server.addresses());
+  // Configuration serveur pour production
+  const host = process.env.HOST || "0.0.0.0";
+  const port = parseInt(process.env.PORT || "8080");
+  
+  await server.listen({ host, port });
+  logger.info(`Server is listening at http://${host}:${port}`);
 }
 
 startServer().catch((error) => {
