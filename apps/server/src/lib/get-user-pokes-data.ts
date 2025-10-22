@@ -1,8 +1,10 @@
 import { db } from "@/db";
 import { pokes, user } from "@/db/schema";
+import { create } from "@bufbuild/protobuf";
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { eq, or } from "drizzle-orm";
 import logger from "./logger";
+import { GetUserPokesResponseSchema, UserPokeRelationSchema } from "@/rpc/proto/poky/v1/pokes_service_pb";
 
 export interface UserPokeRelation {
   id: string;
@@ -36,7 +38,9 @@ export async function getUserPokesData(userId: string) {
     .where(or(eq(pokes.userAId, userId), eq(pokes.userBId, userId)));
 
   if (pokeRelations.length == 0) {
-    return []
+    return create(GetUserPokesResponseSchema, {
+      pokeRelations: [],
+    });
   }
 
   // Get user details for all the other users in poke relations
@@ -49,7 +53,7 @@ export async function getUserPokesData(userId: string) {
       id: user.id,
       name: user.name,
       username: user.username,
-      image: user.image,
+      image: user.picture,
     })
     .from(user)
     .where(or(...otherUserIds.map((id) => eq(user.id, id))));
@@ -90,17 +94,26 @@ export async function getUserPokesData(userId: string) {
   );
 
   logger.debug(pokeRelationsWithUsers.length)
-  const pokeRelationMessage = pokeRelationsWithUsers.map((relation: any) => ({
-    ...relation,
-    lastPokeDate: timestampFromDate(new Date(relation.lastPokeDate)),
-  }));
+  const pokeRelationMessages = pokeRelationsWithUsers.map((relation) => 
+    create(UserPokeRelationSchema, {
+      id: relation.id,
+      userAId: relation.userAId,
+      userBId: relation.userBId,
+      count: relation.count,
+      lastPokeDate: timestampFromDate(new Date(relation.lastPokeDate)),
+      lastPokeBy: relation.lastPokeBy,
+      visibleLeaderboard: relation.visibleLeaderboard,
+      otherUser: {
+        id: relation.otherUser.id,
+        name: relation.otherUser.name,
+        username: relation.otherUser.username ?? "",
+        image: relation.otherUser.image ?? "",
+        createdAt: undefined, // Not needed for this context
+      },
+    })
+  );
 
-  return {
-    pokeRelations: pokeRelationMessage,
-    count: pokeRelationMessage.length,
-    totalPokes: pokeRelationMessage.reduce(
-      (sum: number, relation: any) => sum + relation.count,
-      0,
-    ),
-  };
+  return create(GetUserPokesResponseSchema, {
+    pokeRelations: pokeRelationMessages,
+  });
 }

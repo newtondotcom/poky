@@ -3,46 +3,31 @@ import { useShallow } from "zustand/react/shallow";
 import { useContext, useMemo, useEffect } from "react";
 import { createCallbackClient, type ConnectError } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { PokesService } from "@/rpc/proto/poky/v1/pokes_service_pb";
+import { PokesService, type UserPokeRelation } from "@/rpc/proto/poky/v1/pokes_service_pb";
 import { AuthContext, type IAuthContext } from "react-oauth2-code-pkce";
+import { timestampDate} from "@bufbuild/protobuf/wkt";
 
 // -------------------
 // Zustand store
 // -------------------
-interface PokeRelation {
-  id: string;
-  count: number;
-  userAId: string;
-  userBId: string;
-  lastPokeDate: string;
-  lastPokeBy: string;
-  visibleLeaderboard: boolean;
-  otherUser: {
-    id: string;
-    name: string;
-    username: string | null;
-    image: string | null;
-  };
-}
-
 interface PokeData {
   count: number;
   totalPokes: number;
-  pokeRelations: PokeRelation[];
+  pokeRelations: UserPokeRelation[];
 }
 
 interface PokeStore {
   pokesData: PokeData | null;
   isLoading: boolean;
   error: any;
-  orderedPokeRelations: PokeRelation[];
+  orderedPokeRelations: UserPokeRelation[];
   isConnected: boolean;
 
   setPokesData: (data: PokeData | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: any) => void;
   setConnectionStatus: (connected: boolean) => void;
-  getOrderedPokeRelations: (pokeRelations: PokeRelation[]) => PokeRelation[];
+  getOrderedPokeRelations: (pokeRelations: UserPokeRelation[]) => UserPokeRelation[];
 }
 
 export const usePokeStore = create<PokeStore>((set, get) => ({
@@ -63,18 +48,20 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
   setError: (error) => set({ error }),
   setConnectionStatus: (connected) => set({ isConnected: connected }),
 
-  getOrderedPokeRelations: (pokeRelations) => {
+  getOrderedPokeRelations: (pokeRelations: UserPokeRelation[]) => {
     if (!pokeRelations) return [];
     return [...pokeRelations].sort((a, b) => {
-      const aIsYourTurn = a.lastPokeBy === a.otherUser.id;
-      const bIsYourTurn = b.lastPokeBy === b.otherUser.id;
+      const aIsYourTurn = a.lastPokeBy === a.otherUser?.id;
+      const bIsYourTurn = b.lastPokeBy === b.otherUser?.id;
 
       if (aIsYourTurn && !bIsYourTurn) return -1;
       if (!aIsYourTurn && bIsYourTurn) return 1;
 
       if (a.count !== b.count) return b.count - a.count;
 
-      return new Date(b.lastPokeDate).getTime() - new Date(a.lastPokeDate).getTime();
+      const aTime = a.lastPokeDate ? timestampDate(a.lastPokeDate).getTime() : 0;
+      const bTime = b.lastPokeDate ? timestampDate(b.lastPokeDate).getTime() : 0;
+      return bTime - aTime;
     });
   },
 }));
@@ -90,7 +77,9 @@ export const usePokesClient = () => {
       baseUrl: "http://localhost:8080",
       interceptors: [
         (next) => (request) => {
-          console.log(token)
+          if (!token) {
+            throw new Error("No token found");
+          }
           request.header.append("Authorization", `Bearer ${token}`);
           return next(request);
         },
@@ -126,7 +115,12 @@ export const usePokeData = () => {
     const stream = client.getUserPokes(
       {},
       (res) => {
-        setPokesData(res as any);
+        const pokeData: PokeData = {
+          count: res.pokeRelations.length,
+          totalPokes: res.pokeRelations.reduce((acc, curr) => acc + curr.count, 0),
+          pokeRelations: res.pokeRelations,
+        };
+        setPokesData(pokeData);
         setLoading(false);
         setConnectionStatus(true);
       },
@@ -142,7 +136,14 @@ export const usePokeData = () => {
     // Cleanup
     return () => {
       setConnectionStatus(false);
-      if (stream && typeof stream.close === "function") stream.close();
+      setError(null);
+      if (stream && typeof stream === "function") {
+        try {
+          stream();
+        } catch (error) {
+          console.warn("Error closing stream:", error);
+        }
+      }
     };
   }, [client, setPokesData, setLoading, setError, setConnectionStatus]);
 
