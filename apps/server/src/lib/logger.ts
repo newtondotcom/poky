@@ -15,10 +15,10 @@ const logger = winston.createLogger({
         winston.format.colorize(),
         winston.format.simple()
       ),
-      level: process.env.NODE_ENV === "env"
+      level: process.env.NODE_ENV === "dev"
       ? "debug" : "error"
     }),
-    ...(process.env.NODE_ENV === "env"
+    ...(process.env.NODE_ENV !== "dev"
       ? [new winston.transports.File({ filename: "logs/error.log", level: "error" })]
       : []),
   ],
