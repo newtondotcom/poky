@@ -192,6 +192,9 @@ PORT="8080"
 
 # CORS - Origines autorisées (séparées par des virgules)
 ALLOWED_ORIGINS="http://localhost:3001,https://pokes.myr-project.eu"
+
+# Redis Connection Pool
+REDIS_MAX_CONNECTIONS="10"
 ```
 
 #### Web (.env)

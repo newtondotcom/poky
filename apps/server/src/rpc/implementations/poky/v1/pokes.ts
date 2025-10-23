@@ -4,6 +4,7 @@ import { getUserPokesData } from "@/lib/get-user-pokes-data";
 import logger from "@/lib/logger";
 import { notifyTargetUser } from "@/lib/notify-target-user";
 import { redisService } from "@/lib/redis";
+import { getRedisConnection } from "@/lib/redis-pool";
 import {
   addUserConnected,
   isUserConnected,
@@ -56,6 +57,9 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
     logger.debug(`First data sent : ${firstDatas}`);
 
     try {
+      // Get Redis connection from pool
+      const sub = await getRedisConnection(currentUserId);
+      
       // Subscribe to the channel
       await sub.subscribe(currentUserId);
       logger.debug(`Subscribed to Redis channel: ${currentUserId}`);
@@ -85,7 +89,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
               sub.off("message", messageHandler);
               reject(new Error("Subscription timeout"));
             }
-          }, 300000000); // 30 second timeout
+          }, 300000000);
 
           // Add the listener
           sub.on("message", messageHandler);
