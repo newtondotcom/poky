@@ -1,4 +1,4 @@
-import { User, Calendar, Zap } from "lucide-react";
+import { User, Calendar, Zap, RefreshCw } from "lucide-react";
 import { usePokeData, useOrderedPokeRelations } from "@/stores/poke-store";
 import { formatDistanceToNow } from "date-fns";
 import { PokeButton } from "@/components/poke-button";
@@ -9,7 +9,7 @@ import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { PokeRelationSheet } from "@/components/poke-relation-sheet";
 
 export function UserPokes() {
-  const { data: pokesData, isLoading, error, isConnected } = usePokeData();
+  const { data: pokesData, isLoading, error, isConnected, retry } = usePokeData();
   const orderedPokeRelations = useOrderedPokeRelations();
   const flipKey = orderedPokeRelations.map((r) => r.id).join(",");
   
@@ -52,8 +52,25 @@ export function UserPokes() {
           </div>
         </div>
         <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
+          <RefreshCw className="h-12 w-12 mx-auto mb-4 text-red-400" />
           <p className="text-red-400 font-medium">Failed to load your pokes</p>
-          <p className="text-sm text-white/60 mt-1">{error.message}</p>
+          <p className="text-sm text-white/60 mt-1 mb-4">{error.message}</p>
+          <button
+            onClick={retry}
+            disabled={isLoading}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/30 rounded-lg text-white/90 font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <>
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4" />
+                Retry
+              </>
+            )}
+          </button>
         </div>
       </div>
     );

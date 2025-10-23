@@ -22,12 +22,14 @@ interface PokeStore {
   error: any;
   orderedPokeRelations: UserPokeRelation[];
   isConnected: boolean;
+  retryCount: number;
 
   setPokesData: (data: PokeData | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: any) => void;
   setConnectionStatus: (connected: boolean) => void;
   getOrderedPokeRelations: (pokeRelations: UserPokeRelation[]) => UserPokeRelation[];
+  retry: () => void;
 }
 
 export const usePokeStore = create<PokeStore>((set, get) => ({
@@ -36,6 +38,7 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
   error: null,
   orderedPokeRelations: [],
   isConnected: false,
+  retryCount: 0,
 
   setPokesData: (data) => {
     const orderedRelations = data?.pokeRelations
@@ -64,12 +67,30 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
       return bTime - aTime;
     });
   },
+
+  retry: () => {
+    // Clear error and reset state to trigger a retry
+    set((state) => ({ 
+      error: null, 
+      isLoading: true, 
+      isConnected: false,
+      retryCount: state.retryCount + 1
+    }));
+  },
 }));
 
 // -------------------
 // Hook: create client with token
 // -------------------
 export const usePokesClient = () => {
+  const { token } = useContext<IAuthContext>(AuthContext);
+  const tokenRef = useRef(token);
+
+  // Update the ref whenever token changes
+  useEffect(() => {
+    tokenRef.current = token;
+  }, [token]);
+
   const client = useMemo(() => {
     const transport = createConnectTransport({
       baseUrl: import.meta.env.VITE_SERVER_URL,
@@ -96,12 +117,14 @@ export const usePokesClient = () => {
 // -------------------
 export const usePokeData = () => {
   const client = usePokesClient();
-  const { setPokesData, setLoading, setError, setConnectionStatus } = usePokeStore(
+  const { setPokesData, setLoading, setError, setConnectionStatus, retry, retryCount } = usePokeStore(
     useShallow((state) => ({
       setPokesData: state.setPokesData,
       setLoading: state.setLoading,
       setError: state.setError,
       setConnectionStatus: state.setConnectionStatus,
+      retry: state.retry,
+      retryCount: state.retryCount,
     })),
   );
 
@@ -143,7 +166,7 @@ export const usePokeData = () => {
         }
       }
     };
-  }, [client, setPokesData, setLoading, setError, setConnectionStatus]);
+  }, [client, setPokesData, setLoading, setError, setConnectionStatus, retryCount]);
 
   return usePokeStore(
     useShallow((state) => ({
@@ -151,6 +174,7 @@ export const usePokeData = () => {
       isLoading: state.isLoading,
       error: state.error,
       isConnected: state.isConnected,
+      retry: state.retry,
     })),
   );
 };
