@@ -70,25 +70,15 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
 // Hook: create client with token
 // -------------------
 export const usePokesClient = () => {
-  const { token } = useContext<IAuthContext>(AuthContext);
-  const tokenRef = useRef(token);
-
-  // Update the ref whenever token changes
-  useEffect(() => {
-    tokenRef.current = token;
-  }, [token]);
-
   const client = useMemo(() => {
     const transport = createConnectTransport({
       baseUrl: import.meta.env.VITE_SERVER_URL,
       interceptors: [
         (next) => (request) => {
-          // Get the current token from ref instead of capturing it in closure
-          const currentToken = tokenRef.current;
-          if (!currentToken) {
-            throw new Error("No token found");
+          const token = JSON.parse(window.localStorage.getItem("ROCP_token"));
+          if (token) {
+            request.header.append("authorization", `Bearer ${token}`);
           }
-          request.header.append("Authorization", `Bearer ${currentToken}`);
           return next(request);
         },
       ],
