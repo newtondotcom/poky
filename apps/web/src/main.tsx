@@ -20,7 +20,7 @@ const authConfig: TAuthConfig = {
   redirectUri: window.location.origin,
   scope: "profile openid offline_access picture email",
   autoLogin : false,
-  onRefreshTokenExpire: (event: TRefreshTokenExpiredEvent) => console.log(event),
+  onRefreshTokenExpire: (event: TRefreshTokenExpiredEvent) => event.logIn(undefined,undefined, "redirect"),
 };
 
 // -------------------
