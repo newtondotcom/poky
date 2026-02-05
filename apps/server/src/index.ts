@@ -6,8 +6,23 @@ import { cors as connectCors } from "@connectrpc/connect";
 import { authInterceptor } from "@/rpc/interceptor";
 import logger from "@/lib/logger";
 import { auth } from "@poky/auth";
+import { runMigrations } from "@poky/db";
 
 async function startServer() {
+
+  // Run database migrations before starting the server
+  // This ensures the schema is up to date before accepting connections
+  try {
+    await runMigrations();
+  } catch (error) {
+    logger.error("Failed to run migrations:", error);
+    // In production, you might want to exit here
+    // For development, we continue so the server can start even if DB is not available
+    if (process.env.NODE_ENV === "production") {
+      process.exit(1);
+    }
+  }
+
   const server = fastify();
 
   // Configuration CORS pour production
