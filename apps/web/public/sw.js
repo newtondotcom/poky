@@ -38,8 +38,8 @@ self.addEventListener("push", function (event) {
     data: {
       ...data.data,
       url: data.url || "/",
-      timestamp: Date.now()
-    }
+      timestamp: Date.now(),
+    },
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
@@ -51,19 +51,19 @@ self.addEventListener("notificationclick", function (event) {
   event.notification.close();
 
   const targetUrl = event.notification.data?.url || "/";
-  
+
   event.waitUntil(
-    self.clients.matchAll({type: 'window'}).then(clientList => {
+    self.clients.matchAll({ type: "window" }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url === targetUrl && 'focus' in client) {
+        if (client.url === targetUrl && "focus" in client) {
           return client.focus();
         }
       }
-      
+
       if (self.clients.openWindow) {
         return self.clients.openWindow(targetUrl);
       }
-    })
+    }),
   );
 });
 
@@ -76,7 +76,7 @@ self.addEventListener("pushsubscriptionchange", async (event) => {
       try {
         const newSubscription = await self.registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: self.VAPID_PUBLIC_KEY
+          applicationServerKey: self.VAPID_PUBLIC_KEY,
         });
 
         /*
@@ -97,7 +97,7 @@ self.addEventListener("pushsubscriptionchange", async (event) => {
       } catch (error) {
         console.error("[ServiceWorker] Failed to renew subscription:", error);
       }
-    })()
+    })(),
   );
 });
 

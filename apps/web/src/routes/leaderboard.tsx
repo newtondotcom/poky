@@ -13,8 +13,8 @@ function LeaderboardPage() {
   const navigate = useNavigate();
   const { data: session, isPending } = authClient.useSession();
   if (!session) {
-      navigate({ to: "/" });
-      return null;
+    navigate({ to: "/" });
+    return null;
   }
 
   if (isPending) {

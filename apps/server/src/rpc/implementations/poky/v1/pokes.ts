@@ -4,16 +4,9 @@ import { pokes } from "@poky/db/schema/poky";
 import { getUserPokesData } from "@/lib/get-user-pokes-data";
 import logger from "@/lib/logger";
 import { natsService } from "@/lib/nats";
-import {
-  UserPokesUpdateSchema,
-  userPokesSubject,
-} from "@/lib/nats-messages";
+import { UserPokesUpdateSchema, userPokesSubject } from "@/lib/nats-messages";
 import { notifyTargetUser } from "@/lib/notify-target-user";
-import {
-  addUserConnected,
-  isUserConnected,
-  removeUserConnected,
-} from "@/lib/user-connected";
+import { addUserConnected, isUserConnected, removeUserConnected } from "@/lib/user-connected";
 import { kUserId } from "@/rpc/context";
 import {
   SearchUserResultSchema,
@@ -27,12 +20,7 @@ import {
 } from "@/rpc/proto/poky/v1/pokes_service_pb";
 import { create } from "@bufbuild/protobuf";
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
-import {
-  Code,
-  ConnectError,
-  type HandlerContext,
-  type ServiceImpl,
-} from "@connectrpc/connect";
+import { Code, ConnectError, type HandlerContext, type ServiceImpl } from "@connectrpc/connect";
 
 async function decideWhichActionToPerform(targetUserId: string) {
   // if users logged as online in the map
@@ -41,15 +29,11 @@ async function decideWhichActionToPerform(targetUserId: string) {
 
   if (targetUserConnected) {
     logger.debug(`Publishing to target user channel: ${targetUserId}`);
-    await natsService.publish(
-      userPokesSubject(targetUserId),
-      UserPokesUpdateSchema,
-      { userId: targetUserId },
-    );
+    await natsService.publish(userPokesSubject(targetUserId), UserPokesUpdateSchema, {
+      userId: targetUserId,
+    });
   } else {
-    logger.debug(
-      `Target user ${targetUserId} is offline, sending web push notification`,
-    );
+    logger.debug(`Target user ${targetUserId} is offline, sending web push notification`);
     notifyTargetUser(targetUserId);
   }
 }
@@ -69,10 +53,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
 
     try {
       const subject = userPokesSubject(currentUserId);
-      const { sub, iterator } = await natsService.subscribe(
-        subject,
-        UserPokesUpdateSchema,
-      );
+      const { sub, iterator } = await natsService.subscribe(subject, UserPokesUpdateSchema);
       subscription = sub;
       logger.debug(`Subscribed to NATS subject: ${subject}`);
 
@@ -128,20 +109,13 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
         .from(pokes)
         .where(
           or(
-            and(
-              eq(pokes.userAId, currentUserId),
-              eq(pokes.userBId, targetUserId),
-            ),
-            and(
-              eq(pokes.userAId, targetUserId),
-              eq(pokes.userBId, currentUserId),
-            ),
+            and(eq(pokes.userAId, currentUserId), eq(pokes.userBId, targetUserId)),
+            and(eq(pokes.userAId, targetUserId), eq(pokes.userBId, currentUserId)),
           ),
         )
         .limit(1);
 
       if (existingRelation) {
-
         // Check if it is the user turn to poke
         if (existingRelation.lastPokeBy === currentUserId) {
           logger.error("you have already poked this user");
@@ -166,11 +140,9 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
 
         // publish so that user ui is refreshed
         logger.debug(`Publishing to NATS subject: ${currentUserId}`);
-        await natsService.publish(
-          userPokesSubject(currentUserId),
-          UserPokesUpdateSchema,
-          { userId: currentUserId },
-        );
+        await natsService.publish(userPokesSubject(currentUserId), UserPokesUpdateSchema, {
+          userId: currentUserId,
+        });
 
         return {
           success: true,
@@ -203,11 +175,9 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
 
         // publish so that user ui is refreshed
         logger.debug(`Publishing to NATS subject: ${currentUserId}`);
-        await natsService.publish(
-          userPokesSubject(currentUserId),
-          UserPokesUpdateSchema,
-          { userId: currentUserId },
-        );
+        await natsService.publish(userPokesSubject(currentUserId), UserPokesUpdateSchema, {
+          userId: currentUserId,
+        });
 
         return {
           success: true,
@@ -246,10 +216,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
         .from(user)
         .where(
           and(
-            or(
-              like(user.username, `%${query}%`),
-              like(user.name, `%${query}%`),
-            ),
+            or(like(user.username, `%${query}%`), like(user.name, `%${query}%`)),
             not(eq(user.id, currentUserId)),
           ),
         )
@@ -265,12 +232,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
           lastPokeDate: pokes.lastPokeDate,
         })
         .from(pokes)
-        .where(
-          or(
-            eq(pokes.userAId, currentUserId),
-            eq(pokes.userBId, currentUserId),
-          ),
-        );
+        .where(or(eq(pokes.userAId, currentUserId), eq(pokes.userBId, currentUserId)));
 
       // 🧠 Merge user info + poke info
       const searchResults = users.map((u) => {
@@ -325,10 +287,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
         .where(
           and(
             eq(pokes.id, relationId),
-            or(
-              eq(pokes.userAId, currentUserId),
-              eq(pokes.userBId, currentUserId),
-            ),
+            or(eq(pokes.userAId, currentUserId), eq(pokes.userBId, currentUserId)),
           ),
         )
         .limit(1);
@@ -338,10 +297,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
       }
 
       // Get the other user's details
-      const otherUserId =
-        relation.userAId === currentUserId
-          ? relation.userBId
-          : relation.userAId;
+      const otherUserId = relation.userAId === currentUserId ? relation.userBId : relation.userAId;
       const [otherUser] = await db
         .select({
           id: user.id,

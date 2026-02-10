@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, Loader2, Search, User, Calendar, Zap } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@connectrpc/connect-query";
 import { PokeButton } from "@/components/poke-button";
 import { formatDistanceToNow } from "date-fns";
@@ -19,29 +19,29 @@ function SearchPage() {
   const navigate = useNavigate();
   const { data: session, isPending } = authClient.useSession();
   if (!session) {
-      navigate({ to: "/" });
-      return null;
+    navigate({ to: "/" });
+    return null;
   }
 
   if (isPending) {
     return <Loader />;
   }
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
   // Query to seach users
   const searchUsersQuery = useQuery(
     PokesService.method.searchUsers,
-      {
-        query: searchQuery,
-      },
-      {
-        enabled: searchQuery.trim().length > 0, // Auto-run when query has content
-        retry: false,
-        staleTime: 30000, // Cache results for 30 seconds
-      },
-    );
+    {
+      query: searchQuery,
+    },
+    {
+      enabled: searchQuery.trim().length > 0, // Auto-run when query has content
+      retry: false,
+      staleTime: 30000, // Cache results for 30 seconds
+    },
+  );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -110,17 +110,13 @@ function SearchPage() {
         {searchUsersQuery.error && (
           <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <p className="text-red-400 font-medium">Failed to search users</p>
-            <p className="text-sm text-white/60 mt-1">
-              {searchUsersQuery.error.message}
-            </p>
+            <p className="text-sm text-white/60 mt-1">{searchUsersQuery.error.message}</p>
           </div>
         )}
 
         {searchUsersQuery.data && searchQuery.trim().length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm text-white/60">
-              Found {searchUsersQuery.data.count} user(s)
-            </p>
+            <p className="text-sm text-white/60">Found {searchUsersQuery.data.count} user(s)</p>
 
             {searchUsersQuery.data.users.length === 0 ? (
               <div className="text-center py-8 text-white/60">
@@ -151,24 +147,21 @@ function SearchPage() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate text-white/90">
-                            {user.username}
-                          </p>
+                          <p className="font-medium truncate text-white/90">{user.username}</p>
                           <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
                             <Calendar className="h-3 w-3" />
                             {user.hasPokeRelation && user.lastPokeDate ? (
                               <span>
-                                {formatDistanceToNow(
-                                  timestampDate(user.lastPokeDate),
-                                  {
-                                    addSuffix: true,
-                                  },
-                                )}
+                                {formatDistanceToNow(timestampDate(user.lastPokeDate), {
+                                  addSuffix: true,
+                                })}
                               </span>
                             ) : (
                               <span>
                                 Joined{" "}
-                                {user.createdAt ? timestampDate(user.createdAt).toLocaleDateString() : ""}
+                                {user.createdAt
+                                  ? timestampDate(user.createdAt).toLocaleDateString()
+                                  : ""}
                               </span>
                             )}
                           </div>
@@ -199,9 +192,7 @@ function SearchPage() {
                         )}
                         <div className="flex items-center gap-2 justify-end mb-2">
                           <Zap className="h-4 w-4 text-yellow-400" />
-                          <span className="font-semibold text-white/90">
-                            {user.pokeCount}
-                          </span>
+                          <span className="font-semibold text-white/90">{user.pokeCount}</span>
                         </div>
                       </div>
                     </div>

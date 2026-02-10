@@ -4,10 +4,7 @@ import logger from "@/lib/logger";
 import { webpush } from "@poky/db/schema/poky";
 
 export async function notifyTargetUser(targetUserId: string) {
-  const [sub] = await db
-    .select()
-    .from(webpush)
-    .where(eq(webpush.userId, targetUserId));
+  const [sub] = await db.select().from(webpush).where(eq(webpush.userId, targetUserId));
   if (sub) {
     const subscription = {
       endpoint: sub.endpoint,

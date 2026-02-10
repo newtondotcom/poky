@@ -20,8 +20,7 @@ export default defineConfig({
       manifest: {
         name: "pok7",
         short_name: "pok7",
-        description:
-          "An enhancement of Meta pokes in a modern PWA with liquid glass theme",
+        description: "An enhancement of Meta pokes in a modern PWA with liquid glass theme",
         theme_color: "#31d748",
         background_color: "#ffffff",
         display: "standalone",

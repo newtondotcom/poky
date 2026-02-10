@@ -12,12 +12,7 @@ import {
   type WebPushService,
 } from "@/rpc/proto/poky/v1/webpush_service_pb";
 import { create } from "@bufbuild/protobuf";
-import {
-  Code,
-  ConnectError,
-  type HandlerContext,
-  type ServiceImpl,
-} from "@connectrpc/connect";
+import { Code, ConnectError, type HandlerContext, type ServiceImpl } from "@connectrpc/connect";
 
 export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
   async registerWebPush(req: RegisterWebPushRequest, context: HandlerContext) {
@@ -45,9 +40,7 @@ export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
           },
         });
 
-      const expirationDate = req.expirationTime
-        ? new Date(req.expirationTime.toString())
-        : null;
+      const expirationDate = req.expirationTime ? new Date(req.expirationTime.toString()) : null;
 
       // Upsert web push subscription (one per device)
       await db
@@ -107,10 +100,7 @@ export class WebpushServiceImpl implements ServiceImpl<typeof WebPushService> {
     // assert user Id is the same as webpush user_id
     try {
       // First, check if the subscription exists and belongs to the user
-      const [existing] = await db
-        .select()
-        .from(webpush)
-        .where(eq(webpush.id, req.id));
+      const [existing] = await db.select().from(webpush).where(eq(webpush.id, req.id));
       if (!existing || existing.userId !== userId) {
         throw new Error("Subscription not found or not owned by user");
       }

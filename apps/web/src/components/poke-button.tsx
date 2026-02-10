@@ -6,13 +6,7 @@ import { usePokeUser } from "@/hooks/poke-user";
 interface PokeButtonProps {
   targetUserId: string;
   targetUserName: string;
-  variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
   onPokeSuccess?: () => void;
@@ -31,7 +25,7 @@ export function PokeButton({
   const handlePoke = async () => {
     try {
       pokeUser({
-        targetUserId
+        targetUserId,
       });
     } catch (err) {
       toast.error({ text: `Failed to poke ${targetUserName} with ${err}` });
@@ -46,11 +40,7 @@ export function PokeButton({
       disabled={isPoking}
       className={className}
     >
-      {isPoking ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        <Zap className="h-4 w-4" />
-      )}
+      {isPoking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
       {size !== "icon" && (isPoking ? "Poking..." : "Poke")}
     </Button>
   );

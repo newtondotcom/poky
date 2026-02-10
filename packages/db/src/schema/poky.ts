@@ -1,10 +1,4 @@
-import {
-  pgTable,
-  text,
-  integer,
-  timestamp,
-  boolean,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { user } from "./auth";
 
@@ -17,9 +11,7 @@ export const devices = pgTable("devices", {
   name: text("name"), // "Chrome on Windows"
   userAgent: text("user_agent"),
   lastSeen: timestamp("last_seen", { withTimezone: false, mode: "date" }),
-  createdAt: timestamp("created_at", { withTimezone: false, mode: "date" })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: false, mode: "date" }).defaultNow().notNull(),
 });
 
 // Push subscriptions table with device relationship
@@ -38,9 +30,7 @@ export const webpush = pgTable("webpush", {
     mode: "date",
   }),
   options: text("options").notNull(), // JSON with keys
-  createdAt: timestamp("created_at", { withTimezone: false, mode: "date" })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: false, mode: "date" }).defaultNow().notNull(),
   isActive: boolean("is_active").default(true).notNull(),
 });
 

@@ -29,7 +29,11 @@ interface PokeRelationSheetProps {
   selectedRelation: any;
 }
 
-export function PokeRelationSheet({ isOpen, onOpenChange, selectedRelation }: PokeRelationSheetProps) {
+export function PokeRelationSheet({
+  isOpen,
+  onOpenChange,
+  selectedRelation,
+}: PokeRelationSheetProps) {
   // Query to fetch fresh relation data when sheet opens
   const { data: freshRelationData, isLoading: isLoadingRelation } = useQuery(
     PokesService.method.getPokeRelation,
@@ -38,7 +42,7 @@ export function PokeRelationSheet({ isOpen, onOpenChange, selectedRelation }: Po
     },
     {
       enabled: !!selectedRelation?.id && isOpen,
-    }
+    },
   );
 
   // Mutation to toggle visibility
@@ -87,7 +91,10 @@ export function PokeRelationSheet({ isOpen, onOpenChange, selectedRelation }: Po
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="bg-white/10 backdrop-blur-xl border-white/20 px-4 py-4">
+      <SheetContent
+        side="bottom"
+        className="bg-white/10 backdrop-blur-xl border-white/20 px-4 py-4"
+      >
         <SheetHeader>
           <SheetTitle className="text-white/90">
             {freshRelationData?.relation?.otherUser?.name || selectedRelation?.otherUser?.name}
@@ -96,7 +103,7 @@ export function PokeRelationSheet({ isOpen, onOpenChange, selectedRelation }: Po
             Manage your poke relation with this user
           </SheetDescription>
         </SheetHeader>
-        
+
         <div className="flex flex-col gap-4 mt-6">
           {isLoadingRelation ? (
             <div className="flex items-center justify-center py-8">
@@ -114,19 +121,20 @@ export function PokeRelationSheet({ isOpen, onOpenChange, selectedRelation }: Po
               >
                 {toggleVisibilityMutation.isPending ? (
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                ) : (freshRelationData?.relation?.visibleLeaderboard ?? selectedRelation?.visibleLeaderboard) ? (
+                ) : (freshRelationData?.relation?.visibleLeaderboard ??
+                  selectedRelation?.visibleLeaderboard) ? (
                   <EyeOff className="h-4 w-4" />
                 ) : (
                   <Eye className="h-4 w-4" />
                 )}
                 <span>
-                  {(freshRelationData?.relation?.visibleLeaderboard ?? selectedRelation?.visibleLeaderboard)
-                    ? "Hide from Leaderboard" 
-                    : "Show on Leaderboard"
-                  }
+                  {(freshRelationData?.relation?.visibleLeaderboard ??
+                  selectedRelation?.visibleLeaderboard)
+                    ? "Hide from Leaderboard"
+                    : "Show on Leaderboard"}
                 </span>
               </Button>
-          
+
               {/* Delete Relation Option */}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -146,9 +154,11 @@ export function PokeRelationSheet({ isOpen, onOpenChange, selectedRelation }: Po
                     <AlertDialogDescription className="text-white/60">
                       Are you sure you want to delete your poke relation with{" "}
                       <span className="font-semibold text-white/80">
-                        {freshRelationData?.relation?.otherUser?.name || selectedRelation?.otherUser?.name}
+                        {freshRelationData?.relation?.otherUser?.name ||
+                          selectedRelation?.otherUser?.name}
                       </span>
-                      ? This action cannot be undone and will remove all poke history between you two.
+                      ? This action cannot be undone and will remove all poke history between you
+                      two.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

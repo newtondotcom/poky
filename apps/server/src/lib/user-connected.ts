@@ -9,10 +9,7 @@ class UserConnectionManager {
   private readonly DEFAULT_TTL = 300; // 5 minutes
 
   private constructor() {
-    const url =
-      process.env.VALKEY_URL ??
-      process.env.REDIS_URL ??
-      "redis://localhost:6379";
+    const url = process.env.VALKEY_URL ?? process.env.REDIS_URL ?? "redis://localhost:6379";
     this.redis = new Redis(url);
 
     // Start cleanup interval
@@ -94,9 +91,7 @@ class UserConnectionManager {
     const users = await this.redis.smembers(this.CONNECTED_USERS_SET);
 
     if (users.length > 0) {
-      const ttlKeys = users.map(
-        (userId: string) => `${this.USER_TTL_PREFIX}${userId}`,
-      );
+      const ttlKeys = users.map((userId: string) => `${this.USER_TTL_PREFIX}${userId}`);
       await this.redis.del(...ttlKeys);
     }
 
@@ -171,21 +166,16 @@ export const addUserConnected = (userId: string, ttlSeconds?: number) =>
 export const removeUserConnected = (userId: string) =>
   userConnectionManager.removeUserConnected(userId);
 
-export const isUserConnected = (userId: string) =>
-  userConnectionManager.isUserConnected(userId);
+export const isUserConnected = (userId: string) => userConnectionManager.isUserConnected(userId);
 
-export const getConnectedUsers = () =>
-  userConnectionManager.getConnectedUsers();
+export const getConnectedUsers = () => userConnectionManager.getConnectedUsers();
 
-export const getConnectedUsersCount = () =>
-  userConnectionManager.getConnectedUsersCount();
+export const getConnectedUsersCount = () => userConnectionManager.getConnectedUsersCount();
 
-export const clearAllConnections = () =>
-  userConnectionManager.clearAllConnections();
+export const clearAllConnections = () => userConnectionManager.clearAllConnections();
 
 // Additional useful functions
 export const refreshUserConnection = (userId: string, ttlSeconds?: number) =>
   userConnectionManager.refreshUserConnection(userId, ttlSeconds);
 
-export const getUserTTL = (userId: string) =>
-  userConnectionManager.getUserTTL(userId);
+export const getUserTTL = (userId: string) => userConnectionManager.getUserTTL(userId);

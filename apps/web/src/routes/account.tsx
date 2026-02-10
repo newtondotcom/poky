@@ -29,8 +29,8 @@ function AccountPage() {
   const navigate = useNavigate();
   const { data: session, isPending } = authClient.useSession();
   if (!session) {
-      navigate({ to: "/" });
-      return null;
+    navigate({ to: "/" });
+    return null;
   }
 
   if (isPending) {
@@ -51,14 +51,14 @@ function AccountPage() {
   const deleteWebPushMutation = useMutation(WebPushService.method.deleteWebPush);
 
   // Add mutation to test web push
-  const testWebPushMutation = useMutation(WebPushService.method.testWebPush,{
+  const testWebPushMutation = useMutation(WebPushService.method.testWebPush, {
     onSuccess: () => {
       toast.success({ text: "Test notification sent!" });
     },
     onError: (err) => {
-    toast.error({ text: "Failed to send test notification." });
-    console.error(err);
-    }
+      toast.error({ text: "Failed to send test notification." });
+      console.error(err);
+    },
   });
 
   // Add mutations for refreshing anonymized data
@@ -96,8 +96,8 @@ function AccountPage() {
             endpoint = sub.endpoint;
             // Validate with backend
             const getWebPushQuery = useQuery(WebPushService.method.getWebPush, {
-                id: endpoint, // will be set dynamically
-              });
+              id: endpoint, // will be set dynamically
+            });
             valid = !!getWebPushQuery;
           }
         } catch {
@@ -122,8 +122,7 @@ function AccountPage() {
   };
 
   const cycleMode = () => {
-    const newTheme =
-      theme === "light" ? "dark" : theme === "dark" ? "system" : "light";
+    const newTheme = theme === "light" ? "dark" : theme === "dark" ? "system" : "light";
     setTheme(newTheme);
     console.log(`Theme changed to ${newTheme}`);
   };
@@ -177,10 +176,7 @@ function AccountPage() {
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
         });
-        localStorage.setItem(
-          "webpush-subscription",
-          JSON.stringify(subscription),
-        );
+        localStorage.setItem("webpush-subscription", JSON.stringify(subscription));
         const subObj = subscription.toJSON();
         const deviceId = getDeviceId();
         const deviceName = `${getBrowserName()} on ${getOSName()}`; // e.g., "Chrome on Windows"
@@ -230,9 +226,7 @@ function AccountPage() {
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
-        <h2 className="text-xl font-semibold text-white/90">
-          Account Settings
-        </h2>
+        <h2 className="text-xl font-semibold text-white/90">Account Settings</h2>
         <div className="w-10"></div> {/* Spacer for centering */}
       </div>
 
@@ -269,7 +263,7 @@ function AccountPage() {
                       <div className="w-12 h-12 rounded-full overflow-hidden bg-white/20 flex items-center justify-center">
                         {anonymizedDataQuery.isLoading ? (
                           <Loader />
-                        ) : anonymizedDataQuery.data? (
+                        ) : anonymizedDataQuery.data ? (
                           <img
                             src={anonymizedDataQuery.data.imageAnonymized}
                             alt="Anonymous avatar"
@@ -294,7 +288,9 @@ function AccountPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium">
-                          {anonymizedDataQuery.isLoading ? "Loading..." : anonymizedDataQuery.data?.usernameAnonymized || "Generating..."}
+                          {anonymizedDataQuery.isLoading
+                            ? "Loading..."
+                            : anonymizedDataQuery.data?.usernameAnonymized || "Generating..."}
                         </p>
                         <button
                           onClick={() => refreshNameMutation.mutate({})}
@@ -327,9 +323,7 @@ function AccountPage() {
                     </div>
                     <span className="text-sm">Theme</span>
                   </div>
-                  <span className="text-xs text-white/70 capitalize">
-                    {theme}
-                  </span>
+                  <span className="text-xs text-white/70 capitalize">{theme}</span>
                 </button>
 
                 {/* Web Push Permission Toggle */}
@@ -349,13 +343,13 @@ function AccountPage() {
                       disabled={checkingPush}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent ${
                         pushEnabled
-                          ? 'bg-green-500 hover:bg-green-600'
-                          : 'bg-gray-400 hover:bg-gray-500'
+                          ? "bg-green-500 hover:bg-green-600"
+                          : "bg-gray-400 hover:bg-gray-500"
                       }`}
                     >
                       <span
                         className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          pushEnabled ? 'translate-x-6' : 'translate-x-1'
+                          pushEnabled ? "translate-x-6" : "translate-x-1"
                         }`}
                       />
                     </button>

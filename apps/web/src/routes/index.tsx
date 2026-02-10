@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { UserPokes } from "@/components/user-pokes";
 import { Navigation } from "@/components/navigation";
 import UserMenu from "@/components/user-menu";
-import { useEffect } from 'react';
-import { toast } from '@pheralb/toast';
+import { useEffect } from "react";
+import { toast } from "@pheralb/toast";
 import { authClient } from "@/lib/auth-client";
 import Loader from "@/components/loader";
 
@@ -39,7 +39,14 @@ function HomeComponent() {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
-      {!session ? <UserMenu /> : <><Navigation /><UserPokes /></>}
+      {!session ? (
+        <UserMenu />
+      ) : (
+        <>
+          <Navigation />
+          <UserPokes />
+        </>
+      )}
     </div>
   );
 }

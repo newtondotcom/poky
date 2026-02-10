@@ -1,4 +1,4 @@
-import { betterAuth, type BetterAuthOptions} from "better-auth";
+import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@poky/db";
 import * as schema from "@poky/db/schema/auth";
@@ -45,19 +45,11 @@ export const auth = betterAuth<BetterAuthOptions>({
           clientSecret: process.env.CHURROS_CLIENT_SECRET || "",
           authorizationUrl: process.env.CHURROS_AUTHORIZATION_URL || "",
           tokenUrl: process.env.CHURROS_TOKEN_URL || "",
-          scopes: [
-            "openid",
-            "profile",
-            "preferred_username",
-            "email",
-            "churros:profile",
-          ],
+          scopes: ["openid", "profile", "preferred_username", "email", "churros:profile"],
           async getUserInfo(tokens) {
             const userInfoUrl = process.env.CHURROS_USER_INFO;
             if (!userInfoUrl) {
-              throw new Error(
-                "CHURROS_USER_INFO environment variable is not set",
-              );
+              throw new Error("CHURROS_USER_INFO environment variable is not set");
             }
 
             const response = await fetch(userInfoUrl, {
@@ -126,12 +118,12 @@ export const auth = betterAuth<BetterAuthOptions>({
   ],
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,
-  trustedOrigins: process.env.CORS_ORIGIN?.split(",")|| [],
+  trustedOrigins: process.env.CORS_ORIGIN?.split(",") || [],
   advanced: {
     defaultCookieAttributes: {
       sameSite: "none",
       secure: true,
       httpOnly: true,
     },
-  }
+  },
 });

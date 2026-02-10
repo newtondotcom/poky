@@ -12,11 +12,11 @@ export function UserPokes() {
   const { data: pokesData, isLoading, error, isConnected, retry } = usePokeData();
   const orderedPokeRelations = useOrderedPokeRelations();
   const flipKey = orderedPokeRelations.map((r) => r.id).join(",");
-  
+
   // State for bottom sheet
   const [selectedRelation, setSelectedRelation] = useState<any>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  
+
   // Handle avatar click
   const handleAvatarClick = (relation: any) => {
     setSelectedRelation(relation);
@@ -82,15 +82,15 @@ export function UserPokes() {
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white/90">Your Pokes</h2>
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`} />
+            <div
+              className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-400" : "bg-red-400"}`}
+            />
           </div>
         </div>
         <div className="text-center py-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
           <Zap className="h-12 w-12 mx-auto mb-3 text-white/50" />
           <p className="text-white/80 font-medium">No pokes yet!</p>
-          <p className="text-sm text-white/60 mt-1">
-            Start poking people to see them here
-          </p>
+          <p className="text-sm text-white/60 mt-1">Start poking people to see them here</p>
         </div>
       </div>
     );
@@ -107,7 +107,9 @@ export function UserPokes() {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`} />
+            <div
+              className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-400" : "bg-red-400"}`}
+            />
           </div>
         </div>
       </div>
@@ -115,8 +117,7 @@ export function UserPokes() {
       <Flipper flipKey={flipKey} spring="veryGentle">
         <div className="space-y-4">
           {orderedPokeRelations.map((pokeRelation) => {
-            const isYourTurn =
-              pokeRelation.lastPokeBy == pokeRelation.otherUser?.id;
+            const isYourTurn = pokeRelation.lastPokeBy == pokeRelation.otherUser?.id;
 
             return (
               <Flipped key={pokeRelation.id} flipId={pokeRelation.id}>
@@ -143,11 +144,11 @@ export function UserPokes() {
                       <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
                         <Calendar className="h-3 w-3" />
                         <span>
-                          {pokeRelation.lastPokeDate 
+                          {pokeRelation.lastPokeDate
                             ? formatDistanceToNow(timestampDate(pokeRelation.lastPokeDate), {
-                              addSuffix: true,
-                            })
-                          : ""}
+                                addSuffix: true,
+                              })
+                            : ""}
                         </span>
                       </div>
                     </div>
@@ -164,9 +165,7 @@ export function UserPokes() {
                     )}
                     <div className="flex items-center gap-2 justify-end">
                       <Zap className="h-4 w-4 text-yellow-400" />
-                      <span className="font-semibold text-white/90">
-                        {pokeRelation.count}
-                      </span>
+                      <span className="font-semibold text-white/90">{pokeRelation.count}</span>
                     </div>
                   </div>
                 </div>
@@ -175,7 +174,7 @@ export function UserPokes() {
           })}
         </div>
       </Flipper>
-      
+
       {/* Bottom Sheet for Relation Options */}
       <PokeRelationSheet
         isOpen={isSheetOpen}

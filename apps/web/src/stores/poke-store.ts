@@ -69,11 +69,11 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
 
   retry: () => {
     // Clear error and reset state to trigger a retry
-    set((state) => ({ 
-      error: null, 
-      isLoading: true, 
+    set((state) => ({
+      error: null,
+      isLoading: true,
       isConnected: false,
-      retryCount: state.retryCount + 1
+      retryCount: state.retryCount + 1,
     }));
   },
 }));
@@ -85,8 +85,8 @@ export const usePokesClient = () => {
   const client = useMemo(() => {
     const transport = createConnectTransport({
       baseUrl: import.meta.env.VITE_SERVER_URL,
-      fetch: (input, init) => fetch(input, {...init, credentials: "include"}),
-      defaultTimeoutMs : 20*60*1000
+      fetch: (input, init) => fetch(input, { ...init, credentials: "include" }),
+      defaultTimeoutMs: 20 * 60 * 1000,
     });
 
     return createCallbackClient(PokesService, transport);
@@ -165,8 +165,6 @@ export const usePokeData = () => {
 // -------------------
 // Helper hooks
 // -------------------
-export const useOrderedPokeRelations = () =>
-  usePokeStore((state) => state.orderedPokeRelations);
+export const useOrderedPokeRelations = () => usePokeStore((state) => state.orderedPokeRelations);
 
-export const useConnectionStatus = () =>
-  usePokeStore((state) => state.isConnected);
+export const useConnectionStatus = () => usePokeStore((state) => state.isConnected);

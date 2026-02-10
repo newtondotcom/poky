@@ -1,10 +1,7 @@
 import { db, desc, eq, inArray, or, and } from "@poky/db";
 import { user } from "@poky/db/schema/auth";
 import { pokes } from "@poky/db/schema/poky";
-import {
-  generateFunnyFrenchName,
-  generateFunnyPicture,
-} from "@poky/db/utils/anonymization";
+import { generateFunnyFrenchName, generateFunnyPicture } from "@poky/db/utils/anonymization";
 import logger from "@/lib/logger";
 import { kUserId } from "@/rpc/context";
 import {
@@ -20,9 +17,7 @@ import { create } from "@bufbuild/protobuf";
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import type { HandlerContext, ServiceImpl } from "@connectrpc/connect";
 
-export class LeaderboardServiceImpl
-  implements ServiceImpl<typeof LeaderboardService>
-{
+export class LeaderboardServiceImpl implements ServiceImpl<typeof LeaderboardService> {
   async getLeaderboard(_req: GetLeaderboardRequest, _context: HandlerContext) {
     try {
       // Get top 50 poke relations ordered by count (highest first)
@@ -76,9 +71,7 @@ export class LeaderboardServiceImpl
         const userB = userMap.get(relation.userBId);
 
         if (!userA || !userB) {
-          throw new Error(
-            `User not found: ${relation.userAId} or ${relation.userBId}`,
-          );
+          throw new Error(`User not found: ${relation.userAId} or ${relation.userBId}`);
         }
 
         // Determine which data to send based on visibility
@@ -124,10 +117,7 @@ export class LeaderboardServiceImpl
     }
   }
 
-  async getUserAnonymizedData(
-    _req: GetUserAnonymizedDataRequest,
-    context: HandlerContext,
-  ) {
+  async getUserAnonymizedData(_req: GetUserAnonymizedDataRequest, context: HandlerContext) {
     const currentUserId = context.values.get(kUserId);
     try {
       const [userData] = await db
@@ -154,10 +144,7 @@ export class LeaderboardServiceImpl
     }
   }
 
-  async togglePokeVisibility(
-    req: TogglePokeVisibilityRequest,
-    context: HandlerContext,
-  ) {
+  async togglePokeVisibility(req: TogglePokeVisibilityRequest, context: HandlerContext) {
     const currentUserId = context.values.get(kUserId);
     const { relationId, visible } = req;
 
@@ -173,18 +160,13 @@ export class LeaderboardServiceImpl
         .where(
           and(
             eq(pokes.id, relationId),
-            or(
-              eq(pokes.userAId, currentUserId),
-              eq(pokes.userBId, currentUserId),
-            ),
+            or(eq(pokes.userAId, currentUserId), eq(pokes.userBId, currentUserId)),
           ),
         )
         .limit(1);
 
       if (existingRelation.length === 0) {
-        throw new Error(
-          "Poke relation not found or you don't have permission to modify it",
-        );
+        throw new Error("Poke relation not found or you don't have permission to modify it");
       }
 
       // Update the visibility
@@ -205,10 +187,7 @@ export class LeaderboardServiceImpl
     }
   }
 
-  async refreshAnonymizedPicture(
-    req: RefreshAnonymizedPictureRequest,
-    context: HandlerContext,
-  ) {
+  async refreshAnonymizedPicture(req: RefreshAnonymizedPictureRequest, context: HandlerContext) {
     try {
       const userId = context.values.get(kUserId);
       const newPicture = generateFunnyPicture();
@@ -228,10 +207,7 @@ export class LeaderboardServiceImpl
     }
   }
 
-  async refreshAnonymizedName(
-    _req: RefreshAnonymizedNameRequest,
-    context: HandlerContext,
-  ) {
+  async refreshAnonymizedName(_req: RefreshAnonymizedNameRequest, context: HandlerContext) {
     try {
       const userId = context.values.get(kUserId);
       const newName = generateFunnyFrenchName();

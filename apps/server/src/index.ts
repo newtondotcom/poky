@@ -9,7 +9,6 @@ import { auth } from "@poky/auth";
 import { runMigrations } from "@poky/db";
 
 async function startServer() {
-
   // Run database migrations before starting the server
   // This ensures the schema is up to date before accepting connections
   try {
@@ -87,7 +86,7 @@ async function startServer() {
         const req = new Request(url.toString(), {
           method: request.method,
           headers,
-          body: request.body ? JSON.stringify(request.body) : undefined,
+          ...(request.body ? { body: JSON.stringify(request.body) } : {}),
         });
 
         // Process authentication request

@@ -1,24 +1,11 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import {
-  eq,
-  or,
-  inArray,
-  and,
-  not,
-  like,
-  desc,
-  asc,
-  count,
-  sql,
-} from "drizzle-orm";
+import { eq, or, inArray, and, not, like, desc, asc, count, sql } from "drizzle-orm";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 
 export const db = drizzle(process.env.DATABASE_URL || "");
 
 // Re-export common drizzle-orm operators
 export { eq, or, inArray, and, not, like, desc, asc, count, sql };
-
-
 
 /**
  * Applies database migrations if the schema is not up to date.
@@ -51,4 +38,3 @@ export async function runMigrations(): Promise<void> {
     throw error;
   }
 }
-

@@ -8,7 +8,6 @@ import Loader from "@/components/loader";
 import { toast } from "@pheralb/toast";
 import { routeTree } from "./routeTree.gen";
 
-
 // -------------------
 // React Query client
 // -------------------
@@ -40,17 +39,15 @@ const router = createRouter({
       () =>
         createConnectTransport({
           baseUrl: import.meta.env.VITE_SERVER_URL,
-          fetch: (input, init) => fetch(input, {...init, credentials: "include"}),
+          fetch: (input, init) => fetch(input, { ...init, credentials: "include" }),
         }),
       [],
     );
 
     return (
-    <TransportProvider transport={transport}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-    </QueryClientProvider>
-    </TransportProvider>
+      <TransportProvider transport={transport}>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </TransportProvider>
     );
   },
 });

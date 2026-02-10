@@ -1,10 +1,10 @@
-import { useQuery } from '@connectrpc/connect-query';
+import { useQuery } from "@connectrpc/connect-query";
 import { Trophy, Medal, Award, Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "@pheralb/toast";
 import { LeaderboardItemSkeleton } from "@/components/skeletons/leaderbord";
-import { LeaderboardService } from '@/rpc/proto/poky/v1/leaderboard_service_pb';
-import { timestampDate } from '@bufbuild/protobuf/wkt';
+import { LeaderboardService } from "@/rpc/proto/poky/v1/leaderboard_service_pb";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 
 function getRankIcon(rank: number) {
   if (rank === 1) return <Trophy className="h-5 w-5 text-yellow-400" />;
@@ -83,17 +83,16 @@ export function Leaderboard() {
 
               <div className="text-right flex flex-row gap-2 md:flex-col">
                 <div className="flex items-center gap-1">
-                  <span className="text-xl font-bold text-white/90">
-                    {entry.count}
-                  </span>
+                  <span className="text-xl font-bold text-white/90">{entry.count}</span>
                   <span className="text-xs text-white/60">pokes</span>
                 </div>
                 <div className="flex items-center gap-1 text-xs text-white/60 mt-1">
                   <Calendar className="h-3 w-3" />
                   <span>
-                    {entry.lastPokeDate && formatDistanceToNow(timestampDate(entry.lastPokeDate), {
-                      addSuffix: true,
-                    })}
+                    {entry.lastPokeDate &&
+                      formatDistanceToNow(timestampDate(entry.lastPokeDate), {
+                        addSuffix: true,
+                      })}
                   </span>
                 </div>
               </div>
@@ -104,11 +103,11 @@ export function Leaderboard() {
               {/* User A */}
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
-                    <img
-                      src={entry.userA?.image || undefined}
-                      alt={entry.userA?.username || undefined}
-                      className="w-full h-full object-cover"
-                    />
+                  <img
+                    src={entry.userA?.image || undefined}
+                    alt={entry.userA?.username || undefined}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <span className="text-sm font-medium text-white/90 truncate">
                   {entry.userA?.username}
@@ -120,11 +119,11 @@ export function Leaderboard() {
               {/* User B */}
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 flex-shrink-0">
-                    <img
-                      src={entry.userB?.image || undefined}
-                      alt={entry.userB?.username || undefined}
-                      className="w-full h-full object-cover"
-                    />
+                  <img
+                    src={entry.userB?.image || undefined}
+                    alt={entry.userB?.username || undefined}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <span className="text-sm font-medium text-white/90 truncate">
                   {entry.userB?.username}
