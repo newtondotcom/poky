@@ -9,7 +9,11 @@ class UserConnectionManager {
   private readonly DEFAULT_TTL = 300; // 5 minutes
 
   private constructor() {
-    this.redis = new Redis(process.env.REDIS_URL as string);
+    const url =
+      process.env.VALKEY_URL ??
+      process.env.REDIS_URL ??
+      "redis://localhost:6379";
+    this.redis = new Redis(url);
 
     // Start cleanup interval
     this.startCleanupInterval();
@@ -30,10 +34,7 @@ class UserConnectionManager {
     userId: string,
     ttlSeconds: number = this.DEFAULT_TTL,
   ): Promise<void> {
-    // Set TTL key for automatic cleanup
     await this.redis.setex(`${this.USER_TTL_PREFIX}${userId}`, ttlSeconds, "1");
-
-    // Add to set for fast lookups
     await this.redis.sadd(this.CONNECTED_USERS_SET, userId);
   }
 
@@ -65,7 +66,6 @@ class UserConnectionManager {
     if (exists) {
       await this.redis.expire(`${this.USER_TTL_PREFIX}${userId}`, ttlSeconds);
     } else {
-      // User wasn't connected, add them
       await this.addUserConnected(userId, ttlSeconds);
     }
   }
@@ -91,16 +91,15 @@ class UserConnectionManager {
    * Clear all connections
    */
   public async clearAllConnections(): Promise<void> {
-    // Get all users first
     const users = await this.redis.smembers(this.CONNECTED_USERS_SET);
 
-    // Delete TTL keys
     if (users.length > 0) {
-      const ttlKeys = users.map((userId) => `${this.USER_TTL_PREFIX}${userId}`);
+      const ttlKeys = users.map(
+        (userId: string) => `${this.USER_TTL_PREFIX}${userId}`,
+      );
       await this.redis.del(...ttlKeys);
     }
 
-    // Clear the set
     await this.redis.del(this.CONNECTED_USERS_SET);
   }
 

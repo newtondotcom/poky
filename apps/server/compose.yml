@@ -1,15 +1,23 @@
 services:
-  redis:
-    image: redis:7-alpine
-    container_name: reddit_redis
+  nats:
+    image: nats:2.10-alpine
+    container_name: pok7_nats
     ports:
-      - "6379:6379"
-    command: redis-server
+      - "4222:4222"
     restart: unless-stopped
     networks:
       - network
 
-  # PostgreSQL Database
+  valkey:
+    image: valkey/valkey:7-alpine
+    container_name: pok7_valkey
+    ports:
+      - "6379:6379"
+    command: valkey-server
+    restart: unless-stopped
+    networks:
+      - network
+
   postgres:
     image: postgres:17
     container_name: reddit_postgres
@@ -17,11 +25,10 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypassword
-      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5432:5432"
+      - "8001:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - /tmp/postgres_data:/var/lib/postgresql/data
     networks:
       - network
 

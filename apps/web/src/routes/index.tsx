@@ -16,7 +16,7 @@ function HomeComponent() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (session) {
+    if (session?.user) {
       const userKey = `hasLoggedIn:${session?.user.id}`;
       if (!localStorage.getItem(userKey)) {
         toast.info({

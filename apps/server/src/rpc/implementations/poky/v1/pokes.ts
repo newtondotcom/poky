@@ -3,9 +3,12 @@ import { user } from "@poky/db/schema/auth";
 import { pokes } from "@poky/db/schema/poky";
 import { getUserPokesData } from "@/lib/get-user-pokes-data";
 import logger from "@/lib/logger";
+import { natsService } from "@/lib/nats";
+import {
+  UserPokesUpdateSchema,
+  userPokesSubject,
+} from "@/lib/nats-messages";
 import { notifyTargetUser } from "@/lib/notify-target-user";
-import { redisService } from "@/lib/redis";
-import { getRedisConnection } from "@/lib/redis-pool";
 import {
   addUserConnected,
   isUserConnected,
@@ -31,9 +34,6 @@ import {
   type ServiceImpl,
 } from "@connectrpc/connect";
 
-const sub = redisService.getSubscriber();
-const pub = redisService.getPublisher();
-
 async function decideWhichActionToPerform(targetUserId: string) {
   // if users logged as online in the map
   const targetUserConnected = await isUserConnected(targetUserId);
@@ -41,7 +41,11 @@ async function decideWhichActionToPerform(targetUserId: string) {
 
   if (targetUserConnected) {
     logger.debug(`Publishing to target user channel: ${targetUserId}`);
-    pub.publish(targetUserId, targetUserId);
+    await natsService.publish(
+      userPokesSubject(targetUserId),
+      UserPokesUpdateSchema,
+      { userId: targetUserId },
+    );
   } else {
     logger.debug(
       `Target user ${targetUserId} is offline, sending web push notification`,
@@ -61,45 +65,19 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
     yield firstDatas;
     logger.debug(`First data sent : ${firstDatas}`);
 
+    let subscription: { unsubscribe: () => void } | undefined;
+
     try {
-      // Get Redis connection from pool
-      const sub = await getRedisConnection(currentUserId);
+      const subject = userPokesSubject(currentUserId);
+      const { sub, iterator } = await natsService.subscribe(
+        subject,
+        UserPokesUpdateSchema,
+      );
+      subscription = sub;
+      logger.debug(`Subscribed to NATS subject: ${subject}`);
 
-      // Subscribe to the channel
-      await sub.subscribe(currentUserId);
-      logger.debug(`Subscribed to Redis channel: ${currentUserId}`);
-
-      // Create async iterator to receive messages
-      while (true) {
-        logger.debug(`Waiting for message on channel: ${currentUserId}`);
-        await new Promise<string>((resolve, reject) => {
-          let isResolved = false;
-
-          // Create a one-time message handler
-          const messageHandler = (ch: string, msg: string) => {
-            if (ch === currentUserId && !isResolved) {
-              logger.debug(`Received message on channel ${ch}: ${msg}`);
-              isResolved = true;
-              sub.off("message", messageHandler);
-              clearTimeout(timeout);
-              resolve(msg);
-            }
-          };
-
-          // Set a timeout to prevent hanging
-          const timeout = setTimeout(() => {
-            if (!isResolved) {
-              logger.debug(`Subscription timeout for user: ${currentUserId}`);
-              isResolved = true;
-              sub.off("message", messageHandler);
-              reject(new Error("Subscription timeout"));
-            }
-          }, 300000000);
-
-          // Add the listener
-          sub.on("message", messageHandler);
-        });
-
+      for await (const message of iterator) {
+        logger.debug(`Received message on subject ${subject}:`, message);
         logger.debug(`Processing update for user: ${currentUserId}`);
         const nextDatas = await getUserPokesData(currentUserId);
         yield nextDatas;
@@ -109,7 +87,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
       throw new ConnectError("Subscription error:", Code.NotFound);
     } finally {
       logger.debug("Subscription ended for user:", currentUserId);
-      await sub.unsubscribe(currentUserId);
+      subscription?.unsubscribe();
       removeUserConnected(currentUserId);
     }
   }
@@ -184,11 +162,15 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
           .where(eq(pokes.id, existingRelation.id));
 
         // Notify target user after database update
-        decideWhichActionToPerform(targetUserId);
+        await decideWhichActionToPerform(targetUserId);
 
         // publish so that user ui is refreshed
-        logger.debug(`Publishing to Redis channel: ${currentUserId}`);
-        pub.publish(currentUserId, currentUserId);
+        logger.debug(`Publishing to NATS subject: ${currentUserId}`);
+        await natsService.publish(
+          userPokesSubject(currentUserId),
+          UserPokesUpdateSchema,
+          { userId: currentUserId },
+        );
 
         return {
           success: true,
@@ -217,11 +199,15 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
         });
 
         // Notify target user after database update
-        decideWhichActionToPerform(targetUserId);
+        await decideWhichActionToPerform(targetUserId);
 
         // publish so that user ui is refreshed
-        logger.debug(`Publishing to Redis channel: ${currentUserId}`);
-        pub.publish(currentUserId, currentUserId);
+        logger.debug(`Publishing to NATS subject: ${currentUserId}`);
+        await natsService.publish(
+          userPokesSubject(currentUserId),
+          UserPokesUpdateSchema,
+          { userId: currentUserId },
+        );
 
         return {
           success: true,
