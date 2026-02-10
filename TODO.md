@@ -1,0 +1,3 @@
+- move to better t stack like package for api and config and env
+- add proton gen to api package
+- make swift app
