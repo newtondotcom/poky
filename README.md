@@ -16,35 +16,77 @@ Une application moderne de pokes à la Meta avec des fonctionnalités temps rée
 ## 🛠️ Stack Technique
 
 ### Frontend
-- **TypeScript** - For type safety and improved developer experience
+- **TypeScript** - Type safety and improved developer experience
 - **TanStack Router** - File-based routing with full type safety
 - **TailwindCSS** - Utility-first CSS for rapid UI development
 - **shadcn/ui** - Reusable UI components
-- **Fastify** - Fast, low-overhead web framework
 - **Bun** - Runtime environment
-- **Drizzle** - TypeScript-first ORM
+- **Drizzle ORM** - TypeScript-first ORM
 - **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
+- **Better-Auth** - Secure authentication
 - **Turborepo** - Optimized monorepo build system
 - **PWA** - Progressive Web App support
+- **Connect RPC** - Type-safe gRPC-Web APIs
 
 ### Backend
-- **Fastify** - Framework serveur Node.js ultra-rapide
-- **Connect RPC** - APIs gRPC-Web avec sécurité des types
-- **Protocol Buffers** - Sérialisation binaire efficace
-- **Drizzle ORM** - ORM TypeScript-first avec migrations
-- **PostgreSQL** - Base de données relationnelle robuste
-- **Redis (ioredis)** - Cache et gestion des sessions temps réel
-- **Web Push** - Notifications push natives
-- **JOSE** - Gestion sécurisée des tokens JWT
-- **Winston** - Logging structuré et performant
+- **Fastify** - Ultra-fast Node.js server framework with CORS support
+- **Connect RPC** - gRPC-Web APIs with type safety
+- **Protocol Buffers** - Efficient binary serialization
+- **Drizzle ORM** - TypeScript-first ORM with migrations
+- **PostgreSQL** - Robust relational database
+- **Redis (ioredis)** - Real-time caching and session management
+- **NATS** - High-performance messaging system
+- **Web Push** - Native push notifications
+- **Winston** - Structured and performant logging
 
 ### Infrastructure & Tools
-- **Bun 1.2.17** - Runtime JavaScript ultra-rapide
-- **Turborepo** - Monorepo optimisé pour la performance
-- **Docker** - Conteneurisation et déploiement
-- **Buf** - Outils Protocol Buffers modernes
-- **Drizzle Kit** - Outils de migration et introspection DB
+- **Bun** - Ultra-fast JavaScript runtime
+- **Turborepo** - Optimized monorepo with intelligent build caching
+- **Docker** - Containerization and deployment
+- **Buf** - Modern Protocol Buffers tooling
+- **Drizzle Kit** - Database migration and introspection tools
+- **TypeScript** - Static type checking and type safety
+
+## 📦 Managed Dependencies
+
+All dependencies are centralized in the root `package.json` catalog for consistent versioning:
+
+### Core Dependencies
+- `better-auth` - Authentication framework
+- `dotenv` - Environment variable management
+- `zod` - Schema validation
+- `typescript` - TypeScript compiler
+- `tsdown` - TypeScript bundler
+
+### Database & ORM
+- `drizzle-orm` - TypeScript ORM
+- `drizzle-kit` - Database tools
+- `pg` - PostgreSQL client
+- `postgres` - PostgreSQL driver
+
+### Server & API
+- `fastify` - Web framework
+- `@fastify/cors` - CORS middleware
+- `@connectrpc/connect` - Connect RPC client
+- `@connectrpc/connect-fastify` - Fastify integration
+- `@connectrpc/connect-query` - Query integration
+- `@connectrpc/connect-web` - Web integration
+- `@connectrpc/validate` - Validation utilities
+
+### Messaging & Cache
+- `ioredis` - Redis client
+- `nats` - NATS messaging
+- `web-push` - Push notifications
+- `@types/web-push` - TypeScript definitions for web-push
+
+### Development & Build Tools
+- `@bufbuild/protobuf` - Protocol Buffers runtime
+- `@bufbuild/buf` - Protocol Buffers CLI
+- `@types/bun` - Bun type definitions
+- `@types/pg` - PostgreSQL type definitions
+
+### Logging
+- `winston` - Structured logging
 
 ## Getting Started
 
@@ -75,22 +117,22 @@ bun dev
 Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
 The API is running at [http://localhost:3000](http://localhost:3000).
 
-
-
-
-
-
-
 ## Project Structure
 
 ```
-test/
+pok7/
 ├── apps/
-│   ├── web/         # Frontend application (React + TanStack Router)
-│   └── server/      # Backend API (Fastify)
+│   ├── web/                 # Frontend application (React + TanStack Router + PWA)
+│   └── server/              # Backend API (Fastify + Connect RPC)
 ├── packages/
-│   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
+│   ├── api/                 # RPC API implementations and service handlers
+│   ├── auth/                # Authentication configuration (Better-Auth)
+│   ├── db/                  # Database schema and migrations (Drizzle ORM)
+│   ├── env/                 # Environment variable validation
+│   └── config/              # Shared TypeScript and build configuration
+├── bunfig.toml              # Bun workspace configuration
+├── turbo.json               # Turborepo build configuration
+└── package.json             # Root workspace manifest with dependency catalog
 ```
 
 ## Available Scripts
@@ -107,24 +149,24 @@ test/
 - `cd apps/web && bun desktop:build`: Build Tauri desktop app
 
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-1. Fork le projet
-2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
-3. Commit vos changements (`git commit -m 'Add some AmazingFeature'`)
-4. Push vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrir une Pull Request
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 📝 Licence
+## 📝 License
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
 
 ## 🆘 Support
 
-Si vous rencontrez des problèmes ou avez des questions :
-- Ouvrez une [issue](https://github.com/votre-username/pok7/issues)
-- Consultez la [documentation](https://github.com/votre-username/pok7/wiki)
+If you encounter any issues or have questions:
+- Open an [issue](https://github.com/your-username/pok7/issues)
+- Check the [documentation](https://github.com/your-username/pok7/wiki)
 
 ---
 
-**Développé avec ❤️ et [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack)**
+**Built with ❤️ and [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack)**
