@@ -11,10 +11,8 @@ import type { Message } from "@bufbuild/protobuf";
 /**
  * Describes the file proto/poky/v1/leaderboard_service.proto.
  */
-export const file_proto_poky_v1_leaderboard_service: GenFile /*@__PURE__*/ = fileDesc(
-  "Cidwcm90by9wb2t5L3YxL2xlYWRlcmJvYXJkX3NlcnZpY2UucHJvdG8SDXByb3RvLnBva3kudjEiLQoIVXNlckRhdGESEAoIdXNlcm5hbWUYASABKAkSDwoHcGljdHVyZRgCIAEoCSKVAgoQTGVhZGVyYm9hcmRFbnRyeRITCgtyZWxhdGlvbl9pZBgBIAEoCRIRCgl1c2VyX2FfaWQYAiABKAkSEQoJdXNlcl9iX2lkGAMgASgJEhQKDGxhc3RfcG9rZV9ieRgEIAEoCRINCgVjb3VudBgFIAEoBRIyCg5sYXN0X3Bva2VfZGF0ZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGwoTdmlzaWJsZV9sZWFkZXJib2FyZBgHIAEoCBInCgZ1c2VyX2EYCCABKAsyFy5wcm90by5wb2t5LnYxLlVzZXJEYXRhEicKBnVzZXJfYhgJIAEoCzIXLnByb3RvLnBva3kudjEuVXNlckRhdGEiFwoVR2V0TGVhZGVyYm9hcmRSZXF1ZXN0IkoKFkdldExlYWRlcmJvYXJkUmVzcG9uc2USMAoHZW50cmllcxgBIAMoCzIfLnByb3RvLnBva3kudjEuTGVhZGVyYm9hcmRFbnRyeSJDChtUb2dnbGVQb2tlVmlzaWJpbGl0eVJlcXVlc3QSEwoLcmVsYXRpb25faWQYASABKAkSDwoHdmlzaWJsZRgCIAEoCCJAChxUb2dnbGVQb2tlVmlzaWJpbGl0eVJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDwoHbWVzc2FnZRgCIAEoCSIeChxHZXRVc2VyQW5vbnltaXplZERhdGFSZXF1ZXN0IlgKHUdldFVzZXJBbm9ueW1pemVkRGF0YVJlc3BvbnNlEhsKE3VzZXJuYW1lX2Fub255bWl6ZWQYASABKAkSGgoScGljdHVyZV9hbm9ueW1pemVkGAIgASgJIiEKH1JlZnJlc2hBbm9ueW1pemVkUGljdHVyZVJlcXVlc3QiPgogUmVmcmVzaEFub255bWl6ZWRQaWN0dXJlUmVzcG9uc2USGgoScGljdHVyZV9hbm9ueW1pemVkGAEgASgJIh4KHFJlZnJlc2hBbm9ueW1pemVkTmFtZVJlcXVlc3QiPAodUmVmcmVzaEFub255bWl6ZWROYW1lUmVzcG9uc2USGwoTdXNlcm5hbWVfYW5vbnltaXplZBgBIAEoCTLJBAoSTGVhZGVyYm9hcmRTZXJ2aWNlEl0KDkdldExlYWRlcmJvYXJkEiQucHJvdG8ucG9reS52MS5HZXRMZWFkZXJib2FyZFJlcXVlc3QaJS5wcm90by5wb2t5LnYxLkdldExlYWRlcmJvYXJkUmVzcG9uc2USbwoUVG9nZ2xlUG9rZVZpc2liaWxpdHkSKi5wcm90by5wb2t5LnYxLlRvZ2dsZVBva2VWaXNpYmlsaXR5UmVxdWVzdBorLnByb3RvLnBva3kudjEuVG9nZ2xlUG9rZVZpc2liaWxpdHlSZXNwb25zZRJyChVHZXRVc2VyQW5vbnltaXplZERhdGESKy5wcm90by5wb2t5LnYxLkdldFVzZXJBbm9ueW1pemVkRGF0YVJlcXVlc3QaLC5wcm90by5wb2t5LnYxLkdldFVzZXJBbm9ueW1pemVkRGF0YVJlc3BvbnNlEnsKGFJlZnJlc2hBbm9ueW1pemVkUGljdHVyZRIuLnByb3RvLnBva3kudjEuUmVmcmVzaEFub255bWl6ZWRQaWN0dXJlUmVxdWVzdBovLnByb3RvLnBva3kudjEuUmVmcmVzaEFub255bWl6ZWRQaWN0dXJlUmVzcG9uc2UScgoVUmVmcmVzaEFub255bWl6ZWROYW1lEisucHJvdG8ucG9reS52MS5SZWZyZXNoQW5vbnltaXplZE5hbWVSZXF1ZXN0GiwucHJvdG8ucG9reS52MS5SZWZyZXNoQW5vbnltaXplZE5hbWVSZXNwb25zZWIGcHJvdG8z",
-  [file_google_protobuf_timestamp],
-);
+export const file_proto_poky_v1_leaderboard_service: GenFile = /*@__PURE__*/
+  fileDesc("Cidwcm90by9wb2t5L3YxL2xlYWRlcmJvYXJkX3NlcnZpY2UucHJvdG8SDXByb3RvLnBva3kudjEiLQoIVXNlckRhdGESEAoIdXNlcm5hbWUYASABKAkSDwoHcGljdHVyZRgCIAEoCSKVAgoQTGVhZGVyYm9hcmRFbnRyeRITCgtyZWxhdGlvbl9pZBgBIAEoCRIRCgl1c2VyX2FfaWQYAiABKAkSEQoJdXNlcl9iX2lkGAMgASgJEhQKDGxhc3RfcG9rZV9ieRgEIAEoCRINCgVjb3VudBgFIAEoBRIyCg5sYXN0X3Bva2VfZGF0ZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGwoTdmlzaWJsZV9sZWFkZXJib2FyZBgHIAEoCBInCgZ1c2VyX2EYCCABKAsyFy5wcm90by5wb2t5LnYxLlVzZXJEYXRhEicKBnVzZXJfYhgJIAEoCzIXLnByb3RvLnBva3kudjEuVXNlckRhdGEiFwoVR2V0TGVhZGVyYm9hcmRSZXF1ZXN0IkoKFkdldExlYWRlcmJvYXJkUmVzcG9uc2USMAoHZW50cmllcxgBIAMoCzIfLnByb3RvLnBva3kudjEuTGVhZGVyYm9hcmRFbnRyeSJDChtUb2dnbGVQb2tlVmlzaWJpbGl0eVJlcXVlc3QSEwoLcmVsYXRpb25faWQYASABKAkSDwoHdmlzaWJsZRgCIAEoCCJAChxUb2dnbGVQb2tlVmlzaWJpbGl0eVJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDwoHbWVzc2FnZRgCIAEoCSIeChxHZXRVc2VyQW5vbnltaXplZERhdGFSZXF1ZXN0IlYKHUdldFVzZXJBbm9ueW1pemVkRGF0YVJlc3BvbnNlEhsKE3VzZXJuYW1lX2Fub255bWl6ZWQYASABKAkSGAoQaW1hZ2VfYW5vbnltaXplZBgCIAEoCSIhCh9SZWZyZXNoQW5vbnltaXplZFBpY3R1cmVSZXF1ZXN0IjwKIFJlZnJlc2hBbm9ueW1pemVkUGljdHVyZVJlc3BvbnNlEhgKEGltYWdlX2Fub255bWl6ZWQYASABKAkiHgocUmVmcmVzaEFub255bWl6ZWROYW1lUmVxdWVzdCI8Ch1SZWZyZXNoQW5vbnltaXplZE5hbWVSZXNwb25zZRIbChN1c2VybmFtZV9hbm9ueW1pemVkGAEgASgJMskEChJMZWFkZXJib2FyZFNlcnZpY2USXQoOR2V0TGVhZGVyYm9hcmQSJC5wcm90by5wb2t5LnYxLkdldExlYWRlcmJvYXJkUmVxdWVzdBolLnByb3RvLnBva3kudjEuR2V0TGVhZGVyYm9hcmRSZXNwb25zZRJvChRUb2dnbGVQb2tlVmlzaWJpbGl0eRIqLnByb3RvLnBva3kudjEuVG9nZ2xlUG9rZVZpc2liaWxpdHlSZXF1ZXN0GisucHJvdG8ucG9reS52MS5Ub2dnbGVQb2tlVmlzaWJpbGl0eVJlc3BvbnNlEnIKFUdldFVzZXJBbm9ueW1pemVkRGF0YRIrLnByb3RvLnBva3kudjEuR2V0VXNlckFub255bWl6ZWREYXRhUmVxdWVzdBosLnByb3RvLnBva3kudjEuR2V0VXNlckFub255bWl6ZWREYXRhUmVzcG9uc2USewoYUmVmcmVzaEFub255bWl6ZWRQaWN0dXJlEi4ucHJvdG8ucG9reS52MS5SZWZyZXNoQW5vbnltaXplZFBpY3R1cmVSZXF1ZXN0Gi8ucHJvdG8ucG9reS52MS5SZWZyZXNoQW5vbnltaXplZFBpY3R1cmVSZXNwb25zZRJyChVSZWZyZXNoQW5vbnltaXplZE5hbWUSKy5wcm90by5wb2t5LnYxLlJlZnJlc2hBbm9ueW1pemVkTmFtZVJlcXVlc3QaLC5wcm90by5wb2t5LnYxLlJlZnJlc2hBbm9ueW1pemVkTmFtZVJlc3BvbnNlYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message proto.poky.v1.UserData
@@ -35,10 +33,8 @@ export type UserData = Message<"proto.poky.v1.UserData"> & {
  * Describes the message proto.poky.v1.UserData.
  * Use `create(UserDataSchema)` to create a new message.
  */
-export const UserDataSchema: GenMessage<UserData> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_leaderboard_service,
-  0,
-);
+export const UserDataSchema: GenMessage<UserData> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_leaderboard_service, 0);
 
 /**
  * @generated from message proto.poky.v1.LeaderboardEntry
@@ -94,23 +90,22 @@ export type LeaderboardEntry = Message<"proto.poky.v1.LeaderboardEntry"> & {
  * Describes the message proto.poky.v1.LeaderboardEntry.
  * Use `create(LeaderboardEntrySchema)` to create a new message.
  */
-export const LeaderboardEntrySchema: GenMessage<LeaderboardEntry> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_leaderboard_service,
-  1,
-);
+export const LeaderboardEntrySchema: GenMessage<LeaderboardEntry> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_leaderboard_service, 1);
 
 /**
  * 1️⃣ Get leaderboard
  *
  * @generated from message proto.poky.v1.GetLeaderboardRequest
  */
-export type GetLeaderboardRequest = Message<"proto.poky.v1.GetLeaderboardRequest"> & {};
+export type GetLeaderboardRequest = Message<"proto.poky.v1.GetLeaderboardRequest"> & {
+};
 
 /**
  * Describes the message proto.poky.v1.GetLeaderboardRequest.
  * Use `create(GetLeaderboardRequestSchema)` to create a new message.
  */
-export const GetLeaderboardRequestSchema: GenMessage<GetLeaderboardRequest> /*@__PURE__*/ =
+export const GetLeaderboardRequestSchema: GenMessage<GetLeaderboardRequest> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 2);
 
 /**
@@ -127,7 +122,7 @@ export type GetLeaderboardResponse = Message<"proto.poky.v1.GetLeaderboardRespon
  * Describes the message proto.poky.v1.GetLeaderboardResponse.
  * Use `create(GetLeaderboardResponseSchema)` to create a new message.
  */
-export const GetLeaderboardResponseSchema: GenMessage<GetLeaderboardResponse> /*@__PURE__*/ =
+export const GetLeaderboardResponseSchema: GenMessage<GetLeaderboardResponse> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 3);
 
 /**
@@ -151,7 +146,7 @@ export type TogglePokeVisibilityRequest = Message<"proto.poky.v1.TogglePokeVisib
  * Describes the message proto.poky.v1.TogglePokeVisibilityRequest.
  * Use `create(TogglePokeVisibilityRequestSchema)` to create a new message.
  */
-export const TogglePokeVisibilityRequestSchema: GenMessage<TogglePokeVisibilityRequest> /*@__PURE__*/ =
+export const TogglePokeVisibilityRequestSchema: GenMessage<TogglePokeVisibilityRequest> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 4);
 
 /**
@@ -173,7 +168,7 @@ export type TogglePokeVisibilityResponse = Message<"proto.poky.v1.TogglePokeVisi
  * Describes the message proto.poky.v1.TogglePokeVisibilityResponse.
  * Use `create(TogglePokeVisibilityResponseSchema)` to create a new message.
  */
-export const TogglePokeVisibilityResponseSchema: GenMessage<TogglePokeVisibilityResponse> /*@__PURE__*/ =
+export const TogglePokeVisibilityResponseSchema: GenMessage<TogglePokeVisibilityResponse> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 5);
 
 /**
@@ -181,37 +176,36 @@ export const TogglePokeVisibilityResponseSchema: GenMessage<TogglePokeVisibility
  *
  * @generated from message proto.poky.v1.GetUserAnonymizedDataRequest
  */
-export type GetUserAnonymizedDataRequest =
-  Message<"proto.poky.v1.GetUserAnonymizedDataRequest"> & {};
+export type GetUserAnonymizedDataRequest = Message<"proto.poky.v1.GetUserAnonymizedDataRequest"> & {
+};
 
 /**
  * Describes the message proto.poky.v1.GetUserAnonymizedDataRequest.
  * Use `create(GetUserAnonymizedDataRequestSchema)` to create a new message.
  */
-export const GetUserAnonymizedDataRequestSchema: GenMessage<GetUserAnonymizedDataRequest> /*@__PURE__*/ =
+export const GetUserAnonymizedDataRequestSchema: GenMessage<GetUserAnonymizedDataRequest> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 6);
 
 /**
  * @generated from message proto.poky.v1.GetUserAnonymizedDataResponse
  */
-export type GetUserAnonymizedDataResponse =
-  Message<"proto.poky.v1.GetUserAnonymizedDataResponse"> & {
-    /**
-     * @generated from field: string username_anonymized = 1;
-     */
-    usernameAnonymized: string;
+export type GetUserAnonymizedDataResponse = Message<"proto.poky.v1.GetUserAnonymizedDataResponse"> & {
+  /**
+   * @generated from field: string username_anonymized = 1;
+   */
+  usernameAnonymized: string;
 
-    /**
-     * @generated from field: string picture_anonymized = 2;
-     */
-    pictureAnonymized: string;
-  };
+  /**
+   * @generated from field: string image_anonymized = 2;
+   */
+  imageAnonymized: string;
+};
 
 /**
  * Describes the message proto.poky.v1.GetUserAnonymizedDataResponse.
  * Use `create(GetUserAnonymizedDataResponseSchema)` to create a new message.
  */
-export const GetUserAnonymizedDataResponseSchema: GenMessage<GetUserAnonymizedDataResponse> /*@__PURE__*/ =
+export const GetUserAnonymizedDataResponseSchema: GenMessage<GetUserAnonymizedDataResponse> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 7);
 
 /**
@@ -219,32 +213,31 @@ export const GetUserAnonymizedDataResponseSchema: GenMessage<GetUserAnonymizedDa
  *
  * @generated from message proto.poky.v1.RefreshAnonymizedPictureRequest
  */
-export type RefreshAnonymizedPictureRequest =
-  Message<"proto.poky.v1.RefreshAnonymizedPictureRequest"> & {};
+export type RefreshAnonymizedPictureRequest = Message<"proto.poky.v1.RefreshAnonymizedPictureRequest"> & {
+};
 
 /**
  * Describes the message proto.poky.v1.RefreshAnonymizedPictureRequest.
  * Use `create(RefreshAnonymizedPictureRequestSchema)` to create a new message.
  */
-export const RefreshAnonymizedPictureRequestSchema: GenMessage<RefreshAnonymizedPictureRequest> /*@__PURE__*/ =
+export const RefreshAnonymizedPictureRequestSchema: GenMessage<RefreshAnonymizedPictureRequest> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 8);
 
 /**
  * @generated from message proto.poky.v1.RefreshAnonymizedPictureResponse
  */
-export type RefreshAnonymizedPictureResponse =
-  Message<"proto.poky.v1.RefreshAnonymizedPictureResponse"> & {
-    /**
-     * @generated from field: string picture_anonymized = 1;
-     */
-    pictureAnonymized: string;
-  };
+export type RefreshAnonymizedPictureResponse = Message<"proto.poky.v1.RefreshAnonymizedPictureResponse"> & {
+  /**
+   * @generated from field: string image_anonymized = 1;
+   */
+  imageAnonymized: string;
+};
 
 /**
  * Describes the message proto.poky.v1.RefreshAnonymizedPictureResponse.
  * Use `create(RefreshAnonymizedPictureResponseSchema)` to create a new message.
  */
-export const RefreshAnonymizedPictureResponseSchema: GenMessage<RefreshAnonymizedPictureResponse> /*@__PURE__*/ =
+export const RefreshAnonymizedPictureResponseSchema: GenMessage<RefreshAnonymizedPictureResponse> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 9);
 
 /**
@@ -252,32 +245,31 @@ export const RefreshAnonymizedPictureResponseSchema: GenMessage<RefreshAnonymize
  *
  * @generated from message proto.poky.v1.RefreshAnonymizedNameRequest
  */
-export type RefreshAnonymizedNameRequest =
-  Message<"proto.poky.v1.RefreshAnonymizedNameRequest"> & {};
+export type RefreshAnonymizedNameRequest = Message<"proto.poky.v1.RefreshAnonymizedNameRequest"> & {
+};
 
 /**
  * Describes the message proto.poky.v1.RefreshAnonymizedNameRequest.
  * Use `create(RefreshAnonymizedNameRequestSchema)` to create a new message.
  */
-export const RefreshAnonymizedNameRequestSchema: GenMessage<RefreshAnonymizedNameRequest> /*@__PURE__*/ =
+export const RefreshAnonymizedNameRequestSchema: GenMessage<RefreshAnonymizedNameRequest> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 10);
 
 /**
  * @generated from message proto.poky.v1.RefreshAnonymizedNameResponse
  */
-export type RefreshAnonymizedNameResponse =
-  Message<"proto.poky.v1.RefreshAnonymizedNameResponse"> & {
-    /**
-     * @generated from field: string username_anonymized = 1;
-     */
-    usernameAnonymized: string;
-  };
+export type RefreshAnonymizedNameResponse = Message<"proto.poky.v1.RefreshAnonymizedNameResponse"> & {
+  /**
+   * @generated from field: string username_anonymized = 1;
+   */
+  usernameAnonymized: string;
+};
 
 /**
  * Describes the message proto.poky.v1.RefreshAnonymizedNameResponse.
  * Use `create(RefreshAnonymizedNameResponseSchema)` to create a new message.
  */
-export const RefreshAnonymizedNameResponseSchema: GenMessage<RefreshAnonymizedNameResponse> /*@__PURE__*/ =
+export const RefreshAnonymizedNameResponseSchema: GenMessage<RefreshAnonymizedNameResponse> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_leaderboard_service, 11);
 
 /**
@@ -293,7 +285,7 @@ export const LeaderboardService: GenService<{
     methodKind: "unary";
     input: typeof GetLeaderboardRequestSchema;
     output: typeof GetLeaderboardResponseSchema;
-  };
+  },
   /**
    * Toggle visibility of a poke relation on leaderboard
    *
@@ -303,7 +295,7 @@ export const LeaderboardService: GenService<{
     methodKind: "unary";
     input: typeof TogglePokeVisibilityRequestSchema;
     output: typeof TogglePokeVisibilityResponseSchema;
-  };
+  },
   /**
    * Get anonymized user data (username + picture)
    *
@@ -313,7 +305,7 @@ export const LeaderboardService: GenService<{
     methodKind: "unary";
     input: typeof GetUserAnonymizedDataRequestSchema;
     output: typeof GetUserAnonymizedDataResponseSchema;
-  };
+  },
   /**
    * Refresh anonymized picture
    *
@@ -323,7 +315,7 @@ export const LeaderboardService: GenService<{
     methodKind: "unary";
     input: typeof RefreshAnonymizedPictureRequestSchema;
     output: typeof RefreshAnonymizedPictureResponseSchema;
-  };
+  },
   /**
    * Refresh anonymized username
    *
@@ -333,5 +325,7 @@ export const LeaderboardService: GenService<{
     methodKind: "unary";
     input: typeof RefreshAnonymizedNameRequestSchema;
     output: typeof RefreshAnonymizedNameResponseSchema;
-  };
-}> /*@__PURE__*/ = serviceDesc(file_proto_poky_v1_leaderboard_service, 0);
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_proto_poky_v1_leaderboard_service, 0);
+

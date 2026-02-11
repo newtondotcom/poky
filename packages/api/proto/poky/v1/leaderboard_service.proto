@@ -52,14 +52,14 @@ message GetUserAnonymizedDataRequest {}
 
 message GetUserAnonymizedDataResponse {
   string username_anonymized = 1;
-  string picture_anonymized = 2;
+  string image_anonymized = 2;
 }
 
 // 4️⃣ Refresh anonymized picture
 message RefreshAnonymizedPictureRequest {}
 
 message RefreshAnonymizedPictureResponse {
-  string picture_anonymized = 1;
+  string image_anonymized = 1;
 }
 
 // 5️⃣ Refresh anonymized picture

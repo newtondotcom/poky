@@ -133,11 +133,10 @@ export class LeaderboardServiceImpl implements ServiceImpl<typeof LeaderboardSer
         throw new Error("User not found");
       }
 
-      const dataMessage = create(GetUserAnonymizedDataResponseSchema, {
-        usernameAnonymized: userData.usernameAnonymized ?? "",
-        imageAnonymized: userData.imageAnonymized ?? "",
-      });
-      return dataMessage;
+      return {
+        usernameAnonymized: userData.usernameAnonymized,
+        imageAnonymized: userData.imageAnonymized,
+      };
     } catch (error) {
       logger.error("Error fetching user anonymized data:", { error });
       throw new Error("Failed to fetch user anonymized data");
@@ -187,7 +186,7 @@ export class LeaderboardServiceImpl implements ServiceImpl<typeof LeaderboardSer
     }
   }
 
-  async refreshAnonymizedPicture(req: RefreshAnonymizedPictureRequest, context: HandlerContext) {
+  async refreshAnonymizedPicture(_req: RefreshAnonymizedPictureRequest, context: HandlerContext) {
     try {
       const userId = context.values.get(kUserId);
       const newPicture = generateFunnyPicture();
@@ -200,6 +199,7 @@ export class LeaderboardServiceImpl implements ServiceImpl<typeof LeaderboardSer
         })
         .where(eq(user.id, userId));
 
+      // Return the correct response type
       return { imageAnonymized: newPicture };
     } catch (error) {
       logger.error("Error refreshing anonymized picture:", { error });

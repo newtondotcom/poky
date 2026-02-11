@@ -11,10 +11,8 @@ import type { Message } from "@bufbuild/protobuf";
 /**
  * Describes the file proto/poky/v1/pokes_service.proto.
  */
-export const file_proto_poky_v1_pokes_service: GenFile /*@__PURE__*/ = fileDesc(
-  "CiFwcm90by9wb2t5L3YxL3Bva2VzX3NlcnZpY2UucHJvdG8SDXByb3RvLnBva3kudjEicQoEVXNlchIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhAKCHVzZXJuYW1lGAMgASgJEg0KBWltYWdlGAQgASgJEi4KCmNyZWF0ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIuMBChBVc2VyUG9rZVJlbGF0aW9uEgoKAmlkGAEgASgJEhEKCXVzZXJfYV9pZBgCIAEoCRIRCgl1c2VyX2JfaWQYAyABKAkSDQoFY291bnQYBCABKAUSMgoObGFzdF9wb2tlX2RhdGUYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGxhc3RfcG9rZV9ieRgGIAEoCRIbChN2aXNpYmxlX2xlYWRlcmJvYXJkGAcgASgIEicKCm90aGVyX3VzZXIYCCABKAsyEy5wcm90by5wb2t5LnYxLlVzZXIikgEKElBva2VSZWxhdGlvblVwZGF0ZRIKCgJpZBgBIAEoCRINCgVjb3VudBgCIAEoBRIyCg5sYXN0X3Bva2VfZGF0ZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFAoMbGFzdF9wb2tlX2J5GAQgASgJEhcKD2lzX25ld19yZWxhdGlvbhgFIAEoCCImChNHZXRVc2VyUG9rZXNSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiTwoUR2V0VXNlclBva2VzUmVzcG9uc2USNwoOcG9rZV9yZWxhdGlvbnMYASADKAsyHy5wcm90by5wb2t5LnYxLlVzZXJQb2tlUmVsYXRpb24iKQoPUG9rZVVzZXJSZXF1ZXN0EhYKDnRhcmdldF91c2VyX2lkGAEgASgJIm4KEFBva2VVc2VyUmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCBIPCgdtZXNzYWdlGAIgASgJEjgKDXBva2VfcmVsYXRpb24YAyABKAsyIS5wcm90by5wb2t5LnYxLlBva2VSZWxhdGlvblVwZGF0ZSIjChJTZWFyY2hVc2Vyc1JlcXVlc3QSDQoFcXVlcnkYASABKAki9gEKEFNlYXJjaFVzZXJSZXN1bHQSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIQCgh1c2VybmFtZRgDIAEoCRINCgVpbWFnZRgEIAEoCRIuCgpjcmVhdGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIZChFoYXNfcG9rZV9yZWxhdGlvbhgGIAEoCBISCgpwb2tlX2NvdW50GAcgASgFEhQKDGxhc3RfcG9rZV9ieRgIIAEoCRIyCg5sYXN0X3Bva2VfZGF0ZRgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiVAoTU2VhcmNoVXNlcnNSZXNwb25zZRIuCgV1c2VycxgBIAMoCzIfLnByb3RvLnBva3kudjEuU2VhcmNoVXNlclJlc3VsdBINCgVjb3VudBgCIAEoBSItChZHZXRQb2tlUmVsYXRpb25SZXF1ZXN0EhMKC3JlbGF0aW9uX2lkGAEgASgJIkwKF0dldFBva2VSZWxhdGlvblJlc3BvbnNlEjEKCHJlbGF0aW9uGAEgASgLMh8ucHJvdG8ucG9reS52MS5Vc2VyUG9rZVJlbGF0aW9uMu4CCgxQb2tlc1NlcnZpY2USWQoMR2V0VXNlclBva2VzEiIucHJvdG8ucG9reS52MS5HZXRVc2VyUG9rZXNSZXF1ZXN0GiMucHJvdG8ucG9reS52MS5HZXRVc2VyUG9rZXNSZXNwb25zZTABEksKCFBva2VVc2VyEh4ucHJvdG8ucG9reS52MS5Qb2tlVXNlclJlcXVlc3QaHy5wcm90by5wb2t5LnYxLlBva2VVc2VyUmVzcG9uc2USVAoLU2VhcmNoVXNlcnMSIS5wcm90by5wb2t5LnYxLlNlYXJjaFVzZXJzUmVxdWVzdBoiLnByb3RvLnBva3kudjEuU2VhcmNoVXNlcnNSZXNwb25zZRJgCg9HZXRQb2tlUmVsYXRpb24SJS5wcm90by5wb2t5LnYxLkdldFBva2VSZWxhdGlvblJlcXVlc3QaJi5wcm90by5wb2t5LnYxLkdldFBva2VSZWxhdGlvblJlc3BvbnNlYgZwcm90bzM",
-  [file_google_protobuf_timestamp],
-);
+export const file_proto_poky_v1_pokes_service: GenFile = /*@__PURE__*/
+  fileDesc("CiFwcm90by9wb2t5L3YxL3Bva2VzX3NlcnZpY2UucHJvdG8SDXByb3RvLnBva3kudjEicQoEVXNlchIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhAKCHVzZXJuYW1lGAMgASgJEg0KBWltYWdlGAQgASgJEi4KCmNyZWF0ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIuMBChBVc2VyUG9rZVJlbGF0aW9uEgoKAmlkGAEgASgJEhEKCXVzZXJfYV9pZBgCIAEoCRIRCgl1c2VyX2JfaWQYAyABKAkSDQoFY291bnQYBCABKAUSMgoObGFzdF9wb2tlX2RhdGUYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGxhc3RfcG9rZV9ieRgGIAEoCRIbChN2aXNpYmxlX2xlYWRlcmJvYXJkGAcgASgIEicKCm90aGVyX3VzZXIYCCABKAsyEy5wcm90by5wb2t5LnYxLlVzZXIikgEKElBva2VSZWxhdGlvblVwZGF0ZRIKCgJpZBgBIAEoCRINCgVjb3VudBgCIAEoBRIyCg5sYXN0X3Bva2VfZGF0ZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFAoMbGFzdF9wb2tlX2J5GAQgASgJEhcKD2lzX25ld19yZWxhdGlvbhgFIAEoCCImChNHZXRVc2VyUG9rZXNSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiTwoUR2V0VXNlclBva2VzUmVzcG9uc2USNwoOcG9rZV9yZWxhdGlvbnMYASADKAsyHy5wcm90by5wb2t5LnYxLlVzZXJQb2tlUmVsYXRpb24iKQoPUG9rZVVzZXJSZXF1ZXN0EhYKDnRhcmdldF91c2VyX2lkGAEgASgJIm4KEFBva2VVc2VyUmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCBIPCgdtZXNzYWdlGAIgASgJEjgKDXBva2VfcmVsYXRpb24YAyABKAsyIS5wcm90by5wb2t5LnYxLlBva2VSZWxhdGlvblVwZGF0ZSIjChJTZWFyY2hVc2Vyc1JlcXVlc3QSDQoFcXVlcnkYASABKAki9gEKEFNlYXJjaFVzZXJSZXN1bHQSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIQCgh1c2VybmFtZRgDIAEoCRINCgVpbWFnZRgEIAEoCRIuCgpjcmVhdGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIZChFoYXNfcG9rZV9yZWxhdGlvbhgGIAEoCBISCgpwb2tlX2NvdW50GAcgASgFEhQKDGxhc3RfcG9rZV9ieRgIIAEoCRIyCg5sYXN0X3Bva2VfZGF0ZRgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiVAoTU2VhcmNoVXNlcnNSZXNwb25zZRIuCgV1c2VycxgBIAMoCzIfLnByb3RvLnBva3kudjEuU2VhcmNoVXNlclJlc3VsdBINCgVjb3VudBgCIAEoBSItChZHZXRQb2tlUmVsYXRpb25SZXF1ZXN0EhMKC3JlbGF0aW9uX2lkGAEgASgJIkwKF0dldFBva2VSZWxhdGlvblJlc3BvbnNlEjEKCHJlbGF0aW9uGAEgASgLMh8ucHJvdG8ucG9reS52MS5Vc2VyUG9rZVJlbGF0aW9uMu4CCgxQb2tlc1NlcnZpY2USWQoMR2V0VXNlclBva2VzEiIucHJvdG8ucG9reS52MS5HZXRVc2VyUG9rZXNSZXF1ZXN0GiMucHJvdG8ucG9reS52MS5HZXRVc2VyUG9rZXNSZXNwb25zZTABEksKCFBva2VVc2VyEh4ucHJvdG8ucG9reS52MS5Qb2tlVXNlclJlcXVlc3QaHy5wcm90by5wb2t5LnYxLlBva2VVc2VyUmVzcG9uc2USVAoLU2VhcmNoVXNlcnMSIS5wcm90by5wb2t5LnYxLlNlYXJjaFVzZXJzUmVxdWVzdBoiLnByb3RvLnBva3kudjEuU2VhcmNoVXNlcnNSZXNwb25zZRJgCg9HZXRQb2tlUmVsYXRpb24SJS5wcm90by5wb2t5LnYxLkdldFBva2VSZWxhdGlvblJlcXVlc3QaJi5wcm90by5wb2t5LnYxLkdldFBva2VSZWxhdGlvblJlc3BvbnNlYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message proto.poky.v1.User
@@ -50,10 +48,8 @@ export type User = Message<"proto.poky.v1.User"> & {
  * Describes the message proto.poky.v1.User.
  * Use `create(UserSchema)` to create a new message.
  */
-export const UserSchema: GenMessage<User> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_pokes_service,
-  0,
-);
+export const UserSchema: GenMessage<User> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 0);
 
 /**
  * @generated from message proto.poky.v1.UserPokeRelation
@@ -104,10 +100,8 @@ export type UserPokeRelation = Message<"proto.poky.v1.UserPokeRelation"> & {
  * Describes the message proto.poky.v1.UserPokeRelation.
  * Use `create(UserPokeRelationSchema)` to create a new message.
  */
-export const UserPokeRelationSchema: GenMessage<UserPokeRelation> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_pokes_service,
-  1,
-);
+export const UserPokeRelationSchema: GenMessage<UserPokeRelation> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 1);
 
 /**
  * @generated from message proto.poky.v1.PokeRelationUpdate
@@ -143,10 +137,8 @@ export type PokeRelationUpdate = Message<"proto.poky.v1.PokeRelationUpdate"> & {
  * Describes the message proto.poky.v1.PokeRelationUpdate.
  * Use `create(PokeRelationUpdateSchema)` to create a new message.
  */
-export const PokeRelationUpdateSchema: GenMessage<PokeRelationUpdate> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_pokes_service,
-  2,
-);
+export const PokeRelationUpdateSchema: GenMessage<PokeRelationUpdate> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 2);
 
 /**
  * 1️⃣ Get user poke relations (subscription)
@@ -166,10 +158,8 @@ export type GetUserPokesRequest = Message<"proto.poky.v1.GetUserPokesRequest"> &
  * Describes the message proto.poky.v1.GetUserPokesRequest.
  * Use `create(GetUserPokesRequestSchema)` to create a new message.
  */
-export const GetUserPokesRequestSchema: GenMessage<GetUserPokesRequest> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_pokes_service,
-  3,
-);
+export const GetUserPokesRequestSchema: GenMessage<GetUserPokesRequest> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 3);
 
 /**
  * @generated from message proto.poky.v1.GetUserPokesResponse
@@ -185,7 +175,7 @@ export type GetUserPokesResponse = Message<"proto.poky.v1.GetUserPokesResponse">
  * Describes the message proto.poky.v1.GetUserPokesResponse.
  * Use `create(GetUserPokesResponseSchema)` to create a new message.
  */
-export const GetUserPokesResponseSchema: GenMessage<GetUserPokesResponse> /*@__PURE__*/ =
+export const GetUserPokesResponseSchema: GenMessage<GetUserPokesResponse> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_pokes_service, 4);
 
 /**
@@ -204,10 +194,8 @@ export type PokeUserRequest = Message<"proto.poky.v1.PokeUserRequest"> & {
  * Describes the message proto.poky.v1.PokeUserRequest.
  * Use `create(PokeUserRequestSchema)` to create a new message.
  */
-export const PokeUserRequestSchema: GenMessage<PokeUserRequest> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_pokes_service,
-  5,
-);
+export const PokeUserRequestSchema: GenMessage<PokeUserRequest> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 5);
 
 /**
  * @generated from message proto.poky.v1.PokeUserResponse
@@ -233,10 +221,8 @@ export type PokeUserResponse = Message<"proto.poky.v1.PokeUserResponse"> & {
  * Describes the message proto.poky.v1.PokeUserResponse.
  * Use `create(PokeUserResponseSchema)` to create a new message.
  */
-export const PokeUserResponseSchema: GenMessage<PokeUserResponse> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_pokes_service,
-  6,
-);
+export const PokeUserResponseSchema: GenMessage<PokeUserResponse> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 6);
 
 /**
  * 3️⃣ Search users
@@ -254,10 +240,8 @@ export type SearchUsersRequest = Message<"proto.poky.v1.SearchUsersRequest"> & {
  * Describes the message proto.poky.v1.SearchUsersRequest.
  * Use `create(SearchUsersRequestSchema)` to create a new message.
  */
-export const SearchUsersRequestSchema: GenMessage<SearchUsersRequest> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_pokes_service,
-  7,
-);
+export const SearchUsersRequestSchema: GenMessage<SearchUsersRequest> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 7);
 
 /**
  * @generated from message proto.poky.v1.SearchUserResult
@@ -313,10 +297,8 @@ export type SearchUserResult = Message<"proto.poky.v1.SearchUserResult"> & {
  * Describes the message proto.poky.v1.SearchUserResult.
  * Use `create(SearchUserResultSchema)` to create a new message.
  */
-export const SearchUserResultSchema: GenMessage<SearchUserResult> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_pokes_service,
-  8,
-);
+export const SearchUserResultSchema: GenMessage<SearchUserResult> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 8);
 
 /**
  * @generated from message proto.poky.v1.SearchUsersResponse
@@ -337,10 +319,8 @@ export type SearchUsersResponse = Message<"proto.poky.v1.SearchUsersResponse"> &
  * Describes the message proto.poky.v1.SearchUsersResponse.
  * Use `create(SearchUsersResponseSchema)` to create a new message.
  */
-export const SearchUsersResponseSchema: GenMessage<SearchUsersResponse> /*@__PURE__*/ = messageDesc(
-  file_proto_poky_v1_pokes_service,
-  9,
-);
+export const SearchUsersResponseSchema: GenMessage<SearchUsersResponse> = /*@__PURE__*/
+  messageDesc(file_proto_poky_v1_pokes_service, 9);
 
 /**
  * 4️⃣ Get poke relation details
@@ -358,7 +338,7 @@ export type GetPokeRelationRequest = Message<"proto.poky.v1.GetPokeRelationReque
  * Describes the message proto.poky.v1.GetPokeRelationRequest.
  * Use `create(GetPokeRelationRequestSchema)` to create a new message.
  */
-export const GetPokeRelationRequestSchema: GenMessage<GetPokeRelationRequest> /*@__PURE__*/ =
+export const GetPokeRelationRequestSchema: GenMessage<GetPokeRelationRequest> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_pokes_service, 10);
 
 /**
@@ -375,7 +355,7 @@ export type GetPokeRelationResponse = Message<"proto.poky.v1.GetPokeRelationResp
  * Describes the message proto.poky.v1.GetPokeRelationResponse.
  * Use `create(GetPokeRelationResponseSchema)` to create a new message.
  */
-export const GetPokeRelationResponseSchema: GenMessage<GetPokeRelationResponse> /*@__PURE__*/ =
+export const GetPokeRelationResponseSchema: GenMessage<GetPokeRelationResponse> = /*@__PURE__*/
   messageDesc(file_proto_poky_v1_pokes_service, 11);
 
 /**
@@ -391,7 +371,7 @@ export const PokesService: GenService<{
     methodKind: "server_streaming";
     input: typeof GetUserPokesRequestSchema;
     output: typeof GetUserPokesResponseSchema;
-  };
+  },
   /**
    * Mutation: poke another user
    *
@@ -401,7 +381,7 @@ export const PokesService: GenService<{
     methodKind: "unary";
     input: typeof PokeUserRequestSchema;
     output: typeof PokeUserResponseSchema;
-  };
+  },
   /**
    * Query: search users and include poke relation info
    *
@@ -411,7 +391,7 @@ export const PokesService: GenService<{
     methodKind: "unary";
     input: typeof SearchUsersRequestSchema;
     output: typeof SearchUsersResponseSchema;
-  };
+  },
   /**
    * Query: get specific poke relation details
    *
@@ -421,5 +401,7 @@ export const PokesService: GenService<{
     methodKind: "unary";
     input: typeof GetPokeRelationRequestSchema;
     output: typeof GetPokeRelationResponseSchema;
-  };
-}> /*@__PURE__*/ = serviceDesc(file_proto_poky_v1_pokes_service, 0);
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_proto_poky_v1_pokes_service, 0);
+
