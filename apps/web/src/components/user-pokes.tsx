@@ -2,7 +2,7 @@ import { User, Calendar, Zap, RefreshCw } from "lucide-react";
 import { usePokeData, useOrderedPokeRelations } from "@/stores/poke-store";
 import { formatDistanceToNow } from "date-fns";
 import { PokeButton } from "@/components/poke-button";
-import { Flipper, Flipped } from "react-flip-toolkit";
+import { motion, AnimatePresence } from "motion/react";
 import { PokeItemSkeleton } from "@/components/skeletons/poke-item";
 import { useState } from "react";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
@@ -11,7 +11,6 @@ import { PokeRelationSheet } from "@/components/poke-relation-sheet";
 export function UserPokes() {
   const { data: pokesData, isLoading, error, isConnected, retry } = usePokeData();
   const orderedPokeRelations = useOrderedPokeRelations();
-  const flipKey = orderedPokeRelations.map((r) => r.id).join(",");
 
   // State for bottom sheet
   const [selectedRelation, setSelectedRelation] = useState<any>(null);
@@ -114,66 +113,70 @@ export function UserPokes() {
         </div>
       </div>
 
-      <Flipper flipKey={flipKey} spring="veryGentle">
-        <div className="space-y-4">
+      <motion.div layout className="space-y-4">
+        <AnimatePresence mode="popLayout">
           {orderedPokeRelations.map((pokeRelation) => {
             const isYourTurn = pokeRelation.lastPokeBy == pokeRelation.otherUser?.id;
 
             return (
-              <Flipped key={pokeRelation.id} flipId={pokeRelation.id}>
-                <div className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => handleAvatarClick(pokeRelation)}
-                      className="w-10 h-10 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 hover:ring-white/50 transition-all duration-200 hover:scale-105 cursor-pointer"
-                    >
-                      {pokeRelation?.otherUser?.image ? (
-                        <img
-                          src={pokeRelation?.otherUser?.image}
-                          alt={pokeRelation?.otherUser?.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <User className="h-5 w-5 text-white/70" />
-                      )}
-                    </button>
-                    <div>
-                      <p className="font-medium text-white/90">
-                        {pokeRelation.otherUser?.username}
-                      </p>
-                      <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
-                        <Calendar className="h-3 w-3" />
-                        <span>
-                          {pokeRelation.lastPokeDate
-                            ? formatDistanceToNow(timestampDate(pokeRelation.lastPokeDate), {
-                                addSuffix: true,
-                              })
-                            : ""}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-row items-center align-middle space-x-2">
-                    {isYourTurn && (
-                      <PokeButton
-                        targetUserId={pokeRelation.otherUser?.id ?? ""}
-                        targetUserName={pokeRelation.otherUser?.name ?? ""}
-                        variant="outline"
-                        size="sm"
-                        className="text-green-400 border-green-400/30 hover:bg-green-400/10"
+              <motion.div
+                key={pokeRelation.id}
+                layout
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center justify-between p-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
+              >
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleAvatarClick(pokeRelation)}
+                    className="w-10 h-10 rounded-full overflow-hidden bg-white/20 flex items-center justify-center ring-2 ring-white/30 hover:ring-white/50 transition-all duration-200 hover:scale-105 cursor-pointer"
+                  >
+                    {pokeRelation?.otherUser?.image ? (
+                      <img
+                        src={pokeRelation?.otherUser?.image}
+                        alt={pokeRelation?.otherUser?.name}
+                        className="w-full h-full object-cover"
                       />
+                    ) : (
+                      <User className="h-5 w-5 text-white/70" />
                     )}
-                    <div className="flex items-center gap-2 justify-end">
-                      <Zap className="h-4 w-4 text-yellow-400" />
-                      <span className="font-semibold text-white/90">{pokeRelation.count}</span>
+                  </button>
+                  <div>
+                    <p className="font-medium text-white/90">{pokeRelation.otherUser?.username}</p>
+                    <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
+                      <Calendar className="h-3 w-3" />
+                      <span>
+                        {pokeRelation.lastPokeDate
+                          ? formatDistanceToNow(timestampDate(pokeRelation.lastPokeDate), {
+                              addSuffix: true,
+                            })
+                          : ""}
+                      </span>
                     </div>
                   </div>
                 </div>
-              </Flipped>
+                <div className="flex flex-row items-center align-middle space-x-2">
+                  {isYourTurn && (
+                    <PokeButton
+                      targetUserId={pokeRelation.otherUser?.id ?? ""}
+                      targetUserName={pokeRelation.otherUser?.name ?? ""}
+                      variant="outline"
+                      size="sm"
+                      className="text-green-400 border-green-400/30 hover:bg-green-400/10"
+                    />
+                  )}
+                  <div className="flex items-center gap-2 justify-end">
+                    <Zap className="h-4 w-4 text-yellow-400" />
+                    <span className="font-semibold text-white/90">{pokeRelation.count}</span>
+                  </div>
+                </div>
+              </motion.div>
             );
           })}
-        </div>
-      </Flipper>
+        </AnimatePresence>
+      </motion.div>
 
       {/* Bottom Sheet for Relation Options */}
       <PokeRelationSheet
