@@ -1,0 +1,43 @@
+{
+  "name": "@poky/api",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "dep:update": "buf dep update",
+    "lint": "buf lint",
+    "gen": "buf generate"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "catalog:",
+    "@connectrpc/connect": "catalog:",
+    "@connectrpc/validate": "catalog:",
+    "@poky/auth": "workspace:*",
+    "@poky/db": "workspace:*",
+    "@poky/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "winston": "catalog:",
+    "zod": "catalog:",
+    "ioredis": "catalog:",
+    "nats": "catalog:",
+    "pg": "catalog:",
+    "postgres": "catalog:",
+    "web-push": "catalog:"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "catalog:",
+    "@bufbuild/protoc-gen-es": "^2.11.0",
+    "@poky/config": "workspace:*",
+    "typescript": "catalog:",
+    "@types/pg": "catalog:",
+    "@types/web-push": "catalog:",
+    "drizzle-kit": "catalog:"
+  }
+}

@@ -7,6 +7,7 @@ import { createConnectTransport } from "@connectrpc/connect-web";
 import Loader from "@/components/loader";
 import { toast } from "@pheralb/toast";
 import { routeTree } from "./routeTree.gen";
+import { env } from "@poky/env/web";
 
 // -------------------
 // React Query client
@@ -38,7 +39,7 @@ const router = createRouter({
     const transport = useMemo(
       () =>
         createConnectTransport({
-          baseUrl: import.meta.env.VITE_SERVER_URL,
+          baseUrl: env.VITE_SERVER_URL,
           fetch: (input, init) => fetch(input, { ...init, credentials: "include" }),
         }),
       [],

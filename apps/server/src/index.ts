@@ -1,12 +1,13 @@
 import { fastify } from "fastify";
 import { fastifyConnectPlugin } from "@connectrpc/connect-fastify";
-import routes from "@/rpc/connect";
 import fastifyCors from "@fastify/cors";
 import { cors as connectCors } from "@connectrpc/connect";
-import { authInterceptor } from "@/rpc/interceptor";
-import logger from "@/lib/logger";
+import logger from "@poky/api/lib/logger";
 import { auth } from "@poky/auth";
 import { runMigrations } from "@poky/db";
+import { env } from "@poky/env/server";
+import routes from "@poky/api/routers/poky";
+import { authInterceptor } from "@poky/api/rpc/interceptor";
 
 async function startServer() {
   // Run database migrations before starting the server
@@ -17,7 +18,7 @@ async function startServer() {
     logger.error("Failed to run migrations:", error);
     // In production, you might want to exit here
     // For development, we continue so the server can start even if DB is not available
-    if (process.env.NODE_ENV === "production") {
+    if (env.NODE_ENV === "production") {
       process.exit(1);
     }
   }
@@ -25,7 +26,7 @@ async function startServer() {
   const server = fastify();
 
   // Configuration CORS pour production
-  const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || [];
+  const allowedOrigins = env.CORS_ORIGIN?.split(",") || [];
 
   await server.register(fastifyCors, {
     origin: (origin, callback) => {
@@ -107,8 +108,8 @@ async function startServer() {
   });
 
   // Configuration serveur pour production
-  const host = process.env.HOST || "0.0.0.0";
-  const port = parseInt(process.env.PORT || "3000");
+  const host = env.HOST || "0.0.0.0";
+  const port = parseInt(env.PORT || "3000");
 
   await server.listen({ host, port });
   logger.info(`Server is listening at http://${host}:${port}`);

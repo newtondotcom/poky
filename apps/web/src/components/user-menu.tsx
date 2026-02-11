@@ -2,6 +2,7 @@ import DynamicText from "./kokonutui/dynamic-text";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "@pheralb/toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { env } from "@poky/env/web";
 
 export default function UserMenu() {
   const { error, isPending } = authClient.useSession();
@@ -14,7 +15,7 @@ export default function UserMenu() {
     await authClient.signIn.oauth2(
       {
         providerId: "churros",
-        callbackURL: import.meta.env.VITE_LOCAL_URL,
+        callbackURL: env.VITE_LOCAL_URL,
       },
       {
         onSuccess: () => {

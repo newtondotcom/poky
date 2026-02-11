@@ -12,38 +12,56 @@
       "@better-auth/expo": "^1.4.18",
       "dotenv": "^17.2.4",
       "zod": "^4.3.6",
-      "typescript": "^5.9.3",
+      "typescript": "^5",
       "tsdown": "^0.20.3",
-      "drizzle-orm": "^0.45.0"
+      "drizzle-orm": "^0.45.0",
+      "@bufbuild/protobuf": "^2.11.0",
+      "@bufbuild/buf": "^1.65.0",
+      "@connectrpc/connect": "^2.1.1",
+      "@connectrpc/connect-fastify": "^2.1.1",
+      "@connectrpc/connect-query": "^2.2.0",
+      "@connectrpc/connect-web": "^2.1.1",
+      "@connectrpc/validate": "^0.2.0",
+      "drizzle-kit": "^0.31.9",
+      "pg": "^8.18.0",
+      "@types/pg": "^8.16.0",
+      "@types/bun": "^1.3.4",
+      "fastify": "^5.7.4",
+      "@fastify/cors": "^11.2.0",
+      "winston": "^3.19.0",
+      "ioredis": "^5.9.2",
+      "nats": "^2.29.3",
+      "postgres": "^3.4.8",
+      "web-push": "^3.6.7",
+      "@types/web-push": "^3.6.4"
     }
   },
   "scripts": {
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check",
     "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
     "dev:native": "turbo -F native dev",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F server dev",
-    "compile:server": "turbo -F backend compile",
     "db:push": "turbo -F @poky/db db:push",
     "db:studio": "turbo -F @poky/db db:studio",
     "db:generate": "turbo -F @poky/db db:generate",
-    "db:migrate": "turbo -F @poky/db db:migrate"
+    "db:migrate": "turbo -F @poky/db db:migrate",
+    "check": "oxlint && oxfmt --write",
+    "ruler:apply": "bunx @intellectronica/ruler@latest apply --local-only",
+    "compile:server": "turbo -F server compile"
   },
   "dependencies": {
-    "dotenv": "^17.2.4",
-    "zod": "^4.3.6"
+    "@poky/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.8",
+    "@poky/config": "workspace:*",
+    "@types/bun": "catalog:",
     "oxfmt": "^0.30.0",
     "oxlint": "^1.45.0",
-    "tsdown": "^0.20.3",
-    "turbo": "^2.8.4"
+    "typescript": "catalog:"
   },
-  "packageManager": "bun@1.3.1"
+  "packageManager": "bun@1.3.7"
 }

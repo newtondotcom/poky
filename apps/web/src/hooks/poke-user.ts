@@ -1,4 +1,4 @@
-import { PokesService } from "@/rpc/proto/poky/v1/pokes_service_pb";
+import { PokesService } from "@poky/api/rpc/proto/poky/v1/pokes_service_pb";
 import { useMutation } from "@connectrpc/connect-query";
 import { toast } from "@pheralb/toast";
 

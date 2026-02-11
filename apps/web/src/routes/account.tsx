@@ -2,13 +2,15 @@ import Loader from "@/components/loader";
 import { useTheme } from "@/components/theme-provider";
 import { authClient } from "@/lib/auth-client";
 import { getBrowserName, getDeviceId, getOSName } from "@/lib/device_id";
-import { LeaderboardService } from "@/rpc/proto/poky/v1/leaderboard_service_pb";
-import { WebPushService } from "@/rpc/proto/poky/v1/webpush_service_pb";
+import { LeaderboardService } from "@poky/api/rpc/proto/poky/v1/leaderboard_service_pb";
+import { WebPushService } from "@poky/api/rpc/proto/poky/v1/webpush_service_pb";
 import { useMutation, useQuery } from "@connectrpc/connect-query";
 import { toast } from "@pheralb/toast";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Bell, Loader2, LogOut, Moon, RotateCcw, Sun, TestTube } from "lucide-react";
 import { useEffect, useState } from "react";
+
+import { env } from "@poky/env/web";
 
 export const Route = createFileRoute("/account")({
   component: AccountPage,
@@ -167,7 +169,7 @@ function AccountPage() {
           return;
         }
         const reg = await navigator.serviceWorker.ready;
-        const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+        const vapidPublicKey = env.VITE_VAPID_PUBLIC_KEY;
         if (!vapidPublicKey) {
           toast.error({ text: "VAPID public key is not set." });
           return;

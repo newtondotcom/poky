@@ -3,7 +3,7 @@ import { Trophy, Medal, Award, Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "@pheralb/toast";
 import { LeaderboardItemSkeleton } from "@/components/skeletons/leaderbord";
-import { LeaderboardService } from "@/rpc/proto/poky/v1/leaderboard_service_pb";
+import { LeaderboardService } from "@poky/api/rpc/proto/poky/v1/leaderboard_service_pb";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 
 function getRankIcon(rank: number) {

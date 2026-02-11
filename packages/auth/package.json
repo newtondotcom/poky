@@ -1,27 +1,22 @@
 {
   "name": "@poky/auth",
+  "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
     },
     "./*": {
-      "types": "./dist/*.d.ts",
       "default": "./src/*.ts"
     }
   },
-  "type": "module",
-  "scripts": {
-    "build": "tsdown"
-  },
+  "scripts": {},
   "devDependencies": {
-    "tsdown": "catalog:"
-  },
-  "peerDependencies": {
+    "@poky/config": "workspace:*",
     "typescript": "catalog:"
   },
   "dependencies": {
     "@poky/db": "workspace:*",
+    "@poky/env": "workspace:*",
     "better-auth": "catalog:",
     "@better-auth/expo": "catalog:",
     "dotenv": "catalog:",

@@ -1,8 +1,0 @@
-modules:
-  - path: files
-lint:
-  use:
-    - DEFAULT
-breaking:
-  use:
-    - FILE

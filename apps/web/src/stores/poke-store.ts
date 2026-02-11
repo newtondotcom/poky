@@ -1,10 +1,11 @@
-import { PokesService, type UserPokeRelation } from "@/rpc/proto/poky/v1/pokes_service_pb";
+import { PokesService, type UserPokeRelation } from "@poky/api/rpc/proto/poky/v1/pokes_service_pb";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { createCallbackClient, type ConnectError } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
 import { useEffect, useMemo } from "react";
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
+import { env } from "@poky/env/web";
 
 // -------------------
 // Zustand store
@@ -84,7 +85,7 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
 export const usePokesClient = () => {
   const client = useMemo(() => {
     const transport = createConnectTransport({
-      baseUrl: import.meta.env.VITE_SERVER_URL,
+      baseUrl: env.VITE_SERVER_URL,
       fetch: (input, init) => fetch(input, { ...init, credentials: "include" }),
       defaultTimeoutMs: 20 * 60 * 1000,
     });

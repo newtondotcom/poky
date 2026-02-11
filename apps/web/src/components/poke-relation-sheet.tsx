@@ -1,8 +1,8 @@
 import { Eye, EyeOff, Trash2 } from "lucide-react";
 import { useMutation, useQuery } from "@connectrpc/connect-query";
 import { toast } from "@pheralb/toast";
-import { LeaderboardService } from "@/rpc/proto/poky/v1/leaderboard_service_pb";
-import { PokesService } from "@/rpc/proto/poky/v1/pokes_service_pb";
+import { LeaderboardService } from "@poky/api/rpc/proto/poky/v1/leaderboard_service_pb";
+import { PokesService } from "@poky/api/rpc/proto/poky/v1/pokes_service_pb";
 import {
   Sheet,
   SheetContent,

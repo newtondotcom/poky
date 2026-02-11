@@ -2,7 +2,9 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, or, inArray, and, not, like, desc, asc, count, sql } from "drizzle-orm";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 
-export const db = drizzle(process.env.DATABASE_URL || "");
+import { env } from "@poky/env/server";
+
+export const db = drizzle(env.DATABASE_URL);
 
 // Re-export common drizzle-orm operators
 export { eq, or, inArray, and, not, like, desc, asc, count, sql };
@@ -13,7 +15,7 @@ export { eq, or, inArray, and, not, like, desc, asc, count, sql };
  * This function is idempotent - safe to call multiple times.
  */
 export async function runMigrations(): Promise<void> {
-  if (!process.env.DATABASE_URL) {
+  if (!env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not set. Cannot run migrations.");
   }
 

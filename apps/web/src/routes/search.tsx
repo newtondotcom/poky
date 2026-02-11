@@ -6,7 +6,7 @@ import { useQuery } from "@connectrpc/connect-query";
 import { PokeButton } from "@/components/poke-button";
 import { formatDistanceToNow } from "date-fns";
 import { SearchResultSkeleton } from "@/components/skeletons/search-result";
-import { PokesService, type SearchUserResult } from "@/rpc/proto/poky/v1/pokes_service_pb";
+import { PokesService, type SearchUserResult } from "@poky/api/rpc/proto/poky/v1/pokes_service_pb";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import Loader from "@/components/loader";
 import { authClient } from "@/lib/auth-client";

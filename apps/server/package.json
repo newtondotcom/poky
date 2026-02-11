@@ -1,6 +1,6 @@
 {
-  "name": "backend",
-  "module": "index.ts",
+  "name": "server",
+  "main": "src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {
@@ -11,33 +11,24 @@
     "start": "bun run dist/index.js"
   },
   "devDependencies": {
+    "@bufbuild/buf": "catalog:",
     "@bufbuild/protoc-gen-es": "^2.11.0",
-    "@types/bun": "latest",
-    "@types/pg": "^8.16.0",
-    "@types/web-push": "^3.6.4",
-    "drizzle-kit": "^0.31.9"
-  },
-  "peerDependencies": {
-    "typescript": "^5.8.3"
+    "@types/bun": "catalog:",
+    "@poky/config": "workspace:*",
+    "typescript": "catalog:"
   },
   "dependencies": {
-    "@bufbuild/buf": "^1.65.0",
-    "@bufbuild/protobuf": "^2.11.0",
-    "@connectrpc/connect": "^2.1.1",
-    "@connectrpc/connect-fastify": "^2.1.1",
-    "@fastify/cors": "^11.2.0",
+    "@bufbuild/protobuf": "catalog:",
+    "@connectrpc/connect": "catalog:",
+    "@connectrpc/connect-fastify": "catalog:",
+    "@fastify/cors": "catalog:",
+    "@poky/api": "workspace:*",
     "@poky/auth": "workspace:*",
     "@poky/db": "workspace:*",
+    "@poky/env": "workspace:*",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
-    "fastify": "^5.7.4",
-    "ioredis": "^5.9.2",
-    "nats": "^2.29.3",
-    "pg": "^8.18.0",
-    "postgres": "^3.4.8",
-    "tsx": "^4.21.0",
-    "web-push": "^3.6.7",
-    "winston": "^3.19.0",
+    "fastify": "catalog:",
     "zod": "catalog:"
   }
 }

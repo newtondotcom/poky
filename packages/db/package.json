@@ -3,33 +3,29 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
     },
     "./*": {
-      "types": "./dist/*.d.ts",
       "default": "./src/*.ts"
     }
   },
   "scripts": {
-    "build": "tsdown",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio",
     "db:migrate": "drizzle-kit migrate"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.31.9",
-    "@types/pg": "^8.16.0",
-    "tsdown": "catalog:"
-  },
-  "peerDependencies": {
+    "@poky/config": "workspace:*",
+    "@types/pg": "catalog:",
+    "drizzle-kit": "catalog:",
     "typescript": "catalog:"
   },
   "dependencies": {
+    "@poky/env": "workspace:*",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
-    "pg": "^8.18.0",
+    "pg": "catalog:",
     "zod": "catalog:"
   }
 }
