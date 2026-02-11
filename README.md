@@ -95,12 +95,29 @@ First, install the dependencies:
 ```bash
 bun install
 ```
-## Database Setup
+## Infrastructure Setup
 
-This project uses PostgreSQL with Drizzle ORM.
+### Docker Services
 
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/server/.env` file with your PostgreSQL connection details.
+This project requires PostgreSQL, NATS, and Valkey (Redis) for full functionality. Start all services using Docker Compose:
+
+```bash
+cd apps/server
+docker compose up -d
+```
+
+This will start:
+- **PostgreSQL** - Database on port 8001 (credentials: `postgres:mypassword`)
+- **NATS** - Message broker on port 4222
+- **Valkey** - Cache/session storage on port 6379
+
+### Database Setup
+
+1. Ensure PostgreSQL is running via Docker Compose
+2. Update your `apps/server/.env` file with the connection details (if needed):
+   ```
+   DATABASE_URL=postgresql://postgres:mypassword@localhost:8001/postgres
+   ```
 
 3. Apply the schema to your database:
 ```bash
