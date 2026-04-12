@@ -14,6 +14,7 @@
     "@bufbuild/buf": "catalog:",
     "@bufbuild/protoc-gen-es": "^2.11.0",
     "@types/bun": "catalog:",
+    "tsdown": "catalog:",
     "@poky/config": "workspace:*",
     "typescript": "catalog:"
   },
