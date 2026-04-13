@@ -43,7 +43,7 @@ class NatsService {
     conn.publish(subject, JSON.stringify(payload));
   }
 
-  async subscribe<T>(subject: string) {
+  async subscribe(subject: string) {
     const conn = await this.getConnection();
     const sub = conn.subscribe(subject);
 

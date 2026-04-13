@@ -10,16 +10,16 @@
     }
   },
   "scripts": {},
-  "devDependencies": {
-    "@poky/config": "workspace:*",
-    "typescript": "catalog:"
-  },
   "dependencies": {
+    "@better-auth/expo": "catalog:",
     "@poky/db": "workspace:*",
     "@poky/env": "workspace:*",
     "better-auth": "catalog:",
-    "@better-auth/expo": "catalog:",
     "dotenv": "catalog:",
     "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@poky/config": "workspace:*",
+    "typescript": "catalog:"
   }
 }

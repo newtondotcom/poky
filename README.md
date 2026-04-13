@@ -16,6 +16,7 @@ Une application moderne de pokes à la Meta avec des fonctionnalités temps rée
 ## 🛠️ Stack Technique
 
 ### Frontend
+
 - **TypeScript** - Type safety and improved developer experience
 - **TanStack Router** - File-based routing with full type safety
 - **TailwindCSS** - Utility-first CSS for rapid UI development
@@ -29,6 +30,7 @@ Une application moderne de pokes à la Meta avec des fonctionnalités temps rée
 - **Connect RPC** - Type-safe gRPC-Web APIs
 
 ### Backend
+
 - **Fastify** - Ultra-fast Node.js server framework with CORS support
 - **Connect RPC** - gRPC-Web APIs with type safety
 - **Protocol Buffers** - Efficient binary serialization
@@ -40,6 +42,7 @@ Une application moderne de pokes à la Meta avec des fonctionnalités temps rée
 - **Winston** - Structured and performant logging
 
 ### Infrastructure & Tools
+
 - **Bun** - Ultra-fast JavaScript runtime
 - **Turborepo** - Optimized monorepo with intelligent build caching
 - **Docker** - Containerization and deployment
@@ -52,6 +55,7 @@ Une application moderne de pokes à la Meta avec des fonctionnalités temps rée
 All dependencies are centralized in the root `package.json` catalog for consistent versioning:
 
 ### Core Dependencies
+
 - `better-auth` - Authentication framework
 - `dotenv` - Environment variable management
 - `zod` - Schema validation
@@ -59,12 +63,14 @@ All dependencies are centralized in the root `package.json` catalog for consiste
 - `tsdown` - TypeScript bundler
 
 ### Database & ORM
+
 - `drizzle-orm` - TypeScript ORM
 - `drizzle-kit` - Database tools
 - `pg` - PostgreSQL client
 - `postgres` - PostgreSQL driver
 
 ### Server & API
+
 - `fastify` - Web framework
 - `@fastify/cors` - CORS middleware
 - `@connectrpc/connect` - Connect RPC client
@@ -74,18 +80,21 @@ All dependencies are centralized in the root `package.json` catalog for consiste
 - `@connectrpc/validate` - Validation utilities
 
 ### Messaging & Cache
+
 - `ioredis` - Redis client
 - `nats` - NATS messaging
 - `web-push` - Push notifications
 - `@types/web-push` - TypeScript definitions for web-push
 
 ### Development & Build Tools
+
 - `@bufbuild/protobuf` - Protocol Buffers runtime
 - `@bufbuild/buf` - Protocol Buffers CLI
 - `@types/bun` - Bun type definitions
 - `@types/pg` - PostgreSQL type definitions
 
 ### Logging
+
 - `winston` - Structured logging
 
 ## Getting Started
@@ -95,6 +104,7 @@ First, install the dependencies:
 ```bash
 bun install
 ```
+
 ## Infrastructure Setup
 
 ### Docker Services
@@ -107,6 +117,7 @@ docker compose up -d
 ```
 
 This will start:
+
 - **PostgreSQL** - Database on port 8001 (credentials: `postgres:mypassword`)
 - **NATS** - Message broker on port 4222
 - **Valkey** - Cache/session storage on port 6379
@@ -115,15 +126,16 @@ This will start:
 
 1. Ensure PostgreSQL is running via Docker Compose
 2. Update your `apps/server/.env` file with the connection details (if needed):
+
    ```
    DATABASE_URL=postgresql://postgres:mypassword@localhost:8001/postgres
    ```
 
 3. Apply the schema to your database:
+
 ```bash
 bun db:push
 ```
-
 
 Then, run the development server:
 
@@ -165,7 +177,6 @@ pok7/
 - `cd apps/web && bun desktop:dev`: Start Tauri desktop app in development
 - `cd apps/web && bun desktop:build`: Build Tauri desktop app
 
-
 ## 🤝 Contributing
 
 1. Fork the project
@@ -181,6 +192,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 ## 🆘 Support
 
 If you encounter any issues or have questions:
+
 - Open an [issue](https://github.com/your-username/pok7/issues)
 - Check the [documentation](https://github.com/your-username/pok7/wiki)
 

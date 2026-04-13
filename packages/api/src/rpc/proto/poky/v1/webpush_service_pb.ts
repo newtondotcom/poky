@@ -9,8 +9,9 @@ import type { Message } from "@bufbuild/protobuf";
 /**
  * Describes the file proto/poky/v1/webpush_service.proto.
  */
-export const file_proto_poky_v1_webpush_service: GenFile = /*@__PURE__*/
-  fileDesc("CiNwcm90by9wb2t5L3YxL3dlYnB1c2hfc2VydmljZS5wcm90bxINcHJvdG8ucG9reS52MSLeAQoWUmVnaXN0ZXJXZWJQdXNoUmVxdWVzdBIQCghlbmRwb2ludBgBIAEoCRIcCg9leHBpcmF0aW9uX3RpbWUYAiABKANIAIgBARIPCgdvcHRpb25zGAMgASgJEgoKAmlkGAQgASgJEhEKCWRldmljZV9pZBgFIAEoCRIYCgtkZXZpY2VfbmFtZRgGIAEoCUgBiAEBEhcKCnVzZXJfYWdlbnQYByABKAlIAogBAUISChBfZXhwaXJhdGlvbl90aW1lQg4KDF9kZXZpY2VfbmFtZUINCgtfdXNlcl9hZ2VudCIqChdSZWdpc3RlcldlYlB1c2hSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIIh8KEUdldFdlYlB1c2hSZXF1ZXN0EgoKAmlkGAEgASgJIpkBChJHZXRXZWJQdXNoUmVzcG9uc2USCgoCaWQYASABKAkSEAoIZW5kcG9pbnQYAiABKAkSHAoPZXhwaXJhdGlvbl90aW1lGAMgASgDSACIAQESDwoHb3B0aW9ucxgEIAEoCRIPCgd1c2VyX2lkGAUgASgJEhEKCWRldmljZV9pZBgGIAEoCUISChBfZXhwaXJhdGlvbl90aW1lIiIKFERlbGV0ZVdlYlB1c2hSZXF1ZXN0EgoKAmlkGAEgASgJIigKFURlbGV0ZVdlYlB1c2hSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIIicKElRlc3RXZWJQdXNoUmVxdWVzdBIRCglkZXZpY2VfaWQYASABKAkiNwoTVGVzdFdlYlB1c2hSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEg8KB3NlbnRfdG8YAiABKAUy9wIKDldlYlB1c2hTZXJ2aWNlEmAKD1JlZ2lzdGVyV2ViUHVzaBIlLnByb3RvLnBva3kudjEuUmVnaXN0ZXJXZWJQdXNoUmVxdWVzdBomLnByb3RvLnBva3kudjEuUmVnaXN0ZXJXZWJQdXNoUmVzcG9uc2USUQoKR2V0V2ViUHVzaBIgLnByb3RvLnBva3kudjEuR2V0V2ViUHVzaFJlcXVlc3QaIS5wcm90by5wb2t5LnYxLkdldFdlYlB1c2hSZXNwb25zZRJaCg1EZWxldGVXZWJQdXNoEiMucHJvdG8ucG9reS52MS5EZWxldGVXZWJQdXNoUmVxdWVzdBokLnByb3RvLnBva3kudjEuRGVsZXRlV2ViUHVzaFJlc3BvbnNlElQKC1Rlc3RXZWJQdXNoEiEucHJvdG8ucG9reS52MS5UZXN0V2ViUHVzaFJlcXVlc3QaIi5wcm90by5wb2t5LnYxLlRlc3RXZWJQdXNoUmVzcG9uc2ViBnByb3RvMw");
+export const file_proto_poky_v1_webpush_service: GenFile /*@__PURE__*/ = fileDesc(
+  "CiNwcm90by9wb2t5L3YxL3dlYnB1c2hfc2VydmljZS5wcm90bxINcHJvdG8ucG9reS52MSLeAQoWUmVnaXN0ZXJXZWJQdXNoUmVxdWVzdBIQCghlbmRwb2ludBgBIAEoCRIcCg9leHBpcmF0aW9uX3RpbWUYAiABKANIAIgBARIPCgdvcHRpb25zGAMgASgJEgoKAmlkGAQgASgJEhEKCWRldmljZV9pZBgFIAEoCRIYCgtkZXZpY2VfbmFtZRgGIAEoCUgBiAEBEhcKCnVzZXJfYWdlbnQYByABKAlIAogBAUISChBfZXhwaXJhdGlvbl90aW1lQg4KDF9kZXZpY2VfbmFtZUINCgtfdXNlcl9hZ2VudCIqChdSZWdpc3RlcldlYlB1c2hSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIIh8KEUdldFdlYlB1c2hSZXF1ZXN0EgoKAmlkGAEgASgJIpkBChJHZXRXZWJQdXNoUmVzcG9uc2USCgoCaWQYASABKAkSEAoIZW5kcG9pbnQYAiABKAkSHAoPZXhwaXJhdGlvbl90aW1lGAMgASgDSACIAQESDwoHb3B0aW9ucxgEIAEoCRIPCgd1c2VyX2lkGAUgASgJEhEKCWRldmljZV9pZBgGIAEoCUISChBfZXhwaXJhdGlvbl90aW1lIiIKFERlbGV0ZVdlYlB1c2hSZXF1ZXN0EgoKAmlkGAEgASgJIigKFURlbGV0ZVdlYlB1c2hSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIIicKElRlc3RXZWJQdXNoUmVxdWVzdBIRCglkZXZpY2VfaWQYASABKAkiNwoTVGVzdFdlYlB1c2hSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEg8KB3NlbnRfdG8YAiABKAUy9wIKDldlYlB1c2hTZXJ2aWNlEmAKD1JlZ2lzdGVyV2ViUHVzaBIlLnByb3RvLnBva3kudjEuUmVnaXN0ZXJXZWJQdXNoUmVxdWVzdBomLnByb3RvLnBva3kudjEuUmVnaXN0ZXJXZWJQdXNoUmVzcG9uc2USUQoKR2V0V2ViUHVzaBIgLnByb3RvLnBva3kudjEuR2V0V2ViUHVzaFJlcXVlc3QaIS5wcm90by5wb2t5LnYxLkdldFdlYlB1c2hSZXNwb25zZRJaCg1EZWxldGVXZWJQdXNoEiMucHJvdG8ucG9reS52MS5EZWxldGVXZWJQdXNoUmVxdWVzdBokLnByb3RvLnBva3kudjEuRGVsZXRlV2ViUHVzaFJlc3BvbnNlElQKC1Rlc3RXZWJQdXNoEiEucHJvdG8ucG9reS52MS5UZXN0V2ViUHVzaFJlcXVlc3QaIi5wcm90by5wb2t5LnYxLlRlc3RXZWJQdXNoUmVzcG9uc2ViBnByb3RvMw",
+);
 
 /**
  * ----- Register -----
@@ -58,7 +59,7 @@ export type RegisterWebPushRequest = Message<"proto.poky.v1.RegisterWebPushReque
  * Describes the message proto.poky.v1.RegisterWebPushRequest.
  * Use `create(RegisterWebPushRequestSchema)` to create a new message.
  */
-export const RegisterWebPushRequestSchema: GenMessage<RegisterWebPushRequest> = /*@__PURE__*/
+export const RegisterWebPushRequestSchema: GenMessage<RegisterWebPushRequest> /*@__PURE__*/ =
   messageDesc(file_proto_poky_v1_webpush_service, 0);
 
 /**
@@ -75,7 +76,7 @@ export type RegisterWebPushResponse = Message<"proto.poky.v1.RegisterWebPushResp
  * Describes the message proto.poky.v1.RegisterWebPushResponse.
  * Use `create(RegisterWebPushResponseSchema)` to create a new message.
  */
-export const RegisterWebPushResponseSchema: GenMessage<RegisterWebPushResponse> = /*@__PURE__*/
+export const RegisterWebPushResponseSchema: GenMessage<RegisterWebPushResponse> /*@__PURE__*/ =
   messageDesc(file_proto_poky_v1_webpush_service, 1);
 
 /**
@@ -94,8 +95,10 @@ export type GetWebPushRequest = Message<"proto.poky.v1.GetWebPushRequest"> & {
  * Describes the message proto.poky.v1.GetWebPushRequest.
  * Use `create(GetWebPushRequestSchema)` to create a new message.
  */
-export const GetWebPushRequestSchema: GenMessage<GetWebPushRequest> = /*@__PURE__*/
-  messageDesc(file_proto_poky_v1_webpush_service, 2);
+export const GetWebPushRequestSchema: GenMessage<GetWebPushRequest> /*@__PURE__*/ = messageDesc(
+  file_proto_poky_v1_webpush_service,
+  2,
+);
 
 /**
  * @generated from message proto.poky.v1.GetWebPushResponse
@@ -136,8 +139,10 @@ export type GetWebPushResponse = Message<"proto.poky.v1.GetWebPushResponse"> & {
  * Describes the message proto.poky.v1.GetWebPushResponse.
  * Use `create(GetWebPushResponseSchema)` to create a new message.
  */
-export const GetWebPushResponseSchema: GenMessage<GetWebPushResponse> = /*@__PURE__*/
-  messageDesc(file_proto_poky_v1_webpush_service, 3);
+export const GetWebPushResponseSchema: GenMessage<GetWebPushResponse> /*@__PURE__*/ = messageDesc(
+  file_proto_poky_v1_webpush_service,
+  3,
+);
 
 /**
  * ----- Delete -----
@@ -155,7 +160,7 @@ export type DeleteWebPushRequest = Message<"proto.poky.v1.DeleteWebPushRequest">
  * Describes the message proto.poky.v1.DeleteWebPushRequest.
  * Use `create(DeleteWebPushRequestSchema)` to create a new message.
  */
-export const DeleteWebPushRequestSchema: GenMessage<DeleteWebPushRequest> = /*@__PURE__*/
+export const DeleteWebPushRequestSchema: GenMessage<DeleteWebPushRequest> /*@__PURE__*/ =
   messageDesc(file_proto_poky_v1_webpush_service, 4);
 
 /**
@@ -172,7 +177,7 @@ export type DeleteWebPushResponse = Message<"proto.poky.v1.DeleteWebPushResponse
  * Describes the message proto.poky.v1.DeleteWebPushResponse.
  * Use `create(DeleteWebPushResponseSchema)` to create a new message.
  */
-export const DeleteWebPushResponseSchema: GenMessage<DeleteWebPushResponse> = /*@__PURE__*/
+export const DeleteWebPushResponseSchema: GenMessage<DeleteWebPushResponse> /*@__PURE__*/ =
   messageDesc(file_proto_poky_v1_webpush_service, 5);
 
 /**
@@ -191,8 +196,10 @@ export type TestWebPushRequest = Message<"proto.poky.v1.TestWebPushRequest"> & {
  * Describes the message proto.poky.v1.TestWebPushRequest.
  * Use `create(TestWebPushRequestSchema)` to create a new message.
  */
-export const TestWebPushRequestSchema: GenMessage<TestWebPushRequest> = /*@__PURE__*/
-  messageDesc(file_proto_poky_v1_webpush_service, 6);
+export const TestWebPushRequestSchema: GenMessage<TestWebPushRequest> /*@__PURE__*/ = messageDesc(
+  file_proto_poky_v1_webpush_service,
+  6,
+);
 
 /**
  * @generated from message proto.poky.v1.TestWebPushResponse
@@ -213,8 +220,10 @@ export type TestWebPushResponse = Message<"proto.poky.v1.TestWebPushResponse"> &
  * Describes the message proto.poky.v1.TestWebPushResponse.
  * Use `create(TestWebPushResponseSchema)` to create a new message.
  */
-export const TestWebPushResponseSchema: GenMessage<TestWebPushResponse> = /*@__PURE__*/
-  messageDesc(file_proto_poky_v1_webpush_service, 7);
+export const TestWebPushResponseSchema: GenMessage<TestWebPushResponse> /*@__PURE__*/ = messageDesc(
+  file_proto_poky_v1_webpush_service,
+  7,
+);
 
 /**
  * @generated from service proto.poky.v1.WebPushService
@@ -227,7 +236,7 @@ export const WebPushService: GenService<{
     methodKind: "unary";
     input: typeof RegisterWebPushRequestSchema;
     output: typeof RegisterWebPushResponseSchema;
-  },
+  };
   /**
    * @generated from rpc proto.poky.v1.WebPushService.GetWebPush
    */
@@ -235,7 +244,7 @@ export const WebPushService: GenService<{
     methodKind: "unary";
     input: typeof GetWebPushRequestSchema;
     output: typeof GetWebPushResponseSchema;
-  },
+  };
   /**
    * @generated from rpc proto.poky.v1.WebPushService.DeleteWebPush
    */
@@ -243,7 +252,7 @@ export const WebPushService: GenService<{
     methodKind: "unary";
     input: typeof DeleteWebPushRequestSchema;
     output: typeof DeleteWebPushResponseSchema;
-  },
+  };
   /**
    * @generated from rpc proto.poky.v1.WebPushService.TestWebPush
    */
@@ -251,7 +260,5 @@ export const WebPushService: GenService<{
     methodKind: "unary";
     input: typeof TestWebPushRequestSchema;
     output: typeof TestWebPushResponseSchema;
-  },
-}> = /*@__PURE__*/
-  serviceDesc(file_proto_poky_v1_webpush_service, 0);
-
+  };
+}> /*@__PURE__*/ = serviceDesc(file_proto_poky_v1_webpush_service, 0);

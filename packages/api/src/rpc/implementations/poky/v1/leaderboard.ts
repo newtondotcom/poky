@@ -5,7 +5,6 @@ import { generateFunnyFrenchName, generateFunnyPicture } from "@poky/db/utils/an
 import logger from "@/lib/logger";
 import { kUserId } from "@/rpc/context";
 import {
-  GetUserAnonymizedDataResponseSchema,
   type GetLeaderboardRequest,
   type GetUserAnonymizedDataRequest,
   type LeaderboardService,
@@ -13,7 +12,6 @@ import {
   type RefreshAnonymizedPictureRequest,
   type TogglePokeVisibilityRequest,
 } from "@/rpc/proto/poky/v1/leaderboard_service_pb";
-import { create } from "@bufbuild/protobuf";
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import type { HandlerContext, ServiceImpl } from "@connectrpc/connect";
 
