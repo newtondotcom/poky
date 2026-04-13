@@ -1,7 +1,7 @@
 services:
   nats:
     image: nats:2.10-alpine
-    container_name: pok7_nats
+    container_name: poky_nats
     ports:
       - "4222:4222"
     restart: unless-stopped
@@ -10,7 +10,7 @@ services:
 
   valkey:
     image: valkey/valkey:7-alpine
-    container_name: pok7_valkey
+    container_name: poky_valkey
     ports:
       - "6379:6379"
     command: valkey-server

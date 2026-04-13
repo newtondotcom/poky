@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "pok7",
+      "name": "poky",
       "dependencies": {
         "@poky/env": "workspace:*",
         "dotenv": "^17.4.1",

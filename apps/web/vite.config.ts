@@ -18,8 +18,8 @@ export default defineConfig({
       pwaAssets: { disabled: false, config: true },
       devOptions: { enabled: false },
       manifest: {
-        name: "pok7",
-        short_name: "pok7",
+        name: "poky",
+        short_name: "poky",
         description: "An enhancement of Meta pokes in a modern PWA with liquid glass theme",
         theme_color: "#31d748",
         background_color: "#ffffff",

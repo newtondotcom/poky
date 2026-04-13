@@ -1,6 +1,6 @@
 # Better-T-Stack Project Rules
 
-This is a temp-pok7 project created with Better-T-Stack CLI.
+This is a poky project created with Better-T-Stack CLI.
 
 ## Project Structure
 

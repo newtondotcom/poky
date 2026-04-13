@@ -16,7 +16,7 @@ export async function notifyTargetUser(targetUserId: string) {
     };
     await sendWebPush(subscription, {
       title: "You were poked!",
-      body: "Open Pok7 to see who poked you.",
+      body: "Open Poky to see who poked you.",
       icon: "/favicon-32x32.png",
       data: { type: "poke" },
     });

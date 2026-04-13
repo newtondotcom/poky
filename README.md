@@ -1,4 +1,4 @@
-# 🎯 Pok7
+# 🎯 Poky
 
 Une application moderne de pokes à la Meta avec des fonctionnalités temps réel, construite avec une stack TypeScript de pointe.
 
@@ -149,7 +149,7 @@ The API is running at [http://localhost:3000](http://localhost:3000).
 ## Project Structure
 
 ```
-pok7/
+poky/
 ├── apps/
 │   ├── web/                 # Frontend application (React + TanStack Router + PWA)
 │   └── server/              # Backend API (Fastify + Connect RPC)
@@ -193,8 +193,8 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 
 If you encounter any issues or have questions:
 
-- Open an [issue](https://github.com/your-username/pok7/issues)
-- Check the [documentation](https://github.com/your-username/pok7/wiki)
+- Open an [issue](https://github.com/your-username/poky/issues)
+- Check the [documentation](https://github.com/your-username/poky/wiki)
 
 ---
 
