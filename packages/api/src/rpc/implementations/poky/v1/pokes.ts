@@ -4,7 +4,7 @@ import { pokes } from "@poky/db/schema/poky";
 import { getUserPokesData } from "@/lib/get-user-pokes-data";
 import logger from "@/lib/logger";
 import { natsService } from "@/lib/nats";
-import { UserPokesUpdateSchema, userPokesSubject } from "@/lib/nats-messages";
+import { userPokesSubject } from "@/lib/nats-messages";
 import { notifyTargetUser } from "@/lib/notify-target-user";
 import { addUserConnected, isUserConnected, removeUserConnected } from "@/lib/user-connected";
 import { kUserId } from "@/rpc/context";
@@ -29,7 +29,7 @@ async function decideWhichActionToPerform(targetUserId: string) {
 
   if (targetUserConnected) {
     logger.debug(`Publishing to target user channel: ${targetUserId}`);
-    await natsService.publish(userPokesSubject(targetUserId), UserPokesUpdateSchema, {
+    await natsService.publish(userPokesSubject(targetUserId), {
       userId: targetUserId,
     });
   } else {
@@ -53,7 +53,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
 
     try {
       const subject = userPokesSubject(currentUserId);
-      const { sub, iterator } = await natsService.subscribe(subject, UserPokesUpdateSchema);
+      const { sub, iterator } = await natsService.subscribe(subject);
       subscription = sub;
       logger.debug(`Subscribed to NATS subject: ${subject}`);
 
@@ -140,7 +140,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
 
         // publish so that user ui is refreshed
         logger.debug(`Publishing to NATS subject: ${currentUserId}`);
-        await natsService.publish(userPokesSubject(currentUserId), UserPokesUpdateSchema, {
+        await natsService.publish(userPokesSubject(currentUserId), {
           userId: currentUserId,
         });
 
@@ -175,7 +175,7 @@ export class PokesServiceImpl implements ServiceImpl<typeof PokesService> {
 
         // publish so that user ui is refreshed
         logger.debug(`Publishing to NATS subject: ${currentUserId}`);
-        await natsService.publish(userPokesSubject(currentUserId), UserPokesUpdateSchema, {
+        await natsService.publish(userPokesSubject(currentUserId), {
           userId: currentUserId,
         });
 

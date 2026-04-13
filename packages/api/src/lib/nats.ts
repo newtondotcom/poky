@@ -1,16 +1,16 @@
-import { connect } from "@nats-io/transport-node";
+import { connect, type NatsConnection } from "@nats-io/transport-node";
 import logger from "@/lib/logger";
 import { env } from "@poky/env/server";
 
 class NatsService {
-  private connection;
-  private connecting;
+  private connection: NatsConnection | undefined;
+  private connecting: Promise<NatsConnection> | undefined;
 
   async getConnection() {
     if (this.connection) return this.connection;
 
     if (!this.connecting) {
-      const servers = env.NATS_URL ?? "nats://localhost:4222";
+      const servers = env.NATS_URL;
       this.connecting = connect({ servers })
         .then((conn) => {
           this.connection = conn;
@@ -49,7 +49,7 @@ class NatsService {
 
     const iterator = (async function* () {
       for await (const msg of sub) {
-        yield JSON.parse(msg.data);
+        yield msg.data;
       }
     })();
 
