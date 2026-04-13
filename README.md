@@ -66,8 +66,7 @@ All dependencies are centralized in the root `package.json` catalog for consiste
 
 - `drizzle-orm` - TypeScript ORM
 - `drizzle-kit` - Database tools
-- `pg` - PostgreSQL client
-- `postgres` - PostgreSQL driver
+- Bun built-in [client](https://bun.com/docs/runtime/sql)
 
 ### Server & API
 
