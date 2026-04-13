@@ -1,17 +1,17 @@
-import Redis from "ioredis";
+import { RedisClient } from "bun";
 import logger from "@/lib/logger";
 import { env } from "@poky/env/server";
 
 class UserConnectionManager {
   private static instance: UserConnectionManager;
-  private redis: Redis;
+  private redis: RedisClient;
   private readonly CONNECTED_USERS_SET = "connected_users";
   private readonly USER_TTL_PREFIX = "user_ttl:";
   private readonly DEFAULT_TTL = 300; // 5 minutes
 
   private constructor() {
     const url = env.VALKEY_URL ?? env.VALKEY_URL ?? "redis://localhost:6379";
-    this.redis = new Redis(url);
+    this.redis = new RedisClient(url);
 
     // Start cleanup interval
     this.startCleanupInterval();
@@ -137,23 +137,6 @@ class UserConnectionManager {
    */
   public async getUserTTL(userId: string): Promise<number> {
     return await this.redis.ttl(`${this.USER_TTL_PREFIX}${userId}`);
-  }
-
-  /**
-   * Batch operations for better performance
-   */
-  public async addMultipleUsers(
-    userIds: string[],
-    ttlSeconds: number = this.DEFAULT_TTL,
-  ): Promise<void> {
-    const pipeline = this.redis.pipeline();
-
-    userIds.forEach((userId) => {
-      pipeline.setex(`${this.USER_TTL_PREFIX}${userId}`, ttlSeconds, "1");
-      pipeline.sadd(this.CONNECTED_USERS_SET, userId);
-    });
-
-    await pipeline.exec();
   }
 }
 
