@@ -1,6 +1,6 @@
 import { pgTable, text, integer, timestamp, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { user } from "./auth";
+import { user } from "@poky/db/schema/auth";
 
 // Devices table
 export const devices = pgTable("devices", {
