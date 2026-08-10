@@ -36,8 +36,7 @@ Une application moderne de pokes à la Meta avec des fonctionnalités temps rée
 - **Protocol Buffers** - Efficient binary serialization
 - **Drizzle ORM** - TypeScript-first ORM with migrations
 - **PostgreSQL** - Robust relational database
-- **Redis (ioredis)** - Real-time caching and session management
-- **NATS** - High-performance messaging system
+- **NATS (JetStream)** - High-performance messaging system and KV store for user presence
 - **Web Push** - Native push notifications
 - **Winston** - Structured and performant logging
 
@@ -78,10 +77,10 @@ All dependencies are centralized in the root `package.json` catalog for consiste
 - `@connectrpc/connect-web` - Web integration
 - `@connectrpc/validate` - Validation utilities
 
-### Messaging & Cache
+### Messaging & Presence
 
-- `ioredis` - Redis client
-- `nats` - NATS messaging
+- `@nats-io/transport-node` - NATS messaging
+- `@nats-io/kv` - NATS JetStream KV (user presence)
 - `web-push` - Push notifications
 - `@types/web-push` - TypeScript definitions for web-push
 
@@ -108,7 +107,7 @@ bun install
 
 ### Docker Services
 
-This project requires PostgreSQL, NATS, and Valkey (Redis) for full functionality. Start all services using Docker Compose:
+This project requires PostgreSQL and NATS (with JetStream enabled) for full functionality. Start all services using Docker Compose:
 
 ```bash
 cd apps/server
@@ -118,8 +117,7 @@ docker compose up -d
 This will start:
 
 - **PostgreSQL** - Database on port 8001 (credentials: `postgres:mypassword`)
-- **NATS** - Message broker on port 4222
-- **Valkey** - Cache/session storage on port 6379
+- **NATS** - Message broker (JetStream enabled) on port 4222, also used as KV store for user presence
 
 ### Database Setup
 

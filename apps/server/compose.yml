@@ -1,19 +1,10 @@
 services:
   nats:
-    image: nats:2.10-alpine
+    image: nats:2.14-alpine
     container_name: poky_nats
+    command: ["--jetstream"]
     ports:
       - "4222:4222"
-    restart: unless-stopped
-    networks:
-      - network
-
-  valkey:
-    image: valkey/valkey:7-alpine
-    container_name: poky_valkey
-    ports:
-      - "6379:6379"
-    command: valkey-server
     restart: unless-stopped
     networks:
       - network

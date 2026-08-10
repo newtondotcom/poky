@@ -1,165 +1,67 @@
-import { RedisClient } from "bun";
-import logger from "@/lib/logger";
-import { env } from "@poky/env/server";
+import { natsService } from "@/lib/nats";
 
-class UserConnectionManager {
-  private static instance: UserConnectionManager;
-  private redis: RedisClient;
-  private readonly CONNECTED_USERS_SET = "connected_users";
-  private readonly USER_TTL_PREFIX = "user_ttl:";
-  private readonly DEFAULT_TTL = 300; // 5 minutes
+/**
+ * Presence tracking backed by the NATS JetStream KV bucket "presence".
+ * The bucket has a max age (see NatsService), so keys expire automatically;
+ * re-putting a key writes a new revision and resets its age.
+ */
 
-  private constructor() {
-    const url = env.VALKEY_URL ?? env.VALKEY_URL ?? "redis://localhost:6379";
-    this.redis = new RedisClient(url);
-
-    // Start cleanup interval
-    this.startCleanupInterval();
-  }
-
-  public static getInstance(): UserConnectionManager {
-    if (!UserConnectionManager.instance) {
-      UserConnectionManager.instance = new UserConnectionManager();
-    }
-    return UserConnectionManager.instance;
-  }
-
-  /**
-   * Add user as connected with automatic expiration
-   * Call this when user connects or shows activity
-   */
-  public async addUserConnected(
-    userId: string,
-    ttlSeconds: number = this.DEFAULT_TTL,
-  ): Promise<void> {
-    await this.redis.setex(`${this.USER_TTL_PREFIX}${userId}`, ttlSeconds, "1");
-    await this.redis.sadd(this.CONNECTED_USERS_SET, userId);
-  }
-
-  /**
-   * Remove user from connected list
-   */
-  public async removeUserConnected(userId: string): Promise<void> {
-    await this.redis.del(`${this.USER_TTL_PREFIX}${userId}`);
-    await this.redis.srem(this.CONNECTED_USERS_SET, userId);
-  }
-
-  /**
-   * Check if user is connected (checks TTL key)
-   */
-  public async isUserConnected(userId: string): Promise<boolean> {
-    const result = await this.redis.get(`${this.USER_TTL_PREFIX}${userId}`);
-    return result !== null;
-  }
-
-  /**
-   * Refresh user connection (call on user activity)
-   * This is key for keeping active users connected
-   */
-  public async refreshUserConnection(
-    userId: string,
-    ttlSeconds: number = this.DEFAULT_TTL,
-  ): Promise<void> {
-    const exists = await this.redis.get(`${this.USER_TTL_PREFIX}${userId}`);
-    if (exists) {
-      await this.redis.expire(`${this.USER_TTL_PREFIX}${userId}`, ttlSeconds);
-    } else {
-      await this.addUserConnected(userId, ttlSeconds);
-    }
-  }
-
-  /**
-   * Get all currently connected users
-   */
-  public async getConnectedUsers(): Promise<string[]> {
-    // Clean up first to ensure accuracy
-    await this.cleanupExpiredConnections();
-    return await this.redis.smembers(this.CONNECTED_USERS_SET);
-  }
-
-  /**
-   * Get count of connected users
-   */
-  public async getConnectedUsersCount(): Promise<number> {
-    await this.cleanupExpiredConnections();
-    return await this.redis.scard(this.CONNECTED_USERS_SET);
-  }
-
-  /**
-   * Clear all connections
-   */
-  public async clearAllConnections(): Promise<void> {
-    const users = await this.redis.smembers(this.CONNECTED_USERS_SET);
-
-    if (users.length > 0) {
-      const ttlKeys = users.map((userId: string) => `${this.USER_TTL_PREFIX}${userId}`);
-      await this.redis.del(...ttlKeys);
-    }
-
-    await this.redis.del(this.CONNECTED_USERS_SET);
-  }
-
-  /**
-   * Clean up expired connections from the set
-   * This runs automatically but can be called manually
-   */
-  public async cleanupExpiredConnections(): Promise<number> {
-    const connectedUsers = await this.redis.smembers(this.CONNECTED_USERS_SET);
-    let cleanedCount = 0;
-
-    for (const userId of connectedUsers) {
-      const isActive = await this.redis.get(`${this.USER_TTL_PREFIX}${userId}`);
-      if (!isActive) {
-        await this.redis.srem(this.CONNECTED_USERS_SET, userId);
-        cleanedCount++;
-      }
-    }
-
-    return cleanedCount;
-  }
-
-  /**
-   * Start automatic cleanup interval
-   */
-  private startCleanupInterval(): void {
-    // Clean up every 2 minutes
-    setInterval(async () => {
-      try {
-        await this.cleanupExpiredConnections();
-      } catch (error) {
-        logger.error("Cleanup interval error:", { error });
-      }
-    }, 120000); // 2 minutes
-  }
-
-  /**
-   * Get user's remaining TTL in seconds
-   */
-  public async getUserTTL(userId: string): Promise<number> {
-    return await this.redis.ttl(`${this.USER_TTL_PREFIX}${userId}`);
-  }
+/**
+ * Mark user as connected. Call this when user connects or shows activity.
+ */
+export async function addUserConnected(userId: string): Promise<void> {
+  const kv = await natsService.getPresenceKv();
+  await kv.put(userId, "1");
 }
 
-// Export singleton instance
-export const userConnectionManager = UserConnectionManager.getInstance();
+/**
+ * Remove user from connected list.
+ */
+export async function removeUserConnected(userId: string): Promise<void> {
+  const kv = await natsService.getPresenceKv();
+  await kv.purge(userId);
+}
 
-// Export convenience functions with the same API as your original code
-export const addUserConnected = (userId: string, ttlSeconds?: number) =>
-  userConnectionManager.addUserConnected(userId, ttlSeconds);
+/**
+ * Check if user is currently connected.
+ */
+export async function isUserConnected(userId: string): Promise<boolean> {
+  const kv = await natsService.getPresenceKv();
+  const entry = await kv.get(userId);
+  return entry !== null && entry.operation === "PUT";
+}
 
-export const removeUserConnected = (userId: string) =>
-  userConnectionManager.removeUserConnected(userId);
+/**
+ * Refresh user connection (call on user activity).
+ */
+export const refreshUserConnection = addUserConnected;
 
-export const isUserConnected = (userId: string) => userConnectionManager.isUserConnected(userId);
+/**
+ * Get all currently connected users.
+ */
+export async function getConnectedUsers(): Promise<string[]> {
+  const kv = await natsService.getPresenceKv();
+  const users: string[] = [];
+  for await (const key of await kv.keys()) {
+    users.push(key);
+  }
+  return users;
+}
 
-export const getConnectedUsers = () => userConnectionManager.getConnectedUsers();
+/**
+ * Get count of connected users.
+ */
+export async function getConnectedUsersCount(): Promise<number> {
+  const users = await getConnectedUsers();
+  return users.length;
+}
 
-export const getConnectedUsersCount = () => userConnectionManager.getConnectedUsersCount();
-
-export const clearAllConnections = () => userConnectionManager.clearAllConnections();
-
-// Additional useful functions
-export const refreshUserConnection = (userId: string, ttlSeconds?: number) =>
-  userConnectionManager.refreshUserConnection(userId, ttlSeconds);
-
-export const getUserTTL = (userId: string) => userConnectionManager.getUserTTL(userId);
+/**
+ * Clear all connections.
+ */
+export async function clearAllConnections(): Promise<void> {
+  const kv = await natsService.getPresenceKv();
+  for (const userId of await getConnectedUsers()) {
+    await kv.purge(userId);
+  }
+}
