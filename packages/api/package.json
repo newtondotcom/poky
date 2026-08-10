@@ -15,22 +15,22 @@
     "gen": "buf generate"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.11.0",
-    "@connectrpc/connect": "^2.1.1",
+    "@bufbuild/protobuf": "^2.13.0",
+    "@connectrpc/connect": "^2.1.2",
     "@connectrpc/validate": "^0.2.0",
-    "@nats-io/transport-node": "^3.3.1",
+    "@nats-io/transport-node": "^3.4.0",
     "@poky/auth": "workspace:*",
     "@poky/db": "workspace:*",
     "@poky/env": "workspace:*",
-    "better-auth": "^1.6.2",
+    "better-auth": "^1.6.26",
     "dotenv": "^17.4.1",
     "web-push": "^3.6.7",
     "winston": "^3.19.0",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@bufbuild/buf": "^1.67.0",
-    "@bufbuild/protoc-gen-es": "^2.11.0",
+    "@bufbuild/buf": "^1.72.0",
+    "@bufbuild/protoc-gen-es": "^2.13.0",
     "@poky/config": "workspace:*",
     "@types/web-push": "^3.6.4",
     "drizzle-kit": "^0.31.10",

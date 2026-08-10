@@ -8,97 +8,97 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as SearchRouteImport } from './routes/search'
-import { Route as LeaderboardRouteImport } from './routes/leaderboard'
-import { Route as AccountRouteImport } from './routes/account'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as AccountRouteImport } from "./routes/account";
+import { Route as LeaderboardRouteImport } from "./routes/leaderboard";
+import { Route as SearchRouteImport } from "./routes/search";
 
-const SearchRoute = SearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LeaderboardRoute = LeaderboardRouteImport.update({
-  id: '/leaderboard',
-  path: '/leaderboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AccountRoute = AccountRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
+const AccountRoute = AccountRouteImport.update({
+  id: "/account",
+  path: "/account",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: "/leaderboard",
+  path: "/leaderboard",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const SearchRoute = SearchRouteImport.update({
+  id: "/search",
+  path: "/search",
+  getParentRoute: () => rootRouteImport,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/account': typeof AccountRoute
-  '/leaderboard': typeof LeaderboardRoute
-  '/search': typeof SearchRoute
+  "/": typeof IndexRoute;
+  "/account": typeof AccountRoute;
+  "/leaderboard": typeof LeaderboardRoute;
+  "/search": typeof SearchRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/account': typeof AccountRoute
-  '/leaderboard': typeof LeaderboardRoute
-  '/search': typeof SearchRoute
+  "/": typeof IndexRoute;
+  "/account": typeof AccountRoute;
+  "/leaderboard": typeof LeaderboardRoute;
+  "/search": typeof SearchRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/account': typeof AccountRoute
-  '/leaderboard': typeof LeaderboardRoute
-  '/search': typeof SearchRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/account": typeof AccountRoute;
+  "/leaderboard": typeof LeaderboardRoute;
+  "/search": typeof SearchRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/account' | '/leaderboard' | '/search'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account' | '/leaderboard' | '/search'
-  id: '__root__' | '/' | '/account' | '/leaderboard' | '/search'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: "/" | "/account" | "/leaderboard" | "/search";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/account" | "/leaderboard" | "/search";
+  id: "__root__" | "/" | "/account" | "/leaderboard" | "/search";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AccountRoute: typeof AccountRoute
-  LeaderboardRoute: typeof LeaderboardRoute
-  SearchRoute: typeof SearchRoute
+  IndexRoute: typeof IndexRoute;
+  AccountRoute: typeof AccountRoute;
+  LeaderboardRoute: typeof LeaderboardRoute;
+  SearchRoute: typeof SearchRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/leaderboard': {
-      id: '/leaderboard'
-      path: '/leaderboard'
-      fullPath: '/leaderboard'
-      preLoaderRoute: typeof LeaderboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/account': {
-      id: '/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AccountRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/account": {
+      id: "/account";
+      path: "/account";
+      fullPath: "/account";
+      preLoaderRoute: typeof AccountRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/leaderboard": {
+      id: "/leaderboard";
+      path: "/leaderboard";
+      fullPath: "/leaderboard";
+      preLoaderRoute: typeof LeaderboardRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/search": {
+      id: "/search";
+      path: "/search";
+      fullPath: "/search";
+      preLoaderRoute: typeof SearchRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -107,7 +107,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   LeaderboardRoute: LeaderboardRoute,
   SearchRoute: SearchRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
