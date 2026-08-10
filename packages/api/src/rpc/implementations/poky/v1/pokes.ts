@@ -1,13 +1,17 @@
 import { db, and, eq, like, not, or } from "@poky/db";
 import { user } from "@poky/db/schema/auth";
 import { pokes } from "@poky/db/schema/poky";
-import { getUserPokesData } from "@/lib/get-user-pokes-data";
-import logger from "@/lib/logger";
-import { natsService } from "@/lib/nats";
-import { userPokesSubject } from "@/lib/nats-messages";
-import { notifyTargetUser } from "@/lib/notify-target-user";
-import { addUserConnected, isUserConnected, removeUserConnected } from "@/lib/user-connected";
-import { kUserId } from "@/rpc/context";
+import { getUserPokesData } from "../../../../lib/get-user-pokes-data";
+import logger from "../../../../lib/logger";
+import { natsService } from "../../../../lib/nats";
+import { userPokesSubject } from "../../../../lib/nats-messages";
+import { notifyTargetUser } from "../../../../lib/notify-target-user";
+import {
+  addUserConnected,
+  isUserConnected,
+  removeUserConnected,
+} from "../../../../lib/user-connected";
+import { kUserId } from "../../../context";
 import {
   SearchUserResultSchema,
   SearchUsersResponseSchema,
@@ -17,7 +21,7 @@ import {
   type PokeUserRequest,
   type SearchUsersRequest,
   type GetPokeRelationRequest,
-} from "@/rpc/proto/poky/v1/pokes_service_pb";
+} from "../../../proto/poky/v1/pokes_service_pb";
 import { create } from "@bufbuild/protobuf";
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { Code, ConnectError, type HandlerContext, type ServiceImpl } from "@connectrpc/connect";

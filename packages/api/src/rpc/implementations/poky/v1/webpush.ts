@@ -1,8 +1,8 @@
 import { db, and, eq } from "@poky/db";
 import { devices, webpush } from "@poky/db/schema/poky";
-import logger from "@/lib/logger";
-import { sendWebPush } from "@/lib/webpush";
-import { kUserId } from "@/rpc/context";
+import logger from "../../../../lib/logger";
+import { sendWebPush } from "../../../../lib/webpush";
+import { kUserId } from "../../../context";
 import {
   GetWebPushResponseSchema,
   type DeleteWebPushRequest,
@@ -10,7 +10,7 @@ import {
   type RegisterWebPushRequest,
   type TestWebPushRequest,
   type WebPushService,
-} from "@/rpc/proto/poky/v1/webpush_service_pb";
+} from "../../../proto/poky/v1/webpush_service_pb";
 import { create } from "@bufbuild/protobuf";
 import { Code, ConnectError, type HandlerContext, type ServiceImpl } from "@connectrpc/connect";
 

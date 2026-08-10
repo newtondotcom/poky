@@ -1,6 +1,6 @@
 import { Kvm, type KV } from "@nats-io/kv";
 import { connect, type NatsConnection } from "@nats-io/transport-node";
-import logger from "@/lib/logger";
+import logger from "./logger";
 import { env } from "@poky/env/server";
 
 const PRESENCE_BUCKET = "presence";

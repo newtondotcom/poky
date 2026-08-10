@@ -1,7 +1,7 @@
 import type { Interceptor } from "@connectrpc/connect";
 import { Code, ConnectError } from "@connectrpc/connect";
-import { kUserId } from "@/rpc/context";
-import logger from "@/lib/logger";
+import { kUserId } from "./context";
+import logger from "../lib/logger";
 import { auth } from "@poky/auth";
 
 // -----------------------------------------------------------------------------

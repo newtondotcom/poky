@@ -5,6 +5,11 @@ export function generateDeviceId(): string {
   ctx!.font = "14px Arial";
   ctx!.fillText("Device fingerprint", 2, 2);
 
+  const deviceMemory =
+    "deviceMemory" in navigator && typeof navigator.deviceMemory === "number"
+      ? navigator.deviceMemory
+      : "unknown";
+
   const fingerprint = [
     navigator.userAgent,
     navigator.language,
@@ -12,7 +17,7 @@ export function generateDeviceId(): string {
     new Date().getTimezoneOffset(),
     canvas.toDataURL(),
     navigator.hardwareConcurrency || "unknown",
-    navigator.deviceMemory || "unknown",
+    deviceMemory,
   ].join("|");
 
   // Create a hash of the fingerprint

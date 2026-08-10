@@ -1,4 +1,4 @@
-import { natsService } from "@/lib/nats";
+import { natsService } from "./nats";
 
 /**
  * Presence tracking backed by the NATS JetStream KV bucket "presence".

@@ -7,7 +7,7 @@ import logger from "./logger";
 import {
   GetUserPokesResponseSchema,
   UserPokeRelationSchema,
-} from "@poky/api/rpc/proto/poky/v1/pokes_service_pb";
+} from "../rpc/proto/poky/v1/pokes_service_pb";
 
 export interface UserPokeRelation {
   id: string;

@@ -1,5 +1,5 @@
 import webpush from "web-push";
-import logger from "@/lib/logger";
+import logger from "./logger";
 import { env } from "@poky/env/server";
 
 webpush.setVapidDetails(`mailto:${env.VAPID_EMAIL}`, env.VAPID_PUBLIC_KEY!, env.VAPID_PRIVATE_KEY!);

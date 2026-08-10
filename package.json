@@ -48,8 +48,6 @@
     "compile:server": "turbo -F server compile"
   },
   "dependencies": {
-    "@nats-io/jetstream": "^3.4.0",
-    "@nats-io/kv": "^3.4.0",
     "@poky/env": "workspace:*",
     "dotenv": "catalog:",
     "zod": "catalog:"

@@ -1,4 +1,4 @@
-import { betterAuth, type BetterAuthOptions } from "better-auth";
+import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@poky/db";
 import * as schema from "@poky/db/schema/auth";
@@ -8,8 +8,19 @@ import { generateUserAnonymizedData } from "@poky/db/utils/anonymization";
 import { user } from "@poky/db/schema/auth";
 import { expo } from "@better-auth/expo";
 import { env } from "@poky/env/server";
+import { z } from "zod";
 
-export const auth = betterAuth<BetterAuthOptions>({
+const churrosUserInfoSchema = z.object({
+  sub: z.string().optional(),
+  fullName: z.string().optional(),
+  uid: z.string().optional(),
+  nickname: z.string().optional(),
+  pictureURL: z.string().optional(),
+  email: z.string().optional(),
+  email_verified: z.boolean().optional(),
+});
+
+export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: schema,
@@ -63,7 +74,7 @@ export const auth = betterAuth<BetterAuthOptions>({
               );
             }
 
-            const userInfo = await response.json();
+            const userInfo = churrosUserInfoSchema.parse(await response.json());
 
             console.log("User info received", { userInfo });
 
@@ -95,20 +106,17 @@ export const auth = betterAuth<BetterAuthOptions>({
               };
             }
 
-            const userLocal = {
+            // Extra keys beyond OAuth2UserInfo are persisted via user.additionalFields.
+            return {
               id: userId,
               name: userInfo.fullName || "",
+              email: userInfo.email || "",
+              image: userInfo.pictureURL,
+              emailVerified: userInfo.email_verified ?? false,
               username: userInfo.uid || userInfo.nickname || "",
-              image: userInfo.pictureURL || null,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              email: userInfo.email,
-              usernameAnonymized: anonymizedData.usernameAnonymized,
-              imageAnonymized: anonymizedData.imageAnonymized,
-              emailVerified: userInfo.email_verified,
-            };
-            console.log("User info received", { userLocal });
-            return userLocal;
+              usernameAnonymized: anonymizedData.usernameAnonymized ?? "",
+              imageAnonymized: anonymizedData.imageAnonymized ?? "",
+            } as import("better-auth").OAuth2UserInfo;
           },
         },
       ],

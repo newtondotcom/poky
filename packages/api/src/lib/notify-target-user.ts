@@ -1,6 +1,6 @@
 import { db, eq } from "@poky/db";
-import { sendWebPush } from "@/lib/webpush";
-import logger from "@/lib/logger";
+import { sendWebPush } from "./webpush";
+import logger from "./logger";
 import { webpush } from "@poky/db/schema/poky";
 
 export async function notifyTargetUser(targetUserId: string) {

@@ -2,8 +2,8 @@ import { db, desc, eq, inArray, or, and } from "@poky/db";
 import { user } from "@poky/db/schema/auth";
 import { pokes } from "@poky/db/schema/poky";
 import { generateFunnyFrenchName, generateFunnyPicture } from "@poky/db/utils/anonymization";
-import logger from "@/lib/logger";
-import { kUserId } from "@/rpc/context";
+import logger from "../../../../lib/logger";
+import { kUserId } from "../../../context";
 import {
   type GetLeaderboardRequest,
   type GetUserAnonymizedDataRequest,
@@ -11,7 +11,7 @@ import {
   type RefreshAnonymizedNameRequest,
   type RefreshAnonymizedPictureRequest,
   type TogglePokeVisibilityRequest,
-} from "@/rpc/proto/poky/v1/leaderboard_service_pb";
+} from "../../../proto/poky/v1/leaderboard_service_pb";
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import type { HandlerContext, ServiceImpl } from "@connectrpc/connect";
 
