@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - "apps/server/**"
+      - "apps/web/**"
       - "packages/db/**"
       - "packages/auth/**"
       - "packages/env/**"
@@ -22,10 +23,13 @@ jobs:
         include:
           - name: server
             file: apps/server/Containerfile
-            image_suffix: ""
+            image_suffix: "-server"
           - name: migrate
             file: packages/db/migrate.Containerfile
             image_suffix: "-migrate"
+          - name: web
+            file: apps/web/Containerfile
+            image_suffix: "-web"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
