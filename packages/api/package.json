@@ -24,7 +24,7 @@
     "@poky/auth": "workspace:*",
     "@poky/db": "workspace:*",
     "@poky/env": "workspace:*",
-    "better-auth": "^1.6.26",
+    "better-auth": "catalog:",
     "dotenv": "^17.4.1",
     "web-push": "^3.6.7",
     "winston": "^3.19.0",
