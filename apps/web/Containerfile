@@ -16,6 +16,10 @@ RUN bun install
 
 # Copy full repo (needed for build)
 COPY . .
+
+# Bake production mode into the static client bundle
+ENV NODE_ENV=production
+
 RUN bunx turbo -F web build
 
 # ===== Production stage =====
