@@ -1,5 +1,4 @@
 import { pgTable, text, integer, timestamp, boolean } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 import { user } from "@poky/db/schema/auth";
 
 // Devices table
@@ -33,26 +32,6 @@ export const webpush = pgTable("webpush", {
   createdAt: timestamp("created_at", { withTimezone: false, mode: "date" }).defaultNow().notNull(),
   isActive: boolean("is_active").default(true).notNull(),
 });
-
-// Relations for better querying
-export const devicesRelations = relations(devices, ({ one, many }) => ({
-  user: one(user, {
-    fields: [devices.userId],
-    references: [user.id],
-  }),
-  webPushSubscriptions: many(webpush),
-}));
-
-export const webpushRelations = relations(webpush, ({ one }) => ({
-  device: one(devices, {
-    fields: [webpush.deviceId],
-    references: [devices.id],
-  }),
-  user: one(user, {
-    fields: [webpush.userId],
-    references: [user.id],
-  }),
-}));
 
 // Pokes table : userA, userB, last_poke_by, count, date_last_poke, visible_leaderboard
 export const pokes = pgTable("pokes", {
