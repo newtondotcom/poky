@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@poky/config": "workspace:*",
-    "drizzle-kit": "catalog:",
+    "drizzle-kit": "^1.0.0-rc.4",
     "typescript": "catalog:"
   }
 }
