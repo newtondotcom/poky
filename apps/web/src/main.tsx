@@ -8,6 +8,7 @@ import Loader from "@/components/loader";
 import { toast } from "@pheralb/toast";
 import { routeTree } from "./routeTree.gen";
 import { env } from "@poky/env/web";
+import { fetchWithCredentials } from "@/lib/fetch";
 
 // -------------------
 // React Query client
@@ -40,7 +41,7 @@ const router = createRouter({
       () =>
         createConnectTransport({
           baseUrl: env.VITE_SERVER_URL,
-          fetch: (input, init) => fetch(input, { ...init, credentials: "include" }),
+          fetch: fetchWithCredentials,
         }),
       [],
     );

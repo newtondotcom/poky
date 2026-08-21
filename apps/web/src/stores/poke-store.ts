@@ -1,11 +1,13 @@
 import { PokesService, type UserPokeRelation } from "@poky/api/rpc/proto/poky/v1/pokes_service_pb";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { createCallbackClient, type ConnectError } from "@connectrpc/connect";
-import { createConnectTransport } from "@connectrpc/connect-web";
+import { useTransport } from "@connectrpc/connect-query";
 import { useEffect, useMemo } from "react";
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { env } from "@poky/env/web";
+
+// Matches the server-side maxTimeoutMs for PokesService (packages/api/src/routers/poky.ts)
+const POKES_STREAM_TIMEOUT_MS = 20 * 60 * 1000;
 
 // -------------------
 // Zustand store
@@ -80,20 +82,11 @@ export const usePokeStore = create<PokeStore>((set, get) => ({
 }));
 
 // -------------------
-// Hook: create client with token
+// Hook: create client from the shared transport
 // -------------------
 export const usePokesClient = () => {
-  const client = useMemo(() => {
-    const transport = createConnectTransport({
-      baseUrl: env.VITE_SERVER_URL,
-      fetch: (input, init) => fetch(input, { ...init, credentials: "include" }),
-      defaultTimeoutMs: 20 * 60 * 1000,
-    });
-
-    return createCallbackClient(PokesService, transport);
-  }, []);
-
-  return client;
+  const transport = useTransport();
+  return useMemo(() => createCallbackClient(PokesService, transport), [transport]);
 };
 
 // -------------------
@@ -136,6 +129,7 @@ export const usePokeData = () => {
           setConnectionStatus(false);
         }
       },
+      { timeoutMs: POKES_STREAM_TIMEOUT_MS },
     );
 
     // Cleanup
