@@ -18,7 +18,10 @@ RUN bun install
 COPY . .
 
 # Bake production mode into the static client bundle
-ENV NODE_ENV=production
+ENV VITE_NODE_ENV=production
+ENV VITE_SERVER_URL="https://b.pokes.rob1.cloud"
+ENV VITE_LOCAL_URL="https://pokes.rob1.cloud"
+ENV VITE_VAPID_PUBLIC_KEY="BLjSl7cIn0g0rAYi7a_Yt5bnh48tuMMa93j4gIgyz-w2Cu651bUWNHJruRggAH4nVyKSR0UmOg4ojHw_e4cyWGY"
 
 RUN bunx turbo -F web build
 
